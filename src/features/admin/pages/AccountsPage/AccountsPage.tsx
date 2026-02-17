@@ -1,0 +1,236 @@
+import { Component, createSignal, onMount, For, Show, createResource } from "solid-js";
+import { useNavigate } from "@solidjs/router";
+import gsap from "gsap";
+import { adminApiService } from "../../services/admin-api.service";
+import type { AdminAccount } from "../../../../shared/types/admin.types";
+import { Button } from "../../../../shared/components/ui/Button";
+import { Card } from "../../../../shared/components/ui/Card";
+import { Input } from "../../../../shared/components/ui/Input";
+import { Alert } from "../../../../shared/components/ui/Alert";
+import { SkeletonTable } from "../../../../shared/components/Skeleton";
+import { debounce } from "../../../../shared/utils/debounce.util";
+
+const AccountsPage: Component = () => {
+  const navigate = useNavigate();
+  const [currentPage, setCurrentPage] = createSignal(1);
+  const [inputValue, setInputValue] = createSignal("");
+  const [searchQuery, setSearchQuery] = createSignal("");
+  const [error, setError] = createSignal("");
+
+  let headerRef: HTMLDivElement | undefined;
+
+  const [accounts, { refetch }] = createResource(
+    () => ({ page: currentPage(), search: searchQuery() }),
+    async ({ page, search }) => {
+      return adminApiService.getAccounts({ page, limit: 20, search: search || "" });
+    }
+  );
+
+  onMount(() => {
+    if (headerRef) {
+      gsap.fromTo(
+        headerRef,
+        { opacity: 0, y: 20 },
+        { opacity: 1, y: 0, duration: 0.6, ease: "power2.out" }
+      );
+    }
+  });
+
+  const debouncedSearch = debounce((value: string) => {
+    setSearchQuery(value);
+    setCurrentPage(1);
+  }, 500);
+
+  const handleSearchInput = (value: string) => {
+    setInputValue(value);
+    debouncedSearch(value);
+  };
+
+  const handleClearSearch = () => {
+    setInputValue("");
+    setSearchQuery("");
+    setCurrentPage(1);
+  };
+
+  const handleViewInbox = (account: AdminAccount) => {
+    navigate(`/admin/accounts/${account.id}/inbox`);
+  };
+
+  const formatDate = (dateStr: string) => {
+    const date = new Date(dateStr);
+    return date.toLocaleDateString() + " " + date.toLocaleTimeString();
+  };
+
+  const formatRelativeTime = (dateStr: string) => {
+    const date = new Date(dateStr);
+    const now = new Date();
+    const diff = now.getTime() - date.getTime();
+    const hours = Math.floor(diff / 3600000);
+    const days = Math.floor(diff / 86400000);
+
+    if (hours < 1) return "Just now";
+    if (hours < 24) return `${hours}h ago`;
+    if (days < 7) return `${days}d ago`;
+    return date.toLocaleDateString();
+  };
+
+  return (
+    <div class="space-y-6">
+      <div ref={headerRef}>
+        <h1 class="text-3xl font-bold text-gray-900">Account Management</h1>
+        <p class="mt-2 text-telkom-gray">
+          Browse accounts and inspect their inboxes
+        </p>
+      </div>
+
+      <Show when={error()}>
+        <Alert type="error" message={error()} onClose={() => setError("")} />
+      </Show>
+
+      <Card>
+        <div class="flex gap-3">
+          <div class="flex-1">
+            <Input
+              placeholder="Search by email address..."
+              value={inputValue()}
+              onInput={handleSearchInput}
+            />
+          </div>
+          <Show when={inputValue()}>
+            <Button variant="secondary" onClick={handleClearSearch} size="sm">
+              Clear
+            </Button>
+          </Show>
+        </div>
+      </Card>
+
+      <Card>
+        <Show
+          when={!accounts.loading && accounts()}
+          fallback={<SkeletonTable rows={10} columns={6} />}
+        >
+          <div class="overflow-x-auto">
+            <table class="w-full">
+              <thead class="bg-telkom-lightGray border-b border-gray-200">
+                <tr>
+                  <th class="px-6 py-4 text-left text-xs font-semibold text-gray-700 uppercase">
+                    Email Address
+                  </th>
+                  <th class="px-6 py-4 text-left text-xs font-semibold text-gray-700 uppercase">
+                    Domain
+                  </th>
+                  <th class="px-6 py-4 text-left text-xs font-semibold text-gray-700 uppercase">
+                    Type
+                  </th>
+                  <th class="px-6 py-4 text-left text-xs font-semibold text-gray-700 uppercase">
+                    Created
+                  </th>
+                  <th class="px-6 py-4 text-left text-xs font-semibold text-gray-700 uppercase">
+                    Emails
+                  </th>
+                  <th class="px-6 py-4 text-left text-xs font-semibold text-gray-700 uppercase">
+                    Actions
+                  </th>
+                </tr>
+              </thead>
+              <tbody class="bg-white divide-y divide-gray-200">
+                <For
+                  each={accounts()?.accounts}
+                  fallback={
+                    <tr>
+                      <td colspan="6" class="px-6 py-16 text-center">
+                        <div class="text-6xl mb-4">📭</div>
+                        <p class="text-telkom-gray font-medium">
+                          {searchQuery() ? "No accounts found" : "No accounts yet"}
+                        </p>
+                      </td>
+                    </tr>
+                  }
+                >
+                  {(account) => (
+                    <tr class="hover:bg-gray-50 transition-colors">
+                      <td class="px-6 py-4">
+                        <span class="font-mono text-sm text-gray-900">
+                          {account.email_address}
+                        </span>
+                      </td>
+                      <td class="px-6 py-4 text-sm text-telkom-gray">
+                        {account.domain_name}
+                      </td>
+                      <td class="px-6 py-4">
+                        <span
+                          class={`px-3 py-1 rounded-full text-xs font-medium ${
+                            account.is_custom
+                              ? "bg-purple-100 text-purple-800"
+                              : "bg-blue-100 text-blue-800"
+                          }`}
+                        >
+                          {account.is_custom ? "Custom" : "Random"}
+                        </span>
+                      </td>
+                      <td class="px-6 py-4 text-sm text-telkom-gray">
+                        <span title={formatDate(account.created_at)}>
+                          {formatRelativeTime(account.created_at)}
+                        </span>
+                      </td>
+                      <td class="px-6 py-4">
+                        <span class="px-3 py-1 bg-telkom-red/10 text-telkom-red rounded-full text-xs font-semibold">
+                          {account.email_count || 0} emails
+                        </span>
+                      </td>
+                      <td class="px-6 py-4">
+                        <Button
+                          variant="primary"
+                          size="sm"
+                          onClick={() => handleViewInbox(account)}
+                        >
+                          👁️ View Inbox
+                        </Button>
+                      </td>
+                    </tr>
+                  )}
+                </For>
+              </tbody>
+            </table>
+          </div>
+
+          <Show when={accounts()}>
+            {(data) => (
+              <div class="px-6 py-4 border-t border-gray-200 flex items-center justify-between bg-telkom-lightGray">
+                <div class="text-sm text-telkom-gray">
+                  Page {data().page} of {data().total_pages} • Total: {data().total} accounts
+                </div>
+                <div class="flex gap-2">
+                  <Button
+                    variant="secondary"
+                    size="sm"
+                    onClick={() => {
+                      setCurrentPage(currentPage() - 1);
+                      refetch();
+                    }}
+                    disabled={currentPage() === 1}
+                  >
+                    ← Previous
+                  </Button>
+                  <Button
+                    variant="secondary"
+                    size="sm"
+                    onClick={() => {
+                      setCurrentPage(currentPage() + 1);
+                      refetch();
+                    }}
+                    disabled={currentPage() >= data().total_pages}
+                  >
+                    Next →
+                  </Button>
+                </div>
+              </div>
+            )}
+          </Show>
+        </Show>
+      </Card>
+    </div>
+  );
+};
+
+export default AccountsPage;

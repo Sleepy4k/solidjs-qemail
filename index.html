@@ -1,0 +1,97 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>QEmail - Temporary Email Service</title>
+    <style>
+      .noscript-container {
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: linear-gradient(135deg, #fef2f2 0%, #ffffff 50%, #fef2f2 100%);
+        font-family: system-ui, -apple-system, sans-serif;
+        padding: 1rem;
+      }
+      .noscript-card {
+        max-width: 600px;
+        background: white;
+        padding: 3rem 2rem;
+        border-radius: 1rem;
+        box-shadow: 0 10px 40px rgba(238, 39, 55, 0.1);
+        text-align: center;
+        border: 1px solid #fee;
+      }
+      .noscript-title {
+        color: #ee2737;
+        font-size: 1.875rem;
+        font-weight: bold;
+        margin-bottom: 1rem;
+      }
+      .noscript-message {
+        color: #6b7280;
+        line-height: 1.75;
+        margin-bottom: 2rem;
+      }
+      .noscript-steps {
+        background: #fef2f2;
+        border-radius: 0.5rem;
+        padding: 1.5rem;
+        text-align: left;
+        margin-top: 2rem;
+        border: 1px solid #fee2e2;
+      }
+      .noscript-steps h3 {
+        color: #ee2737;
+        font-size: 1.125rem;
+        font-weight: 600;
+        margin-bottom: 1rem;
+      }
+      .noscript-steps ol {
+        color: #4b5563;
+        padding-left: 1.5rem;
+        margin: 0;
+      }
+      .noscript-steps li {
+        margin-bottom: 0.5rem;
+        line-height: 1.6;
+      }
+      .noscript-brand {
+        margin-top: 2rem;
+        padding-top: 1.5rem;
+        border-top: 1px solid #fee2e2;
+        color: #9ca3af;
+        font-size: 0.875rem;
+      }
+    </style>
+  </head>
+  <body>
+    <noscript>
+      <div class="noscript-container">
+        <div class="noscript-card">
+          <h1 class="noscript-title">JavaScript Required</h1>
+          <p class="noscript-message">
+            QEmail requires JavaScript to function properly. Please enable JavaScript in your browser settings to access this temporary email service.
+          </p>
+          <div class="noscript-steps">
+            <h3>How to Enable JavaScript:</h3>
+            <ol>
+              <li>Open your browser settings or preferences</li>
+              <li>Navigate to Privacy & Security settings</li>
+              <li>Find JavaScript or Site Settings</li>
+              <li>Enable JavaScript for all sites or this site</li>
+              <li>Refresh this page</li>
+            </ol>
+          </div>
+          <div class="noscript-brand">
+            QEmail - Secure Temporary Email Service
+          </div>
+        </div>
+      </div>
+    </noscript>
+    <div id="root"></div>
+    <script type="module" src="/src/index.tsx"></script>
+  </body>
+</html>
