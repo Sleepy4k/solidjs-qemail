@@ -7,8 +7,8 @@ export default defineConfig({
     host: true,
     port: 5173,
     proxy: {
-      '/api': {
-        target: 'http://localhost:3000',
+      "/api": {
+        target: "http://localhost:3000",
         changeOrigin: true,
       },
     },
@@ -17,9 +17,10 @@ export default defineConfig({
     rollupOptions: {
       output: {
         manualChunks: {
-          'vendor-solid': ['solid-js', '@solidjs/router'],
-          'vendor-gsap': ['gsap'],
-          'vendor-nprogress': ['nprogress'],
+          "logo": ["src/assets/images/logo.png"],
+          "vendor-solid": ["solid-js", "@solidjs/router"],
+          "vendor-gsap": ["gsap"],
+          "vendor-nprogress": ["nprogress", "src/assets/css/nprogress.css"],
         },
       },
     },

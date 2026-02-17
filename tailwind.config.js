@@ -13,24 +13,24 @@ export default {
           200: '#fecaca',
           300: '#fca5a5',
           400: '#f87171',
-          500: '#ee2737', // Telkom Red
+          500: '#ee2737',
           600: '#dc2626',
           700: '#b91c1c',
           800: '#991b1b',
           900: '#7f1d1d',
         },
-        telkom: {
+        main: {
           red: '#ee2737',
           darkRed: '#b91c1c',
           gray: '#6b7280',
           lightGray: '#f3f4f6',
         },
         background: {
-          DEFAULT: '#f8f9fa', // Soft gray background
-          dark: '#1a1d23', // Dark mode background
-          darker: '#13161a', // Darker variant
-          card: '#ffffff', // Card background
-          cardDark: '#252930', // Dark card background
+          DEFAULT: '#f8f9fa',
+          dark: '#1a1d23',
+          darker: '#13161a',
+          card: '#ffffff',
+          cardDark: '#252930',
         },
         surface: {
           DEFAULT: '#ffffff',
