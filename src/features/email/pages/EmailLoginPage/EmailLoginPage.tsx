@@ -98,15 +98,21 @@ export const EmailLoginPage: Component = () => {
         <div class="w-full max-w-md">
           <Card>
             <div class="mb-8 text-center">
-              <h1 class="text-3xl font-bold text-gray-900 mb-2">Access Your Inbox</h1>
-              <p class="text-telkom-gray">
+              <h1 class="text-3xl font-bold text-gray-900 mb-2">
+                Access Your Inbox
+              </h1>
+              <p class="text-main-gray">
                 Login with your temporary email credentials
               </p>
             </div>
 
             <form onSubmit={handleSubmit} class="space-y-6">
               {error() && (
-                <Alert type="error" message={error()} onClose={() => setError("")} />
+                <Alert
+                  type="error"
+                  message={error()}
+                  onClose={() => setError("")}
+                />
               )}
 
               <Input
@@ -132,9 +138,11 @@ export const EmailLoginPage: Component = () => {
                     Domain
                   </label>
                   <select
-                    class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-telkom-red focus:border-transparent transition-all"
+                    class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-main-red focus:border-transparent transition-all"
                     value={selectedDomainId()}
-                    onChange={(e) => setSelectedDomainId(Number(e.currentTarget.value))}
+                    onChange={(e) =>
+                      setSelectedDomainId(Number(e.currentTarget.value))
+                    }
                     disabled={isLoading()}
                   >
                     <For each={domains()}>
@@ -180,8 +188,8 @@ export const EmailLoginPage: Component = () => {
               Password Protected Emails
             </h3>
             <p class="text-xs text-gray-600">
-              Only custom emails with passwords require login. Random generated emails
-              can be accessed directly with the session token.
+              Only custom emails with passwords require login. Random generated
+              emails can be accessed directly with the session token.
             </p>
           </div>
         </div>

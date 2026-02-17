@@ -1,0 +1,69 @@
+.noscript-container {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #fef2f2 0%, #ffffff 50%, #fef2f2 100%);
+  font-family:
+    system-ui,
+    -apple-system,
+    sans-serif;
+  padding: 1rem;
+}
+
+.noscript-card {
+  max-width: 600px;
+  background: white;
+  padding: 3rem 2rem;
+  border-radius: 1rem;
+  box-shadow: 0 10px 40px rgba(238, 39, 55, 0.1);
+  text-align: center;
+  border: 1px solid #fee;
+}
+
+.noscript-title {
+  color: #ee2737;
+  font-size: 1.875rem;
+  font-weight: bold;
+  margin-bottom: 1rem;
+}
+.noscript-message {
+  color: #6b7280;
+  line-height: 1.75;
+  margin-bottom: 2rem;
+}
+
+.noscript-steps {
+  background: #fef2f2;
+  border-radius: 0.5rem;
+  padding: 1.5rem;
+  text-align: left;
+  margin-top: 2rem;
+  border: 1px solid #fee2e2;
+}
+
+.noscript-steps h3 {
+  color: #ee2737;
+  font-size: 1.125rem;
+  font-weight: 600;
+  margin-bottom: 1rem;
+}
+
+.noscript-steps ol {
+  color: #4b5563;
+  padding-left: 1.5rem;
+  margin: 0;
+}
+
+.noscript-steps li {
+  margin-bottom: 0.5rem;
+  line-height: 1.6;
+}
+
+.noscript-brand {
+  margin-top: 2rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid #fee2e2;
+  color: #9ca3af;
+  font-size: 0.875rem;
+}

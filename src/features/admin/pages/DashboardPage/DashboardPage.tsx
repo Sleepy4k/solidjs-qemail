@@ -39,11 +39,16 @@ const DashboardPage: Component = () => {
 
   const statsConfig = [
     {
-      label: 'Total Accounts',
+      label: "Total Accounts",
       getValue: () => stats()?.total_accounts || 0,
-      color: 'from-telkom-red to-red-600',
+      color: "from-main-red to-red-600",
       icon: (
-        <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <svg
+          class="w-8 h-8"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+        >
           <path
             stroke-linecap="round"
             stroke-linejoin="round"
@@ -54,11 +59,16 @@ const DashboardPage: Component = () => {
       ),
     },
     {
-      label: 'Active Accounts',
+      label: "Active Accounts",
       getValue: () => stats()?.active_accounts || 0,
-      color: 'from-green-500 to-green-600',
+      color: "from-green-500 to-green-600",
       icon: (
-        <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <svg
+          class="w-8 h-8"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+        >
           <path
             stroke-linecap="round"
             stroke-linejoin="round"
@@ -69,11 +79,16 @@ const DashboardPage: Component = () => {
       ),
     },
     {
-      label: 'Total Emails',
+      label: "Total Emails",
       getValue: () => stats()?.total_emails || 0,
-      color: 'from-orange-500 to-red-500',
+      color: "from-orange-500 to-red-500",
       icon: (
-        <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <svg
+          class="w-8 h-8"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+        >
           <path
             stroke-linecap="round"
             stroke-linejoin="round"
@@ -84,11 +99,16 @@ const DashboardPage: Component = () => {
       ),
     },
     {
-      label: 'Total Domains',
+      label: "Total Domains",
       getValue: () => stats()?.total_domains || 0,
-      color: 'from-red-400 to-telkom-darkRed',
+      color: "from-red-400 to-main-darkRed",
       icon: (
-        <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <svg
+          class="w-8 h-8"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+        >
           <path
             stroke-linecap="round"
             stroke-linejoin="round"
@@ -104,7 +124,7 @@ const DashboardPage: Component = () => {
     <div class="space-y-8">
       <div ref={headerRef}>
         <h1 class="text-3xl font-bold text-gray-900">Dashboard</h1>
-        <p class="mt-2 text-telkom-gray">
+        <p class="mt-2 text-main-gray">
           Welcome back! Here's an overview of your email service
         </p>
       </div>
@@ -124,18 +144,25 @@ const DashboardPage: Component = () => {
           </div>
         }
       >
-        <div ref={statsRef} class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div
+          ref={statsRef}
+          class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6"
+        >
           <For each={statsConfig}>
             {(stat) => (
               <Card>
-                <div class={`bg-gradient-to-br ${stat.color} rounded-xl p-6 text-white`}>
+                <div
+                  class={`bg-gradient-to-br ${stat.color} rounded-xl p-6 text-white`}
+                >
                   <div class="flex items-center justify-between mb-4">
                     <div class="p-3 bg-white/20 backdrop-blur-sm rounded-lg">
                       {stat.icon}
                     </div>
                   </div>
                   <div>
-                    <p class="text-3xl font-bold mb-1">{stat.getValue().toLocaleString()}</p>
+                    <p class="text-3xl font-bold mb-1">
+                      {stat.getValue().toLocaleString()}
+                    </p>
                     <p class="text-white/80 text-sm">{stat.label}</p>
                   </div>
                 </div>
@@ -167,7 +194,7 @@ const DashboardPage: Component = () => {
                   <span class="font-medium text-gray-900">API Service</span>
                 </div>
                 <span class="text-sm font-semibold text-green-700">
-                  ● {health()?.status === 'ok' ? 'Operational' : 'Down'}
+                  ● {health()?.status === "ok" ? "Operational" : "Down"}
                 </span>
               </div>
               <div class="flex items-center justify-between p-4 bg-green-50 border border-green-200 rounded-xl">
@@ -175,23 +202,25 @@ const DashboardPage: Component = () => {
                   <div class="w-3 h-3 bg-green-500 rounded-full animate-pulse"></div>
                   <span class="font-medium text-gray-900">Database</span>
                 </div>
-                <span class="text-sm font-semibold text-green-700">● Operational</span>
+                <span class="text-sm font-semibold text-green-700">
+                  ● Operational
+                </span>
               </div>
               <div class="flex items-center justify-between p-4 bg-green-50 border border-green-200 rounded-xl">
                 <div class="flex items-center gap-3">
                   <div class="w-3 h-3 bg-green-500 rounded-full animate-pulse"></div>
                   <span class="font-medium text-gray-900">Redis Cache</span>
                 </div>
-                <span class="text-sm font-semibold text-green-700">● Operational</span>
+                <span class="text-sm font-semibold text-green-700">
+                  ● Operational
+                </span>
               </div>
             </div>
           </Show>
         </Card>
 
         <Card>
-          <h3 class="text-lg font-semibold text-gray-900 mb-4">
-            Quick Stats
-          </h3>
+          <h3 class="text-lg font-semibold text-gray-900 mb-4">Quick Stats</h3>
           <Show
             when={!stats.loading && !health.loading && stats() && health()}
             fallback={
@@ -203,25 +232,31 @@ const DashboardPage: Component = () => {
             }
           >
             <div class="space-y-4">
-              <div class="p-4 bg-gradient-to-r from-telkom-red/10 to-red-50 border border-telkom-red/20 rounded-xl">
-                <p class="text-sm text-telkom-gray mb-1">Active Accounts Rate</p>
-                <p class="text-2xl font-bold text-telkom-red">
-                  {stats()?.total_accounts ? 
-                    ((stats()!.active_accounts / stats()!.total_accounts) * 100).toFixed(1) 
-                    : 0}%
+              <div class="p-4 bg-gradient-to-r from-main-red/10 to-red-50 border border-main-red/20 rounded-xl">
+                <p class="text-sm text-main-gray mb-1">Active Accounts Rate</p>
+                <p class="text-2xl font-bold text-main-red">
+                  {stats()?.total_accounts
+                    ? (
+                        (stats()!.active_accounts / stats()!.total_accounts) *
+                        100
+                      ).toFixed(1)
+                    : 0}
+                  %
                 </p>
               </div>
               <div class="p-4 bg-gradient-to-r from-green-50 to-emerald-50 border border-green-200 rounded-xl">
-                <p class="text-sm text-telkom-gray mb-1">System Uptime</p>
+                <p class="text-sm text-main-gray mb-1">System Uptime</p>
                 <p class="text-2xl font-bold text-green-700">
-                  {health()?.uptime ? formatUptime(health()!.uptime) : 'N/A'}
+                  {health()?.uptime ? formatUptime(health()!.uptime) : "N/A"}
                 </p>
               </div>
               <div class="p-4 bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200 rounded-xl">
-                <p class="text-sm text-telkom-gray mb-1">Emails per Account</p>
+                <p class="text-sm text-main-gray mb-1">Emails per Account</p>
                 <p class="text-2xl font-bold text-blue-700">
-                  {stats()?.total_accounts && stats()!.total_accounts > 0 ?
-                    (stats()!.total_emails / stats()!.total_accounts).toFixed(1)
+                  {stats()?.total_accounts && stats()!.total_accounts > 0
+                    ? (stats()!.total_emails / stats()!.total_accounts).toFixed(
+                        1,
+                      )
                     : 0}
                 </p>
               </div>

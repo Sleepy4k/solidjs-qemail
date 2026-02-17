@@ -143,13 +143,13 @@ const LandingPage: Component = () => {
     <EmailLayout currentPage="home">
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <div ref={heroRef} class="text-center mb-12">
-          <h1 class="text-5xl md:text-6xl font-bold mb-6 bg-gradient-to-r from-telkom-red via-red-600 to-telkom-darkRed bg-clip-text text-transparent">
+          <h1 class="text-5xl md:text-6xl font-bold mb-6 bg-gradient-to-r from-main-red via-red-600 to-main-darkRed bg-clip-text text-transparent">
             QEmail
           </h1>
-          
-          <p class="text-xl text-telkom-gray max-w-2xl mx-auto mb-8">
-            Generate temporary email addresses instantly. No registration required. 
-            Keep your real inbox clean and spam-free.
+
+          <p class="text-xl text-main-gray max-w-2xl mx-auto mb-8">
+            Generate temporary email addresses instantly. No registration
+            required. Keep your real inbox clean and spam-free.
           </p>
         </div>
 
@@ -160,16 +160,24 @@ const LandingPage: Component = () => {
                 <h2 class="text-2xl font-bold text-gray-900 mb-2">
                   Generate Your Email
                 </h2>
-                <p class="text-telkom-gray">
+                <p class="text-main-gray">
                   Choose a domain and customize your temporary email address
                 </p>
               </div>
 
               <Show when={error()}>
-                <Alert type="error" message={error()} onClose={() => setError("")} />
+                <Alert
+                  type="error"
+                  message={error()}
+                  onClose={() => setError("")}
+                />
               </Show>
               <Show when={success()}>
-                <Alert type="success" message={success()} onClose={() => setSuccess("")} />
+                <Alert
+                  type="success"
+                  message={success()}
+                  onClose={() => setSuccess("")}
+                />
               </Show>
 
               <div>
@@ -180,8 +188,12 @@ const LandingPage: Component = () => {
                   when={domains().length > 0}
                   fallback={
                     <div class="p-4 bg-red-50 border border-red-200 rounded-lg text-center">
-                      <p class="text-sm text-red-600 font-medium">⚠️ No domains available</p>
-                      <p class="text-xs text-red-500 mt-1">Please contact administrator to add domains</p>
+                      <p class="text-sm text-red-600 font-medium">
+                        ⚠️ No domains available
+                      </p>
+                      <p class="text-xs text-red-500 mt-1">
+                        Please contact administrator to add domains
+                      </p>
                     </div>
                   }
                 >
@@ -193,7 +205,9 @@ const LandingPage: Component = () => {
                     <option value="0">Choose a domain...</option>
                     <For each={domains()}>
                       {(domain) => (
-                        <option value={domain.id.toString()}>@{domain.name}</option>
+                        <option value={domain.id.toString()}>
+                          @{domain.name}
+                        </option>
                       )}
                     </For>
                   </Select>
@@ -241,22 +255,29 @@ const LandingPage: Component = () => {
                     required={isCustom()}
                     disabled={isLoading()}
                   />
-                  <p class="text-xs text-telkom-gray">
-                    Password is required for custom emails. Keep it safe to access your inbox later.
+                  <p class="text-xs text-main-gray">
+                    Password is required for custom emails. Keep it safe to
+                    access your inbox later.
                   </p>
                 </div>
               </Show>
 
               <Show when={!isCustom() && username() && password()}>
-                <div class="p-4 bg-telkom-red/5 rounded-xl border border-telkom-red/10 space-y-3">
+                <div class="p-4 bg-main-red/5 rounded-xl border border-main-red/10 space-y-3">
                   <div>
-                    <p class="text-sm font-medium text-telkom-red mb-2">Preview:</p>
+                    <p class="text-sm font-medium text-main-red mb-2">
+                      Preview:
+                    </p>
                     <p class="text-gray-900 font-mono break-all text-lg">
-                      {username()}@{domains().find(d => d.id === selectedDomainId())?.name || "..."}
+                      {username()}@
+                      {domains().find((d) => d.id === selectedDomainId())
+                        ?.name || "..."}
                     </p>
                   </div>
-                  <div class="border-t border-telkom-red/10 pt-3">
-                    <p class="text-sm font-medium text-telkom-red mb-2">Default Password:</p>
+                  <div class="border-t border-main-red/10 pt-3">
+                    <p class="text-sm font-medium text-main-red mb-2">
+                      Default Password:
+                    </p>
                     <div class="flex items-center gap-2">
                       <p class="text-gray-900 font-mono break-all flex-1 bg-white px-3 py-2 rounded-lg border border-gray-200">
                         {password()}
@@ -268,7 +289,7 @@ const LandingPage: Component = () => {
                           setSuccess("Password copied to clipboard!");
                           setTimeout(() => setSuccess(""), 2000);
                         }}
-                        class="px-3 py-2 bg-telkom-red hover:bg-telkom-darkRed text-white rounded-lg transition-colors flex items-center gap-1"
+                        class="px-3 py-2 bg-main-red hover:bg-main-darkRed text-white rounded-lg transition-colors flex items-center gap-1"
                       >
                         📋 Copy
                       </button>
@@ -284,7 +305,11 @@ const LandingPage: Component = () => {
                 type="submit"
                 variant="primary"
                 size="lg"
-                disabled={isLoading() || selectedDomainId() === 0 || domains().length === 0}
+                disabled={
+                  isLoading() ||
+                  selectedDomainId() === 0 ||
+                  domains().length === 0
+                }
                 class="w-full"
               >
                 {isLoading() ? (
@@ -300,7 +325,10 @@ const LandingPage: Component = () => {
           </Card>
         </div>
 
-        <div ref={featuresRef} class="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-5xl mx-auto">
+        <div
+          ref={featuresRef}
+          class="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-5xl mx-auto"
+        >
           <FeatureCard
             title="Lightning Fast"
             description="Get your temporary email in seconds. No signup, no hassle."
@@ -321,9 +349,9 @@ const LandingPage: Component = () => {
 
 const FeatureCard: Component<{ title: string; description: string }> = (props) => {
   return (
-    <div class="p-6 bg-white rounded-2xl border border-gray-200 hover:border-telkom-red/30 hover:shadow-xl transition-all duration-300">
+    <div class="p-6 bg-white rounded-2xl border border-gray-200 hover:border-main-red/30 hover:shadow-xl transition-all duration-300">
       <h3 class="text-lg font-bold text-gray-900 mb-2">{props.title}</h3>
-      <p class="text-sm text-telkom-gray">{props.description}</p>
+      <p class="text-sm text-main-gray">{props.description}</p>
     </div>
   );
 };

@@ -27,7 +27,7 @@ const LoadingFallback: Component = () => {
   return (
     <div class="min-h-screen flex items-center justify-center bg-background-DEFAULT">
       <div class="text-center">
-        <div class="animate-spin w-16 h-16 border-4 border-telkom-red border-t-transparent rounded-full mx-auto"></div>
+        <div class="animate-spin w-16 h-16 border-4 border-main-red border-t-transparent rounded-full mx-auto"></div>
         <p class="mt-4 text-gray-600 font-medium">Loading...</p>
       </div>
     </div>

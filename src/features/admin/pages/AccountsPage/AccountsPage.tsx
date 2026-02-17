@@ -78,7 +78,7 @@ const AccountsPage: Component = () => {
     <div class="space-y-6">
       <div ref={headerRef}>
         <h1 class="text-3xl font-bold text-gray-900">Account Management</h1>
-        <p class="mt-2 text-telkom-gray">
+        <p class="mt-2 text-main-gray">
           Browse accounts and inspect their inboxes
         </p>
       </div>
@@ -111,7 +111,7 @@ const AccountsPage: Component = () => {
         >
           <div class="overflow-x-auto">
             <table class="w-full">
-              <thead class="bg-telkom-lightGray border-b border-gray-200">
+              <thead class="bg-main-lightGray border-b border-gray-200">
                 <tr>
                   <th class="px-6 py-4 text-left text-xs font-semibold text-gray-700 uppercase">
                     Email Address
@@ -140,8 +140,10 @@ const AccountsPage: Component = () => {
                     <tr>
                       <td colspan="6" class="px-6 py-16 text-center">
                         <div class="text-6xl mb-4">📭</div>
-                        <p class="text-telkom-gray font-medium">
-                          {searchQuery() ? "No accounts found" : "No accounts yet"}
+                        <p class="text-main-gray font-medium">
+                          {searchQuery()
+                            ? "No accounts found"
+                            : "No accounts yet"}
                         </p>
                       </td>
                     </tr>
@@ -154,7 +156,7 @@ const AccountsPage: Component = () => {
                           {account.email_address}
                         </span>
                       </td>
-                      <td class="px-6 py-4 text-sm text-telkom-gray">
+                      <td class="px-6 py-4 text-sm text-main-gray">
                         {account.domain_name}
                       </td>
                       <td class="px-6 py-4">
@@ -168,13 +170,13 @@ const AccountsPage: Component = () => {
                           {account.is_custom ? "Custom" : "Random"}
                         </span>
                       </td>
-                      <td class="px-6 py-4 text-sm text-telkom-gray">
+                      <td class="px-6 py-4 text-sm text-main-gray">
                         <span title={formatDate(account.created_at)}>
                           {formatRelativeTime(account.created_at)}
                         </span>
                       </td>
                       <td class="px-6 py-4">
-                        <span class="px-3 py-1 bg-telkom-red/10 text-telkom-red rounded-full text-xs font-semibold">
+                        <span class="px-3 py-1 bg-main-red/10 text-main-red rounded-full text-xs font-semibold">
                           {account.email_count || 0} emails
                         </span>
                       </td>
@@ -196,9 +198,10 @@ const AccountsPage: Component = () => {
 
           <Show when={accounts()}>
             {(data) => (
-              <div class="px-6 py-4 border-t border-gray-200 flex items-center justify-between bg-telkom-lightGray">
-                <div class="text-sm text-telkom-gray">
-                  Page {data().page} of {data().total_pages} • Total: {data().total} accounts
+              <div class="px-6 py-4 border-t border-gray-200 flex items-center justify-between bg-main-lightGray">
+                <div class="text-sm text-main-gray">
+                  Page {data().page} of {data().total_pages} • Total:{" "}
+                  {data().total} accounts
                 </div>
                 <div class="flex gap-2">
                   <Button

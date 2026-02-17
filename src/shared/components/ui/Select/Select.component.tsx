@@ -65,8 +65,8 @@ const Select: Component<SelectProps> = (props) => {
     `;
 
     const states = local.error
-      ? 'border-red-300 focus:border-red-500 focus:ring-red-500'
-      : 'border-gray-300 focus:border-telkom-red focus:ring-telkom-red';
+      ? "border-red-300 focus:border-red-500 focus:ring-red-500"
+      : "border-gray-300 focus:border-main-red focus:ring-main-red";
 
     return `${base} ${states} ${local.class || ''}`.trim();
   };

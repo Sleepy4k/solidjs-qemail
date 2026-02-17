@@ -4,6 +4,7 @@ import { adminStore } from '../../stores/admin.store';
 import { ROUTES } from '../../../../shared/constants/routes.constant';
 import * as animations from '../../../../shared/utils/animation.util';
 import { ConfirmDialog, useConfirmDialog } from '../../../../shared/components/ConfirmDialog';
+import Logo from '../../../../assets/images/logo.png';
 
 export interface AdminLayoutProps {
   children: JSX.Element;
@@ -107,21 +108,18 @@ const AdminLayout: Component<AdminLayoutProps> = (props) => {
         class="w-64 bg-white border-r border-gray-200 flex flex-col shadow-sm"
       >
         <div class="p-6 border-b border-gray-200">
-          <a href="/" class="flex items-center gap-3 hover:opacity-80 transition-opacity">
+          <a
+            href="/"
+            class="flex items-center gap-3 hover:opacity-80 transition-opacity"
+          >
             <div class="w-10 h-10 bg-gradient-to-br from-primary-600 to-primary-700 rounded-xl flex items-center justify-center shadow-lg">
-              <svg
-                class="w-6 h-6 text-white"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="2"
-                  d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
-                />
-              </svg>
+              <img
+                src={Logo}
+                alt="QEmail Logo"
+                class="w-6 h-6"
+                loading="lazy"
+                style={{ filter: 'brightness(0) invert(1)' }}
+              />
             </div>
             <div>
               <h1 class="font-bold text-gray-900">QEmail</h1>
@@ -138,8 +136,8 @@ const AdminLayout: Component<AdminLayoutProps> = (props) => {
                 flex items-center gap-3 px-4 py-3 rounded-lg font-medium transition-all duration-200
                 ${
                   isActive(item.path)
-                    ? 'bg-primary-50 text-primary-700 shadow-sm'
-                    : 'text-gray-700 hover:bg-gray-50'
+                    ? "bg-primary-50 text-primary-700 shadow-sm"
+                    : "text-gray-700 hover:bg-gray-50"
                 }
               `}
             >
@@ -158,16 +156,19 @@ const AdminLayout: Component<AdminLayoutProps> = (props) => {
               <p class="text-sm font-medium text-gray-900 truncate">
                 {adminUser()?.username}
               </p>
-              <p class="text-xs text-gray-600 truncate">
-                {adminUser()?.role}
-              </p>
+              <p class="text-xs text-gray-600 truncate">{adminUser()?.role}</p>
             </div>
           </div>
           <button
             onClick={handleLogout}
             class="w-full flex items-center gap-3 px-4 py-3 text-red-600 hover:bg-red-50 rounded-lg font-medium transition-colors"
           >
-            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg
+              class="w-5 h-5"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
               <path
                 stroke-linecap="round"
                 stroke-linejoin="round"

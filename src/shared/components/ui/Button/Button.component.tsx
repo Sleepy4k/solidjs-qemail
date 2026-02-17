@@ -39,11 +39,13 @@ const Button: Component<ButtonProps> = (props) => {
   let buttonRef: HTMLButtonElement | undefined;
 
   const variantClasses: Record<ButtonVariant, string> = {
-    primary: 'bg-telkom-red hover:bg-telkom-darkRed text-white shadow-sm hover:shadow-md',
-    secondary: 'bg-gray-200 hover:bg-gray-300 text-gray-900 shadow-sm',
-    danger: 'bg-red-600 hover:bg-red-700 text-white shadow-sm hover:shadow-md',
-    success: 'bg-green-600 hover:bg-green-700 text-white shadow-sm hover:shadow-md',
-    ghost: 'bg-transparent hover:bg-gray-100 text-gray-700',
+    primary:
+      "bg-main-red hover:bg-main-darkRed text-white shadow-sm hover:shadow-md",
+    secondary: "bg-gray-200 hover:bg-gray-300 text-gray-900 shadow-sm",
+    danger: "bg-red-600 hover:bg-red-700 text-white shadow-sm hover:shadow-md",
+    success:
+      "bg-green-600 hover:bg-green-700 text-white shadow-sm hover:shadow-md",
+    ghost: "bg-transparent hover:bg-gray-100 text-gray-700",
   };
 
   const sizeClasses: Record<ButtonSize, string> = {
@@ -52,7 +54,8 @@ const Button: Component<ButtonProps> = (props) => {
     lg: 'px-6 py-3 text-lg',
   };
 
-  const baseClasses = 'inline-flex items-center justify-center font-medium rounded-lg transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed focus:outline-none focus:ring-2 focus:ring-telkom-red focus:ring-offset-2';
+  const baseClasses =
+    "inline-flex items-center justify-center font-medium rounded-lg transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed focus:outline-none focus:ring-2 focus:ring-main-red focus:ring-offset-2";
 
   const handleClick = (e: MouseEvent & { currentTarget: HTMLButtonElement }) => {
     if (buttonRef) {
