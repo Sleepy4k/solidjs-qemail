@@ -53,7 +53,6 @@ const DomainList: Component<DomainListProps> = (props) => {
           <div data-domain-item>
             <Card hover padding="lg" shadow="sm">
               <div class="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3">
-                {/* Domain info */}
                 <div class="flex-1 min-w-0">
                   <div class="flex items-center gap-3 flex-wrap">
                     <h3 class="text-base sm:text-lg font-semibold text-gray-900">
@@ -73,8 +72,13 @@ const DomainList: Component<DomainListProps> = (props) => {
                     </Show>
                   </div>
 
-                  {/* CF config summary */}
                   <div class="mt-2 space-y-1">
+                    <p class="text-xs text-gray-600 flex items-center gap-1.5">
+                      <span class="font-medium text-gray-500">Domain ID:</span>
+                      <code class="px-1.5 py-0.5 bg-blue-50 text-blue-700 rounded text-xs font-mono">
+                        {domain.id}
+                      </code>
+                    </p>
                     <Show when={domain.cloudflare_zone_id}>
                       <p class="text-xs text-gray-600 flex items-center gap-1.5">
                         <span class="font-medium text-gray-500">Zone ID:</span>
