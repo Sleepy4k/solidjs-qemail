@@ -1,10 +1,11 @@
 import { Component, createResource, createSignal, Show, For } from 'solid-js';
-import { useParams, useNavigate } from '@solidjs/router';
+import { useParams, useNavigate, useSearchParams } from '@solidjs/router';
 import { Card } from '../../../../shared/components/ui/Card';
 import { Button } from '../../../../shared/components/ui/Button';
 import { SkeletonTable } from '../../../../shared/components/Skeleton';
 import { adminApiService } from '../../services/admin-api.service';
 import type { AdminEmailItem } from '../../../../shared/types/admin.types';
+import { Pagination } from '../../../../shared/components/ui/Pagination';
 
 const SUBJECT_LIMIT = 40;
 const SENDER_LIMIT = 28;
@@ -17,15 +18,17 @@ const truncate = (str: string | null | undefined, max: number) => {
 const AccountInboxPage: Component = () => {
   const params = useParams<{ accountId: string }>();
   const navigate = useNavigate();
+  const [searchParams, setSearchParams] = useSearchParams();
   const accountId = () => parseInt(params.accountId);
 
-  const [currentPage, setCurrentPage] = createSignal(1);
+  const [currentPage, setCurrentPage] = createSignal(Number(searchParams.page) || 1);
+  const [pageSize, setPageSize] = createSignal(Number(searchParams.limit) || 20);
   const [expandedEmail, setExpandedEmail] = createSignal<AdminEmailItem | null>(null);
   const [loadingMessageId, setLoadingMessageId] = createSignal<string | null>(null);
 
   const [inboxData] = createResource(
-    () => ({ id: accountId(), page: currentPage() }),
-    ({ id, page }) => adminApiService.getAccountInbox(id, { page, limit: 20 })
+    () => ({ id: accountId(), page: currentPage(), limit: pageSize() }),
+    ({ id, page, limit }) => adminApiService.getAccountInbox(id, { page, limit })
   );
 
   const formatDate = (dateStr: string) => {
@@ -120,9 +123,26 @@ const AccountInboxPage: Component = () => {
       {/* Inbox messages */}
       <Card>
         <div class="space-y-4">
-          <div class="flex items-center justify-between">
+          <div class="flex items-center justify-between gap-3 flex-wrap">
             <h2 class="text-base sm:text-xl font-semibold text-gray-900">Inbox Messages</h2>
-            <span class="text-xs sm:text-sm text-gray-500">{inboxData()?.total || 0} total</span>
+            <div class="flex items-center gap-3">
+              <select
+                value={pageSize()}
+                onChange={(e) => {
+                  const size = Number(e.currentTarget.value);
+                  setPageSize(size);
+                  setCurrentPage(1);
+                  setExpandedEmail(null);
+                  setSearchParams({ limit: size.toString(), page: '1' });
+                }}
+                class="text-sm border border-gray-300 rounded-lg px-3 py-2.5 bg-white text-gray-700 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-colors"
+              >
+                <option value={10}>10</option>
+                <option value={20}>20</option>
+                <option value={50}>50</option>
+              </select>
+              <span class="text-xs sm:text-sm text-gray-500">{inboxData()?.total || 0} total</span>
+            </div>
           </div>
 
           <Show
@@ -322,31 +342,20 @@ const AccountInboxPage: Component = () => {
                 </For>
               </div>
 
-              {/* Pagination */}
-              <Show when={inboxData() && inboxData()!.total_pages > 1}>
-                <div class="pt-4 border-t border-gray-200 flex flex-col sm:flex-row items-center justify-between gap-3">
-                  <p class="text-xs sm:text-sm text-gray-500">
-                    Page {inboxData()?.page} of {inboxData()?.total_pages} &bull; {inboxData()?.total} emails
-                  </p>
-                  <div class="flex gap-2">
-                    <Button
-                      variant="secondary"
-                      size="sm"
-                      disabled={currentPage() === 1}
-                      onClick={() => { setCurrentPage(p => p - 1); setExpandedEmail(null); }}
-                    >
-                      ← Prev
-                    </Button>
-                    <Button
-                      variant="secondary"
-                      size="sm"
-                      disabled={currentPage() >= (inboxData()?.total_pages || 1)}
-                      onClick={() => { setCurrentPage(p => p + 1); setExpandedEmail(null); }}
-                    >
-                      Next →
-                    </Button>
-                  </div>
-                </div>
+              <Show when={inboxData()}>
+                {(data) => (
+                  <Pagination
+                    currentPage={data().page}
+                    totalPages={data().total_pages}
+                    pageSize={pageSize()}
+                    total={data().total}
+                    onPageChange={(page) => {
+                      setCurrentPage(page);
+                      setExpandedEmail(null);
+                      setSearchParams({ page: page.toString() });
+                    }}
+                  />
+                )}
               </Show>
             </Show>
           </Show>

@@ -61,6 +61,12 @@ class AdminApiService {
     return response.data;
   }
 
+  async deleteAccount(id: number): Promise<void> {
+    await httpService.delete(`${this.baseUrl}/accounts/${id}`, {
+      body: JSON.stringify({}),
+    });
+  }
+
   async getAccountInbox(accountId: number, params?: PaginationQuery): Promise<AdminInboxResponse> {
     const queryString = params
       ? `?${new URLSearchParams(params as any).toString()}`

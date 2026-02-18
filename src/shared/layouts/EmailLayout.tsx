@@ -4,7 +4,7 @@ import { Navigation } from "../components/Navigation";
 interface EmailLayoutProps {
   children: JSX.Element;
   showAdminLink?: boolean;
-  currentPage?: "landing" | "inbox" | "email-login" | "home";
+  currentPage?: "landing" | "inbox" | "email-login" | "home" | "about" | "how-to-use" | "faq";
 }
 
 export const EmailLayout: Component<EmailLayoutProps> = (props) => {

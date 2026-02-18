@@ -1,5 +1,5 @@
 import { Component, createSignal, onMount, For, Show } from "solid-js";
-import { useNavigate } from "@solidjs/router";
+import { useNavigate, A } from "@solidjs/router";
 import gsap from "gsap";
 import { emailService } from "../../../../shared/services/email.service";
 import { emailStore } from "../../../../shared/stores/email.store";

@@ -1,5 +1,5 @@
 import { Component, createSignal, onMount, For, Show, createResource } from "solid-js";
-import { useNavigate } from "@solidjs/router";
+import { useNavigate, useSearchParams } from "@solidjs/router";
 import gsap from "gsap";
 import { adminApiService } from "../../services/admin-api.service";
 import type { AdminAccount } from "../../../../shared/types/admin.types";
@@ -7,22 +7,29 @@ import { Button } from "../../../../shared/components/ui/Button";
 import { Card } from "../../../../shared/components/ui/Card";
 import { Input } from "../../../../shared/components/ui/Input";
 import { Alert } from "../../../../shared/components/ui/Alert";
+import { Pagination } from "../../../../shared/components/ui/Pagination";
 import { SkeletonTable } from "../../../../shared/components/Skeleton";
+import { ConfirmDialog, useConfirmDialog } from "../../../../shared/components/ConfirmDialog";
 import { debounce } from "../../../../shared/utils/debounce.util";
 
 const AccountsPage: Component = () => {
   const navigate = useNavigate();
-  const [currentPage, setCurrentPage] = createSignal(1);
-  const [inputValue, setInputValue] = createSignal("");
-  const [searchQuery, setSearchQuery] = createSignal("");
+  const [searchParams, setSearchParams] = useSearchParams();
+
+  const [currentPage, setCurrentPage] = createSignal(Number(searchParams.page) || 1);
+  const [pageSize, setPageSize] = createSignal(Number(searchParams.limit) || 20);
+  const [inputValue, setInputValue] = createSignal(searchParams.search || "");
+  const [searchQuery, setSearchQuery] = createSignal(searchParams.search || "");
   const [error, setError] = createSignal("");
+
+  const { isOpen, config, confirm, handleConfirm, handleCancel } = useConfirmDialog();
 
   let headerRef: HTMLDivElement | undefined;
 
   const [accounts, { refetch }] = createResource(
-    () => ({ page: currentPage(), search: searchQuery() }),
-    async ({ page, search }) => {
-      return adminApiService.getAccounts({ page, limit: 20, search: search || "" });
+    () => ({ page: currentPage(), limit: pageSize(), search: searchQuery() }),
+    async ({ page, limit, search }) => {
+      return adminApiService.getAccounts({ page, limit, search: search || "" });
     }
   );
 
@@ -39,6 +46,7 @@ const AccountsPage: Component = () => {
   const debouncedSearch = debounce((value: string) => {
     setSearchQuery(value);
     setCurrentPage(1);
+    setSearchParams({ search: value || undefined, page: '1' });
   }, 500);
 
   const handleSearchInput = (value: string) => {
@@ -50,10 +58,39 @@ const AccountsPage: Component = () => {
     setInputValue("");
     setSearchQuery("");
     setCurrentPage(1);
+    setSearchParams({ search: undefined, page: '1' });
   };
 
   const handleViewInbox = (account: AdminAccount) => {
     navigate(`/admin/accounts/${account.id}/inbox`);
+  };
+
+  const handleDeleteAccount = (account: AdminAccount) => {
+    confirm({
+      title: "Delete Account",
+      message: `Are you sure you want to delete "${account.email_address}"? All emails in this inbox will also be permanently removed.`,
+      variant: "danger",
+      onConfirm: async () => {
+        try {
+          await adminApiService.deleteAccount(account.id);
+          refetch();
+        } catch (err: any) {
+          setError(err.message || "Failed to delete account");
+        }
+      },
+    });
+  };
+
+  const handlePageChange = (page: number) => {
+    setCurrentPage(page);
+    setSearchParams({ page: page.toString() });
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+
+  const handlePageSizeChange = (size: number) => {
+    setPageSize(size);
+    setCurrentPage(1);
+    setSearchParams({ limit: size.toString(), page: '1' });
   };
 
   const formatDate = (dateStr: string | null) => {
@@ -86,14 +123,24 @@ const AccountsPage: Component = () => {
       </Show>
 
       <Card>
-        <div class="flex gap-3">
-          <div class="flex-1">
+        <div class="flex items-center gap-3 flex-wrap">
+          <div class="flex-1 min-w-0">
             <Input
               placeholder="Search by email address..."
               value={inputValue()}
               onInput={handleSearchInput}
             />
           </div>
+          <select
+            value={pageSize()}
+            onChange={(e) => handlePageSizeChange(Number(e.currentTarget.value))}
+            class="text-sm border border-gray-300 rounded-lg px-3 py-2.5 bg-white text-gray-700 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-colors"
+          >
+            <option value={10}>10</option>
+            <option value={20}>20</option>
+            <option value={50}>50</option>
+            <option value={100}>100</option>
+          </select>
           <Show when={inputValue()}>
             <Button variant="secondary" onClick={handleClearSearch} size="sm">
               Clear
@@ -105,8 +152,9 @@ const AccountsPage: Component = () => {
       <Card>
         <Show
           when={!accounts.loading && accounts()}
-          fallback={<SkeletonTable rows={10} columns={6} />}
+          fallback={<SkeletonTable rows={10} columns={8} />}
         >
+          {/* Desktop table */}
           <div class="hidden md:block overflow-x-auto">
             <table class="w-full">
               <thead class="bg-main-lightGray border-b border-gray-200">
@@ -190,13 +238,22 @@ const AccountsPage: Component = () => {
                         </span>
                       </td>
                       <td class="px-4 py-4">
-                        <Button
-                          variant="primary"
-                          size="sm"
-                          onClick={() => handleViewInbox(account)}
-                        >
-                          View Inbox
-                        </Button>
+                        <div class="flex items-center gap-2">
+                          <Button
+                            variant="primary"
+                            size="sm"
+                            onClick={() => handleViewInbox(account)}
+                          >
+                            View Inbox
+                          </Button>
+                          <Button
+                            variant="danger"
+                            size="sm"
+                            onClick={() => handleDeleteAccount(account)}
+                          >
+                            Delete
+                          </Button>
+                        </div>
                       </td>
                     </tr>
                   )}
@@ -205,6 +262,7 @@ const AccountsPage: Component = () => {
             </table>
           </div>
 
+          {/* Mobile card list */}
           <div class="md:hidden divide-y divide-gray-200">
             <For
               each={accounts()?.accounts}
@@ -226,14 +284,22 @@ const AccountsPage: Component = () => {
                       </p>
                       <p class="text-xs text-main-gray mt-0.5">{account.domain_name}</p>
                     </div>
-                    <Button
-                      variant="primary"
-                      size="sm"
-                      onClick={() => handleViewInbox(account)}
-                      class="flex-shrink-0"
-                    >
-                      View
-                    </Button>
+                    <div class="flex gap-1.5 flex-shrink-0">
+                      <Button
+                        variant="primary"
+                        size="sm"
+                        onClick={() => handleViewInbox(account)}
+                      >
+                        View
+                      </Button>
+                      <Button
+                        variant="danger"
+                        size="sm"
+                        onClick={() => handleDeleteAccount(account)}
+                      >
+                        Del
+                      </Button>
+                    </div>
                   </div>
                   <div class="flex items-center gap-3 flex-wrap">
                     <span class={`px-2 py-0.5 rounded-full text-xs font-medium ${
@@ -268,41 +334,31 @@ const AccountsPage: Component = () => {
             </For>
           </div>
 
+          {/* Pagination */}
           <Show when={accounts()}>
             {(data) => (
-              <div class="px-4 sm:px-6 py-4 border-t border-gray-200 flex flex-col sm:flex-row items-center justify-between gap-3 bg-main-lightGray">
-                <div class="text-xs sm:text-sm text-main-gray">
-                  Page {data().page} of {data().total_pages} &bull; {data().total} accounts
-                </div>
-                <div class="flex gap-2">
-                  <Button
-                    variant="secondary"
-                    size="sm"
-                    onClick={() => {
-                      setCurrentPage(currentPage() - 1);
-                      refetch();
-                    }}
-                    disabled={currentPage() === 1}
-                  >
-                    ← Prev
-                  </Button>
-                  <Button
-                    variant="secondary"
-                    size="sm"
-                    onClick={() => {
-                      setCurrentPage(currentPage() + 1);
-                      refetch();
-                    }}
-                    disabled={currentPage() >= data().total_pages}
-                  >
-                    Next →
-                  </Button>
-                </div>
-              </div>
+              <Pagination
+                currentPage={data().page}
+                totalPages={data().total_pages}
+                pageSize={pageSize()}
+                total={data().total}
+                onPageChange={handlePageChange}
+              />
             )}
           </Show>
         </Show>
       </Card>
+
+      <ConfirmDialog
+        isOpen={isOpen()}
+        title={config().title}
+        message={config().message}
+        confirmText="Delete"
+        cancelText="Cancel"
+        variant={config().variant}
+        onConfirm={handleConfirm}
+        onCancel={handleCancel}
+      />
     </div>
   );
 };

@@ -88,16 +88,28 @@ const DomainsPage: Component = () => {
   };
 
   // --- Toggle active ---
-  const handleToggleActive = async (domain: AdminDomain) => {
-    try {
-      await adminService.updateDomain(domain.id, {
-        is_active: !domain.is_active,
-      });
-      setSuccessMessage(`Domain ${domain.is_active ? 'disabled' : 'enabled'} successfully!`);
-      refetch();
-    } catch (err: any) {
-      setErrorMessage(err.message || 'Failed to update domain');
-    }
+  const handleToggleActive = (domain: AdminDomain) => {
+    const action = domain.is_active ? 'disable' : 'enable';
+    confirm({
+      title: `${domain.is_active ? 'Disable' : 'Enable'} Domain`,
+      message: `Are you sure you want to ${action} "${domain.name}"? ${
+        domain.is_active
+          ? 'Users will no longer be able to create email addresses on this domain.'
+          : 'Users will be able to create email addresses on this domain again.'
+      }`,
+      variant: domain.is_active ? 'warning' : 'info',
+      onConfirm: async () => {
+        try {
+          await adminService.updateDomain(domain.id, {
+            is_active: !domain.is_active,
+          });
+          setSuccessMessage(`Domain ${domain.is_active ? 'disabled' : 'enabled'} successfully!`);
+          refetch();
+        } catch (err: any) {
+          setErrorMessage(err.message || 'Failed to update domain');
+        }
+      },
+    });
   };
 
   // --- Edit config ---
@@ -341,7 +353,7 @@ const DomainsPage: Component = () => {
         title={confirmConfig().title}
         message={confirmConfig().message}
         variant={confirmConfig().variant}
-        confirmText="Delete"
+        confirmText={confirmConfig().title.startsWith('Delete') ? 'Delete' : confirmConfig().title.startsWith('Disable') ? 'Disable' : 'Enable'}
         onConfirm={handleConfirm}
         onCancel={handleCancel}
       />

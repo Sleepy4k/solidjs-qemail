@@ -19,6 +19,10 @@ const AccountsPage = lazy(() => import('./features/admin/pages/AccountsPage/Acco
 const AccountInboxPage = lazy(() => import('./features/admin/pages/AccountInboxPage/AccountInboxPage'));
 const SettingsPage = lazy(() => import('./features/admin/pages/SettingsPage/SettingsPage'));
 const LogsPage = lazy(() => import('./features/admin/pages/LogsPage/LogsPage'));
+const NotFoundPage = lazy(() => import('./pages/NotFoundPage'));
+const AboutPage = lazy(() => import('./pages/AboutPage'));
+const HowToUsePage = lazy(() => import('./pages/HowToUsePage'));
+const FAQPage = lazy(() => import('./pages/FAQPage'));
 
 const LoadingFallback: Component = () => {
   onMount(() => {
@@ -126,6 +130,30 @@ const AdminLogsRoute: Component = () => (
   </PageWrapper>
 );
 
+const NotFoundRoute: Component = () => (
+  <PageWrapper>
+    <NotFoundPage />
+  </PageWrapper>
+);
+
+const AboutRoute: Component = () => (
+  <PageWrapper>
+    <AboutPage />
+  </PageWrapper>
+);
+
+const HowToUseRoute: Component = () => (
+  <PageWrapper>
+    <HowToUsePage />
+  </PageWrapper>
+);
+
+const FAQRoute: Component = () => (
+  <PageWrapper>
+    <FAQPage />
+  </PageWrapper>
+);
+
 const App: Component = () => {
   onMount(() => {
     NProgress.configure({ showSpinner: true, trickleSpeed: 200 });
@@ -148,6 +176,10 @@ const App: Component = () => {
         <Route path="/admin/accounts/:accountId/inbox" component={AdminAccountInboxRoute} />
         <Route path="/admin/settings" component={AdminSettingsRoute} />
         <Route path="/admin/logs" component={AdminLogsRoute} />
+        <Route path="/about" component={AboutRoute} />
+        <Route path="/how-to-use" component={HowToUseRoute} />
+        <Route path="/faq" component={FAQRoute} />
+        <Route path="*" component={NotFoundRoute} />
       </Suspense>
     </Router>
   );

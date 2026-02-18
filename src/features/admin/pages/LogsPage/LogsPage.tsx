@@ -1,5 +1,6 @@
 import { Component, createSignal, onMount, For, Show, createResource } from 'solid-js';
 import gsap from 'gsap';
+import { useSearchParams } from '@solidjs/router';
 import { adminService } from '../../services/admin.service';
 import type { AdminLog, LogSortField, SortDir, LogActorType, LogStatus } from '../../types/admin.types';
 import { Button } from '../../../../shared/components/ui/Button';
@@ -8,6 +9,7 @@ import { Input } from '../../../../shared/components/ui/Input';
 import { Alert } from '../../../../shared/components/ui/Alert';
 import { SkeletonTable } from '../../../../shared/components/Skeleton';
 import { debounce } from '../../../../shared/utils/debounce.util';
+import { Pagination } from '../../../../shared/components/ui/Pagination';
 
 /* ─── badge configs ───────────────────────────────────────── */
 const STATUS_BADGE: Record<AdminLog['status'], { cls: string; dot: string; label: string }> = {
@@ -106,13 +108,16 @@ const LogDetail: Component<{ log: AdminLog }> = (p) => (
 
 /* ─── main page ───────────────────────────────────────────── */
 const LogsPage: Component = () => {
-  const [currentPage, setCurrentPage] = createSignal(1);
-  const [inputValue, setInputValue] = createSignal('');
-  const [searchQuery, setSearchQuery] = createSignal('');
-  const [actorType, setActorType] = createSignal<LogActorType | ''>('');
-  const [statusFilter, setStatusFilter] = createSignal<LogStatus | ''>('');
-  const [sortBy, setSortBy] = createSignal<LogSortField>('created_at');
-  const [sortDir, setSortDir] = createSignal<SortDir>('desc');
+  const [searchParams, setSearchParams] = useSearchParams();
+
+  const [currentPage, setCurrentPage] = createSignal(Number(searchParams.page) || 1);
+  const [pageSize, setPageSize] = createSignal(Number(searchParams.limit) || 10);
+  const [inputValue, setInputValue] = createSignal(searchParams.search || '');
+  const [searchQuery, setSearchQuery] = createSignal(searchParams.search || '');
+  const [actorType, setActorType] = createSignal<LogActorType | ''>((searchParams.actor_type as LogActorType) || '');
+  const [statusFilter, setStatusFilter] = createSignal<LogStatus | ''>((searchParams.status as LogStatus) || '');
+  const [sortBy, setSortBy] = createSignal<LogSortField>((searchParams.sort_by as LogSortField) || 'created_at');
+  const [sortDir, setSortDir] = createSignal<SortDir>((searchParams.sort_dir as SortDir) || 'desc');
   const [expandedIds, setExpandedIds] = createSignal<Set<number>>(new Set());
   const [error, setError] = createSignal('');
 
@@ -121,6 +126,7 @@ const LogsPage: Component = () => {
   const [logs, { refetch }] = createResource(
     () => ({
       page: currentPage(),
+      limit: pageSize(),
       search: searchQuery(),
       actor_type: actorType(),
       status: statusFilter(),
@@ -133,7 +139,7 @@ const LogsPage: Component = () => {
         setError('');
         return await adminService.getLogs({
           page: params.page,
-          limit: 10,
+          limit: params.limit,
           search: params.search || undefined,
           actor_type: params.actor_type || undefined,
           status: params.status || undefined,
@@ -159,6 +165,7 @@ const LogsPage: Component = () => {
   const debouncedSearch = debounce((value: string) => {
     setSearchQuery(value);
     setCurrentPage(1);
+    setSearchParams({ search: value || undefined, page: '1' });
   }, 400);
 
   const handleSearchInput = (value: string) => {
@@ -172,16 +179,16 @@ const LogsPage: Component = () => {
     setActorType('');
     setStatusFilter('');
     setCurrentPage(1);
+    setSearchParams({ search: undefined, actor_type: undefined, status: undefined, page: '1' });
   };
 
   const handleSort = (field: LogSortField) => {
-    if (sortBy() === field) {
-      setSortDir(sortDir() === 'asc' ? 'desc' : 'asc');
-    } else {
-      setSortBy(field);
-      setSortDir('desc');
-    }
+    const newDir: SortDir = sortBy() === field ? (sortDir() === 'asc' ? 'desc' : 'asc') : 'desc';
+    const newField = field;
+    setSortBy(newField);
+    setSortDir(newDir);
     setCurrentPage(1);
+    setSearchParams({ sort_by: newField, sort_dir: newDir, page: '1' });
   };
 
   const toggleExpand = (id: number) => {
@@ -290,7 +297,12 @@ const LogsPage: Component = () => {
             <select
               class={selectBase}
               value={actorType()}
-              onChange={(e) => { setActorType((e.target as HTMLSelectElement).value as LogActorType | ''); setCurrentPage(1); }}
+              onChange={(e) => {
+                const val = (e.target as HTMLSelectElement).value as LogActorType | '';
+                setActorType(val);
+                setCurrentPage(1);
+                setSearchParams({ actor_type: val || undefined, page: '1' });
+              }}
             >
               <option value="">All actors</option>
               <option value="user">User</option>
@@ -300,11 +312,31 @@ const LogsPage: Component = () => {
             <select
               class={selectBase}
               value={statusFilter()}
-              onChange={(e) => { setStatusFilter((e.target as HTMLSelectElement).value as LogStatus | ''); setCurrentPage(1); }}
+              onChange={(e) => {
+                const val = (e.target as HTMLSelectElement).value as LogStatus | '';
+                setStatusFilter(val);
+                setCurrentPage(1);
+                setSearchParams({ status: val || undefined, page: '1' });
+              }}
             >
               <option value="">All statuses</option>
               <option value="success">Success</option>
               <option value="failure">Failure</option>
+            </select>
+            <select
+              class={selectBase}
+              value={pageSize()}
+              onChange={(e) => {
+                const size = Number((e.target as HTMLSelectElement).value);
+                setPageSize(size);
+                setCurrentPage(1);
+                setSearchParams({ limit: size.toString(), page: '1' });
+              }}
+            >
+              <option value={10}>10</option>
+              <option value={25}>25</option>
+              <option value={50}>50</option>
+              <option value={100}>100</option>
             </select>
           </div>
 
@@ -500,37 +532,13 @@ const LogsPage: Component = () => {
           {/* Pagination */}
           <Show when={logs()}>
             {(data) => (
-              <div class="px-4 sm:px-5 py-3.5 border-t border-gray-200 flex flex-col sm:flex-row items-center justify-between gap-3 bg-gray-50">
-                <p class="text-xs text-gray-500">
-                  Page{' '}
-                  <span class="font-semibold text-gray-700">{data().meta.page}</span>
-                  {' '}of{' '}
-                  <span class="font-semibold text-gray-700">{data().meta.pages}</span>
-                  {' '}—{' '}
-                  <span class="font-semibold text-gray-700">{data().meta.total.toLocaleString()}</span> entries
-                </p>
-                <div class="flex items-center gap-2">
-                  <Button
-                    variant="secondary"
-                    size="sm"
-                    onClick={() => { setCurrentPage(currentPage() - 1); refetch(); }}
-                    disabled={currentPage() === 1}
-                  >
-                    ← Prev
-                  </Button>
-                  <span class="px-3 py-1.5 bg-white border border-gray-200 rounded-lg text-xs font-semibold text-gray-700 min-w-[2rem] text-center">
-                    {data().meta.page}
-                  </span>
-                  <Button
-                    variant="secondary"
-                    size="sm"
-                    onClick={() => { setCurrentPage(currentPage() + 1); refetch(); }}
-                    disabled={currentPage() >= data().meta.pages}
-                  >
-                    Next →
-                  </Button>
-                </div>
-              </div>
+              <Pagination
+                currentPage={data().meta.page}
+                totalPages={data().meta.pages}
+                pageSize={pageSize()}
+                total={data().meta.total}
+                onPageChange={(page) => { setCurrentPage(page); setSearchParams({ page: page.toString() }); }}
+              />
             )}
           </Show>
         </Show>
