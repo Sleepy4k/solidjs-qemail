@@ -7,6 +7,7 @@ import type { EmailMessage } from "../../../../shared/types/email.types";
 import { Button } from "../../../../shared/components/ui/Button";
 import { Alert } from "../../../../shared/components/ui/Alert";
 import { EmailLayout } from "../../../../shared/layouts/EmailLayout";
+import { ConfirmDialog, useConfirmDialog } from "../../../../shared/components/ConfirmDialog";
 
 export const EmailViewPage: Component = () => {
   const params = useParams<{ messageId: string }>();
@@ -16,6 +17,7 @@ export const EmailViewPage: Component = () => {
   const [isLoading, setIsLoading] = createSignal(true);
   const [error, setError] = createSignal("");
   const [isDeleting, setIsDeleting] = createSignal(false);
+  const { isOpen: isConfirmOpen, config: confirmConfig, confirm, handleConfirm, handleCancel } = useConfirmDialog();
 
   let containerRef: HTMLDivElement | undefined;
 
@@ -54,20 +56,24 @@ export const EmailViewPage: Component = () => {
     }
   };
 
-  const handleDelete = async () => {
-    if (!confirm("Are you sure you want to delete this email?")) return;
-
-    setIsDeleting(true);
-    try {
-      const token = emailStore.getToken();
-      if (!token) return;
-
-      await emailService.deleteMessage(token, params.messageId);
-      navigate("/inbox");
-    } catch (err: any) {
-      setError(err.message || "Failed to delete email");
-      setIsDeleting(false);
-    }
+  const handleDelete = () => {
+    confirm({
+      title: 'Delete Email',
+      message: 'Are you sure you want to delete this email? This action cannot be undone.',
+      variant: 'danger',
+      onConfirm: async () => {
+        setIsDeleting(true);
+        try {
+          const token = emailStore.getToken();
+          if (!token) return;
+          await emailService.deleteMessage(token, params.messageId);
+          navigate("/inbox");
+        } catch (err: any) {
+          setError(err.message || "Failed to delete email");
+          setIsDeleting(false);
+        }
+      },
+    });
   };
 
   const formatDate = (dateStr: string) => {
@@ -185,6 +191,16 @@ export const EmailViewPage: Component = () => {
           </Show>
         </Show>
       </div>
+
+      <ConfirmDialog
+        isOpen={isConfirmOpen()}
+        title={confirmConfig().title}
+        message={confirmConfig().message}
+        variant={confirmConfig().variant}
+        confirmText="Delete"
+        onConfirm={handleConfirm}
+        onCancel={handleCancel}
+      />
     </EmailLayout>
   );
 };

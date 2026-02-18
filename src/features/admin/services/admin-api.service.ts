@@ -48,7 +48,9 @@ class AdminApiService {
   }
 
   async deleteDomain(id: number): Promise<void> {
-    await httpService.delete(`${this.baseUrl}/domains/${id}`);
+    await httpService.delete(`${this.baseUrl}/domains/${id}`, {
+      body: JSON.stringify({}),
+    });
   }
 
   async getAccounts(params?: PaginationQuery): Promise<AdminAccountsResponse> {

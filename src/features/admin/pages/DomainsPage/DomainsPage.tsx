@@ -1,6 +1,7 @@
 import { Component, createResource, createSignal, Show } from 'solid-js';
 import { DomainList, DomainForm, DomainFormData } from '../../components';
 import { Card, Button, Alert, Modal } from '../../../../shared/components/ui';
+import { ConfirmDialog, useConfirmDialog } from '../../../../shared/components/ConfirmDialog';
 import { adminService } from '../../services/admin.service';
 import { useAnimation } from '../../../../shared/hooks/use-animation.hook';
 import type { AdminDomain } from '../../types/admin.types';
@@ -13,6 +14,7 @@ const DomainsPage: Component = () => {
   const [isLoading, setIsLoading] = createSignal(false);
   const [errorMessage, setErrorMessage] = createSignal<string | null>(null);
   const [successMessage, setSuccessMessage] = createSignal<string | null>(null);
+  const { isOpen: isConfirmOpen, config: confirmConfig, confirm, handleConfirm, handleCancel } = useConfirmDialog();
 
   const [formData, setFormData] = createSignal<DomainFormData>({
     name: '',
@@ -78,18 +80,21 @@ const DomainsPage: Component = () => {
     }
   };
 
-  const handleDelete = async (domain: AdminDomain) => {
-    if (!confirm(`Are you sure you want to delete "${domain.name}"?`)) {
-      return;
-    }
-
-    try {
-      await adminService.deleteDomain(domain.id);
-      setSuccessMessage('Domain deleted successfully!');
-      refetch();
-    } catch (err: any) {
-      setErrorMessage(err.message || 'Failed to delete domain');
-    }
+  const handleDelete = (domain: AdminDomain) => {
+    confirm({
+      title: 'Delete Domain',
+      message: `Are you sure you want to delete "${domain.name}"? This action cannot be undone.`,
+      variant: 'danger',
+      onConfirm: async () => {
+        try {
+          await adminService.deleteDomain(domain.id);
+          setSuccessMessage('Domain deleted successfully!');
+          refetch();
+        } catch (err: any) {
+          setErrorMessage(err.message || 'Failed to delete domain');
+        }
+      },
+    });
   };
 
   return (
@@ -175,6 +180,16 @@ const DomainsPage: Component = () => {
           onChange={handleFormChange}
         />
       </Modal>
+
+      <ConfirmDialog
+        isOpen={isConfirmOpen()}
+        title={confirmConfig().title}
+        message={confirmConfig().message}
+        variant={confirmConfig().variant}
+        confirmText="Delete"
+        onConfirm={handleConfirm}
+        onCancel={handleCancel}
+      />
     </div>
   );
 };

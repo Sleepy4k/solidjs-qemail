@@ -42,7 +42,9 @@ class EmailService {
   }
 
   async deleteMessage(token: string, messageId: string): Promise<void> {
-    await httpService.delete(`${this.baseUrl}/inbox/${token}/${messageId}`);
+    await httpService.delete(`${this.baseUrl}/inbox/${token}/${messageId}`, {
+      body: JSON.stringify({}),
+    });
   }
 }
 
