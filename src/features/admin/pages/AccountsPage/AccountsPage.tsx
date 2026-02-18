@@ -56,22 +56,17 @@ const AccountsPage: Component = () => {
     navigate(`/admin/accounts/${account.id}/inbox`);
   };
 
-  const formatDate = (dateStr: string) => {
+  const formatDate = (dateStr: string | null) => {
+    if (!dateStr) return "—";
     const date = new Date(dateStr);
-    return date.toLocaleDateString() + " " + date.toLocaleTimeString();
-  };
-
-  const formatRelativeTime = (dateStr: string) => {
-    const date = new Date(dateStr);
-    const now = new Date();
-    const diff = now.getTime() - date.getTime();
-    const hours = Math.floor(diff / 3600000);
-    const days = Math.floor(diff / 86400000);
-
-    if (hours < 1) return "Just now";
-    if (hours < 24) return `${hours}h ago`;
-    if (days < 7) return `${days}d ago`;
-    return date.toLocaleDateString();
+    return date.toLocaleString("en-GB", {
+      day: "2-digit",
+      month: "short",
+      year: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
+      hour12: false,
+    });
   };
 
   const truncateEmail = (email: string, max = 28) =>
@@ -112,7 +107,6 @@ const AccountsPage: Component = () => {
           when={!accounts.loading && accounts()}
           fallback={<SkeletonTable rows={10} columns={6} />}
         >
-          {/* Desktop table */}
           <div class="hidden md:block overflow-x-auto">
             <table class="w-full">
               <thead class="bg-main-lightGray border-b border-gray-200">
@@ -130,6 +124,9 @@ const AccountsPage: Component = () => {
                     Created
                   </th>
                   <th class="px-4 py-4 text-left text-xs font-semibold text-gray-700 uppercase">
+                    Expires At
+                  </th>
+                  <th class="px-4 py-4 text-left text-xs font-semibold text-gray-700 uppercase">
                     Emails
                   </th>
                   <th class="px-4 py-4 text-left text-xs font-semibold text-gray-700 uppercase">
@@ -142,7 +139,7 @@ const AccountsPage: Component = () => {
                   each={accounts()?.accounts}
                   fallback={
                     <tr>
-                      <td colspan="6" class="px-6 py-16 text-center">
+                      <td colspan="7" class="px-6 py-16 text-center">
                         <div class="text-5xl mb-4">📭</div>
                         <p class="text-main-gray font-medium">
                           {searchQuery() ? "No accounts found" : "No accounts yet"}
@@ -170,10 +167,22 @@ const AccountsPage: Component = () => {
                           {account.is_custom ? "Custom" : "Random"}
                         </span>
                       </td>
-                      <td class="px-4 py-4 text-sm text-main-gray">
-                        <span title={formatDate(account.created_at)}>
-                          {formatRelativeTime(account.created_at)}
-                        </span>
+                      <td class="px-4 py-4 text-sm text-main-gray whitespace-nowrap">
+                        {formatDate(account.created_at)}
+                      </td>
+                      <td class="px-4 py-4 text-sm whitespace-nowrap">
+                        <Show
+                          when={account.expires_at}
+                          fallback={<span class="text-gray-400">—</span>}
+                        >
+                          <span class={`${
+                            new Date(account.expires_at!) < new Date()
+                              ? "text-red-500"
+                              : "text-main-gray"
+                          }`}>
+                            {formatDate(account.expires_at)}
+                          </span>
+                        </Show>
                       </td>
                       <td class="px-4 py-4">
                         <span class="px-2.5 py-1 bg-main-red/10 text-main-red rounded-full text-xs font-semibold">
@@ -196,7 +205,6 @@ const AccountsPage: Component = () => {
             </table>
           </div>
 
-          {/* Mobile card list */}
           <div class="md:hidden divide-y divide-gray-200">
             <For
               each={accounts()?.accounts}
@@ -238,16 +246,28 @@ const AccountsPage: Component = () => {
                     <span class="px-2 py-0.5 bg-main-red/10 text-main-red rounded-full text-xs font-semibold">
                       {account.email_count || 0} emails
                     </span>
-                    <span class="text-xs text-main-gray" title={formatDate(account.created_at)}>
-                      {formatRelativeTime(account.created_at)}
-                    </span>
+                  </div>
+                  <div class="grid grid-cols-2 gap-x-4 gap-y-1 mt-1">
+                    <div>
+                      <p class="text-[10px] text-gray-400 uppercase tracking-wide font-medium">Created</p>
+                      <p class="text-xs text-main-gray">{formatDate(account.created_at)}</p>
+                    </div>
+                    <div>
+                      <p class="text-[10px] text-gray-400 uppercase tracking-wide font-medium">Expires</p>
+                      <p class={`text-xs ${
+                        account.expires_at && new Date(account.expires_at) < new Date()
+                          ? "text-red-500"
+                          : "text-main-gray"
+                      }`}>
+                        {formatDate(account.expires_at ?? null)}
+                      </p>
+                    </div>
                   </div>
                 </div>
               )}
             </For>
           </div>
 
-          {/* Pagination */}
           <Show when={accounts()}>
             {(data) => (
               <div class="px-4 sm:px-6 py-4 border-t border-gray-200 flex flex-col sm:flex-row items-center justify-between gap-3 bg-main-lightGray">
