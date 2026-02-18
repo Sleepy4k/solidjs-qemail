@@ -10,6 +10,7 @@ NProgress.configure({ showSpinner: true, trickleSpeed: 200 });
 const LandingPage = lazy(() => import('./features/landing/pages/LandingPage/LandingPage'));
 const EmailLoginPage = lazy(() => import('./features/email/pages/EmailLoginPage/EmailLoginPage'));
 const InboxPage = lazy(() => import('./features/email/pages/InboxPage/InboxPage'));
+const EmailViewPage = lazy(() => import('./features/email/pages/EmailViewPage/EmailViewPage'));
 
 const LoginPage = lazy(() => import('./features/admin/pages/LoginPage/LoginPage'));
 const DashboardPage = lazy(() => import('./features/admin/pages/DashboardPage/DashboardPage'));
@@ -59,6 +60,12 @@ const EmailLoginPageRoute: Component = () => (
 const InboxPageRoute: Component = () => (
   <PageWrapper>
     <InboxPage />
+  </PageWrapper>
+);
+
+const EmailViewPageRoute: Component = () => (
+  <PageWrapper>
+    <EmailViewPage />
   </PageWrapper>
 );
 
@@ -121,6 +128,7 @@ const App: Component = () => {
         <Route path="/" component={LandingPageRoute} />
         <Route path="/email/login" component={EmailLoginPageRoute} />
         <Route path="/inbox" component={InboxPageRoute} />
+        <Route path="/inbox/:messageId" component={EmailViewPageRoute} />
 
         <Route path="/admin/login" component={AdminLoginRoute} />
 

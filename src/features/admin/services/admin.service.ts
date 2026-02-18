@@ -48,7 +48,9 @@ class AdminService {
   }
 
   async deleteDomain(id: number): Promise<void> {
-    await httpService.delete(`${API_ENDPOINTS.ADMIN.DOMAINS}/${id}`);
+    await httpService.delete(`${API_ENDPOINTS.ADMIN.DOMAINS}/${id}`, {
+      body: JSON.stringify({}),
+    });
   }
 
   async listAccounts(

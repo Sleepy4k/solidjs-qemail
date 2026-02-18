@@ -74,11 +74,14 @@ const AccountsPage: Component = () => {
     return date.toLocaleDateString();
   };
 
+  const truncateEmail = (email: string, max = 28) =>
+    email.length > max ? email.substring(0, max) + "…" : email;
+
   return (
     <div class="space-y-6">
       <div ref={headerRef}>
-        <h1 class="text-3xl font-bold text-gray-900">Account Management</h1>
-        <p class="mt-2 text-main-gray">
+        <h1 class="text-xl sm:text-3xl font-bold text-gray-900">Account Management</h1>
+        <p class="mt-1 sm:mt-2 text-xs sm:text-base text-main-gray">
           Browse accounts and inspect their inboxes
         </p>
       </div>
@@ -109,26 +112,27 @@ const AccountsPage: Component = () => {
           when={!accounts.loading && accounts()}
           fallback={<SkeletonTable rows={10} columns={6} />}
         >
-          <div class="overflow-x-auto">
+          {/* Desktop table */}
+          <div class="hidden md:block overflow-x-auto">
             <table class="w-full">
               <thead class="bg-main-lightGray border-b border-gray-200">
                 <tr>
-                  <th class="px-6 py-4 text-left text-xs font-semibold text-gray-700 uppercase">
+                  <th class="px-4 py-4 text-left text-xs font-semibold text-gray-700 uppercase">
                     Email Address
                   </th>
-                  <th class="px-6 py-4 text-left text-xs font-semibold text-gray-700 uppercase">
+                  <th class="px-4 py-4 text-left text-xs font-semibold text-gray-700 uppercase">
                     Domain
                   </th>
-                  <th class="px-6 py-4 text-left text-xs font-semibold text-gray-700 uppercase">
+                  <th class="px-4 py-4 text-left text-xs font-semibold text-gray-700 uppercase">
                     Type
                   </th>
-                  <th class="px-6 py-4 text-left text-xs font-semibold text-gray-700 uppercase">
+                  <th class="px-4 py-4 text-left text-xs font-semibold text-gray-700 uppercase">
                     Created
                   </th>
-                  <th class="px-6 py-4 text-left text-xs font-semibold text-gray-700 uppercase">
+                  <th class="px-4 py-4 text-left text-xs font-semibold text-gray-700 uppercase">
                     Emails
                   </th>
-                  <th class="px-6 py-4 text-left text-xs font-semibold text-gray-700 uppercase">
+                  <th class="px-4 py-4 text-left text-xs font-semibold text-gray-700 uppercase">
                     Actions
                   </th>
                 </tr>
@@ -139,11 +143,9 @@ const AccountsPage: Component = () => {
                   fallback={
                     <tr>
                       <td colspan="6" class="px-6 py-16 text-center">
-                        <div class="text-6xl mb-4">📭</div>
+                        <div class="text-5xl mb-4">📭</div>
                         <p class="text-main-gray font-medium">
-                          {searchQuery()
-                            ? "No accounts found"
-                            : "No accounts yet"}
+                          {searchQuery() ? "No accounts found" : "No accounts yet"}
                         </p>
                       </td>
                     </tr>
@@ -151,42 +153,40 @@ const AccountsPage: Component = () => {
                 >
                   {(account) => (
                     <tr class="hover:bg-gray-50 transition-colors">
-                      <td class="px-6 py-4">
-                        <span class="font-mono text-sm text-gray-900">
-                          {account.email_address}
+                      <td class="px-4 py-4">
+                        <span class="font-mono text-sm text-gray-900" title={account.email_address}>
+                          {truncateEmail(account.email_address, 32)}
                         </span>
                       </td>
-                      <td class="px-6 py-4 text-sm text-main-gray">
+                      <td class="px-4 py-4 text-sm text-main-gray">
                         {account.domain_name}
                       </td>
-                      <td class="px-6 py-4">
-                        <span
-                          class={`px-3 py-1 rounded-full text-xs font-medium ${
-                            account.is_custom
-                              ? "bg-purple-100 text-purple-800"
-                              : "bg-blue-100 text-blue-800"
-                          }`}
-                        >
+                      <td class="px-4 py-4">
+                        <span class={`px-2.5 py-1 rounded-full text-xs font-medium ${
+                          account.is_custom
+                            ? "bg-purple-100 text-purple-800"
+                            : "bg-blue-100 text-blue-800"
+                        }`}>
                           {account.is_custom ? "Custom" : "Random"}
                         </span>
                       </td>
-                      <td class="px-6 py-4 text-sm text-main-gray">
+                      <td class="px-4 py-4 text-sm text-main-gray">
                         <span title={formatDate(account.created_at)}>
                           {formatRelativeTime(account.created_at)}
                         </span>
                       </td>
-                      <td class="px-6 py-4">
-                        <span class="px-3 py-1 bg-main-red/10 text-main-red rounded-full text-xs font-semibold">
-                          {account.email_count || 0} emails
+                      <td class="px-4 py-4">
+                        <span class="px-2.5 py-1 bg-main-red/10 text-main-red rounded-full text-xs font-semibold">
+                          {account.email_count || 0}
                         </span>
                       </td>
-                      <td class="px-6 py-4">
+                      <td class="px-4 py-4">
                         <Button
                           variant="primary"
                           size="sm"
                           onClick={() => handleViewInbox(account)}
                         >
-                          👁️ View Inbox
+                          View Inbox
                         </Button>
                       </td>
                     </tr>
@@ -196,12 +196,63 @@ const AccountsPage: Component = () => {
             </table>
           </div>
 
+          {/* Mobile card list */}
+          <div class="md:hidden divide-y divide-gray-200">
+            <For
+              each={accounts()?.accounts}
+              fallback={
+                <div class="py-12 text-center">
+                  <div class="text-5xl mb-4">📭</div>
+                  <p class="text-main-gray font-medium">
+                    {searchQuery() ? "No accounts found" : "No accounts yet"}
+                  </p>
+                </div>
+              }
+            >
+              {(account) => (
+                <div class="py-4 px-1 space-y-2">
+                  <div class="flex items-start justify-between gap-2">
+                    <div class="min-w-0 flex-1">
+                      <p class="font-mono text-sm text-gray-900 font-semibold break-all">
+                        {account.email_address}
+                      </p>
+                      <p class="text-xs text-main-gray mt-0.5">{account.domain_name}</p>
+                    </div>
+                    <Button
+                      variant="primary"
+                      size="sm"
+                      onClick={() => handleViewInbox(account)}
+                      class="flex-shrink-0"
+                    >
+                      View
+                    </Button>
+                  </div>
+                  <div class="flex items-center gap-3 flex-wrap">
+                    <span class={`px-2 py-0.5 rounded-full text-xs font-medium ${
+                      account.is_custom
+                        ? "bg-purple-100 text-purple-800"
+                        : "bg-blue-100 text-blue-800"
+                    }`}>
+                      {account.is_custom ? "Custom" : "Random"}
+                    </span>
+                    <span class="px-2 py-0.5 bg-main-red/10 text-main-red rounded-full text-xs font-semibold">
+                      {account.email_count || 0} emails
+                    </span>
+                    <span class="text-xs text-main-gray" title={formatDate(account.created_at)}>
+                      {formatRelativeTime(account.created_at)}
+                    </span>
+                  </div>
+                </div>
+              )}
+            </For>
+          </div>
+
+          {/* Pagination */}
           <Show when={accounts()}>
             {(data) => (
-              <div class="px-6 py-4 border-t border-gray-200 flex items-center justify-between bg-main-lightGray">
-                <div class="text-sm text-main-gray">
-                  Page {data().page} of {data().total_pages} • Total:{" "}
-                  {data().total} accounts
+              <div class="px-4 sm:px-6 py-4 border-t border-gray-200 flex flex-col sm:flex-row items-center justify-between gap-3 bg-main-lightGray">
+                <div class="text-xs sm:text-sm text-main-gray">
+                  Page {data().page} of {data().total_pages} &bull; {data().total} accounts
                 </div>
                 <div class="flex gap-2">
                   <Button
@@ -213,7 +264,7 @@ const AccountsPage: Component = () => {
                     }}
                     disabled={currentPage() === 1}
                   >
-                    ← Previous
+                    ← Prev
                   </Button>
                   <Button
                     variant="secondary"

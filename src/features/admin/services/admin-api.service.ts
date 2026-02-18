@@ -8,6 +8,7 @@ import type {
   UpdateDomainRequest,
   AdminAccountsResponse,
   AdminInboxResponse,
+  AdminEmailItem,
   Setting,
   UpdateSettingRequest,
   PaginationQuery,
@@ -64,6 +65,13 @@ class AdminApiService {
       : "";
     const response = await httpService.get<AdminInboxResponse>(
       `${this.baseUrl}/accounts/${accountId}/inbox${queryString}`
+    );
+    return response.data;
+  }
+
+  async getAccountMessage(accountId: number, messageId: string): Promise<AdminEmailItem> {
+    const response = await httpService.get<AdminEmailItem>(
+      `${this.baseUrl}/accounts/${accountId}/inbox/${messageId}`
     );
     return response.data;
   }

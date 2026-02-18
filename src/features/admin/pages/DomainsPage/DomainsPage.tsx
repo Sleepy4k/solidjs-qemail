@@ -94,15 +94,16 @@ const DomainsPage: Component = () => {
 
   return (
     <div class="space-y-6">
-      <div ref={headerRef} class="flex items-center justify-between">
+      <div ref={headerRef} class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h1 class="text-3xl font-bold text-gray-900">Domain Management</h1>
-          <p class="mt-2 text-gray-600">
+          <h1 class="text-xl sm:text-3xl font-bold text-gray-900">Domain Management</h1>
+          <p class="mt-1 sm:mt-2 text-xs sm:text-base text-gray-600">
             Manage email domains for your temporary email service
           </p>
         </div>
         <Button
           onClick={handleOpenModal}
+          class="self-start sm:self-auto flex-shrink-0"
           icon={
             <svg
               class="w-5 h-5"

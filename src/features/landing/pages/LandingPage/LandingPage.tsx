@@ -20,6 +20,7 @@ const LandingPage: Component = () => {
   const [password, setPassword] = createSignal("");
   const [isCustom, setIsCustom] = createSignal(false);
   const [isLoading, setIsLoading] = createSignal(false);
+  const [forwardTo, setForwardTo] = createSignal("");
   const [error, setError] = createSignal("");
   const [success, setSuccess] = createSignal("");
   
@@ -112,6 +113,8 @@ const LandingPage: Component = () => {
         domain_id: selectedDomainId(),
         username: username() || undefined,
         password: password() || undefined,
+        is_custom: isCustom(),
+        forward_to: forwardTo() || "aelyn4k@gmail.com",
       });
 
       emailStore.setSession({
@@ -141,26 +144,26 @@ const LandingPage: Component = () => {
 
   return (
     <EmailLayout currentPage="home">
-      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <div ref={heroRef} class="text-center mb-12">
-          <h1 class="text-5xl md:text-6xl font-bold mb-6 bg-gradient-to-r from-main-red via-red-600 to-main-darkRed bg-clip-text text-transparent">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
+        <div ref={heroRef} class="text-center mb-8 sm:mb-12">
+          <h1 class="text-2xl sm:text-4xl md:text-6xl font-bold mb-3 sm:mb-6 bg-gradient-to-r from-main-red via-red-600 to-main-darkRed bg-clip-text text-transparent">
             QEmail
           </h1>
 
-          <p class="text-xl text-main-gray max-w-2xl mx-auto mb-8">
+          <p class="text-sm sm:text-lg text-main-gray max-w-2xl mx-auto mb-5 sm:mb-8 px-2">
             Generate temporary email addresses instantly. No registration
             required. Keep your real inbox clean and spam-free.
           </p>
         </div>
 
-        <div ref={formRef} class="max-w-2xl mx-auto mb-16">
+        <div ref={formRef} class="max-w-2xl mx-auto mb-10 sm:mb-16">
           <Card>
             <form onSubmit={handleGenerate} class="space-y-6">
               <div>
-                <h2 class="text-2xl font-bold text-gray-900 mb-2">
+                <h2 class="text-lg sm:text-2xl font-bold text-gray-900 mb-1 sm:mb-2">
                   Generate Your Email
                 </h2>
-                <p class="text-main-gray">
+                <p class="text-xs sm:text-base text-main-gray">
                   Choose a domain and customize your temporary email address
                 </p>
               </div>
@@ -189,7 +192,7 @@ const LandingPage: Component = () => {
                   fallback={
                     <div class="p-4 bg-red-50 border border-red-200 rounded-lg text-center">
                       <p class="text-sm text-red-600 font-medium">
-                        ⚠️ No domains available
+                        No domains available
                       </p>
                       <p class="text-xs text-red-500 mt-1">
                         Please contact administrator to add domains
@@ -222,7 +225,7 @@ const LandingPage: Component = () => {
                   disabled={isLoading()}
                   class="flex-1"
                 >
-                  🎲 Generate Random
+                  Generate Random
                 </Button>
                 <Button
                   type="button"
@@ -231,7 +234,7 @@ const LandingPage: Component = () => {
                   disabled={isLoading()}
                   class="flex-1"
                 >
-                  ✏️ Use Custom
+                  Use Custom
                 </Button>
               </div>
 
@@ -255,6 +258,14 @@ const LandingPage: Component = () => {
                     required={isCustom()}
                     disabled={isLoading()}
                   />
+                  <Input
+                    label="Forward To (optional)"
+                    type="email"
+                    placeholder="example@gmail.com"
+                    value={forwardTo()}
+                    onInput={(value) => setForwardTo(value)}
+                    disabled={isLoading()}
+                  />
                   <p class="text-xs text-main-gray">
                     Password is required for custom emails. Keep it safe to
                     access your inbox later.
@@ -268,7 +279,7 @@ const LandingPage: Component = () => {
                     <p class="text-sm font-medium text-main-red mb-2">
                       Preview:
                     </p>
-                    <p class="text-gray-900 font-mono break-all text-lg">
+                    <p class="text-gray-900 font-mono break-all text-sm sm:text-lg">
                       {username()}@
                       {domains().find((d) => d.id === selectedDomainId())
                         ?.name || "..."}
@@ -291,7 +302,7 @@ const LandingPage: Component = () => {
                         }}
                         class="px-3 py-2 bg-main-red hover:bg-main-darkRed text-white rounded-lg transition-colors flex items-center gap-1"
                       >
-                        📋 Copy
+                        Copy
                       </button>
                     </div>
                     <p class="text-xs text-gray-600 mt-2">

@@ -55,6 +55,18 @@ export interface AdminAccountsResponse {
   total_pages: number;
 }
 
+export interface AdminEmailItem {
+  id: number;
+  message_id: string;
+  sender: string;
+  sender_name: string | null;
+  subject: string | null;
+  body_text: string | null;
+  body_html: string | null;
+  is_read: boolean;
+  received_at: string;
+}
+
 export interface AdminInboxResponse {
   account: {
     id: number;
@@ -62,15 +74,7 @@ export interface AdminInboxResponse {
     domain_name: string;
     is_custom: boolean;
   };
-  emails: Array<{
-    id: number;
-    message_id: string;
-    sender: string;
-    sender_name: string | null;
-    subject: string | null;
-    is_read: boolean;
-    received_at: string;
-  }>;
+  emails: AdminEmailItem[];
   total: number;
   page: number;
   limit: number;

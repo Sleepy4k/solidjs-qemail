@@ -166,7 +166,7 @@ class HttpService {
   /**
    * DELETE request
    */
-  async delete<T = any>(url: string, config?: Omit<HttpRequestConfig, 'method' | 'body'>): Promise<HttpResponse<T>> {
+  async delete<T = any>(url: string, config?: Omit<HttpRequestConfig, 'method'>): Promise<HttpResponse<T>> {
     return this.request<T>(url, { ...config, method: 'DELETE' });
   }
 }

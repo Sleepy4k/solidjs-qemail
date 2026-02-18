@@ -7,6 +7,8 @@ export interface GenerateEmailRequest {
   domain_id: number;
   username?: string;
   password?: string;
+  is_custom?: boolean;
+  forward_to?: string;
 }
 
 export interface GenerateEmailResponse {
@@ -32,21 +34,23 @@ export interface EmailMessage {
   message_id: string;
   sender: string;
   sender_name: string | null;
-  recipient: string;
   subject: string | null;
   body_text: string | null;
   body_html: string | null;
-  raw_headers: string | null;
   is_read: boolean;
   received_at: string;
 }
 
-export interface InboxResponse {
-  emails: EmailMessage[];
-  total: number;
+export interface EmailMeta {
   page: number;
   limit: number;
-  total_pages: number;
+  total: number;
+  pages: number;
+}
+
+export interface InboxResponse {
+  data: EmailMessage[];
+  meta: EmailMeta;
 }
 
 export interface PaginationParams {

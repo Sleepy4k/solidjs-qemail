@@ -21,12 +21,10 @@ export const EmailLayout: Component<EmailLayoutProps> = (props) => {
       </div>
 
       {/* Navigation */}
-      <div class="relative z-10">
-        <Navigation 
-          showAdminLink={props.showAdminLink ?? true} 
-          currentPage={props.currentPage}
-        />
-      </div>
+      <Navigation
+        showAdminLink={props.showAdminLink ?? true}
+        currentPage={props.currentPage}
+      />
 
       {/* Content */}
       <div class="relative z-10">

@@ -50,21 +50,21 @@ const DomainList: Component<DomainListProps> = (props) => {
         {(domain) => (
           <div data-domain-item>
             <Card hover padding="lg" shadow="sm">
-              <div class="flex items-center justify-between">
-                <div class="flex-1">
-                  <div class="flex items-center gap-3">
-                    <h3 class="text-lg font-semibold text-gray-900">
+              <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+                <div class="flex-1 min-w-0">
+                  <div class="flex items-center gap-3 flex-wrap">
+                    <h3 class="text-base sm:text-lg font-semibold text-gray-900">
                       {domain.name}
                     </h3>
                     <Show
                       when={domain.is_active}
                       fallback={
-                        <span class="px-3 py-1 rounded-full text-xs font-medium bg-red-100 text-red-800">
+                        <span class="px-2.5 py-1 rounded-full text-xs font-medium bg-red-100 text-red-800">
                           Inactive
                         </span>
                       }
                     >
-                      <span class="px-3 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                      <span class="px-2.5 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">
                         Active
                       </span>
                     </Show>
@@ -74,7 +74,7 @@ const DomainList: Component<DomainListProps> = (props) => {
                     <Show when={domain.cloudflare_zone_id}>
                       <p class="text-sm text-gray-600">
                         <span class="font-medium">Zone ID:</span>{' '}
-                        <code class="px-2 py-0.5 bg-gray-100 rounded text-xs">
+                        <code class="px-2 py-0.5 bg-gray-100 rounded text-xs break-all">
                           {domain.cloudflare_zone_id}
                         </code>
                       </p>
@@ -85,7 +85,7 @@ const DomainList: Component<DomainListProps> = (props) => {
                   </div>
                 </div>
 
-                <div class="flex items-center gap-2">
+                <div class="flex items-center gap-2 flex-shrink-0">
                   <Button
                     variant={domain.is_active ? 'secondary' : 'success'}
                     size="sm"
