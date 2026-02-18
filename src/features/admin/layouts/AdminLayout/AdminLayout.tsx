@@ -142,15 +142,13 @@ const AdminLayout: Component<AdminLayoutProps> = (props) => {
 
   return (
     <div class="min-h-screen bg-gray-50 flex">
-      {/* Desktop sidebar */}
       <aside
         ref={sidebarRef}
-        class="hidden lg:flex w-64 bg-white border-r border-gray-200 flex-col shadow-sm flex-shrink-0"
+        class="hidden lg:flex w-64 bg-white border-r border-gray-200 flex-col shadow-sm flex-shrink-0 sticky top-0 h-screen"
       >
         <SidebarContent />
       </aside>
 
-      {/* Mobile sidebar overlay */}
       <Show when={sidebarOpen()}>
         <div
           class="fixed inset-0 z-40 bg-black/40 lg:hidden"
@@ -161,9 +159,7 @@ const AdminLayout: Component<AdminLayoutProps> = (props) => {
         </aside>
       </Show>
 
-      {/* Main content */}
       <div class="flex-1 flex flex-col min-w-0">
-        {/* Mobile top bar */}
         <header class="lg:hidden flex items-center justify-between px-4 py-3 bg-white border-b border-gray-200 sticky top-0 z-30">
           <button
             onClick={() => setSidebarOpen(true)}
@@ -180,7 +176,7 @@ const AdminLayout: Component<AdminLayoutProps> = (props) => {
             </div>
             <span class="font-bold text-gray-900 text-sm">QEmail Admin</span>
           </a>
-          <div class="w-9" /> {/* spacer */}
+          <div class="w-9" />
         </header>
 
         <main ref={mainRef} class="flex-1 overflow-auto">
