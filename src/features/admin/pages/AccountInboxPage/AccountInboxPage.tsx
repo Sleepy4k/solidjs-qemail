@@ -22,7 +22,7 @@ const AccountInboxPage: Component = () => {
   const accountId = () => parseInt(params.accountId);
 
   const [currentPage, setCurrentPage] = createSignal(Number(searchParams.page) || 1);
-  const [pageSize, setPageSize] = createSignal(Number(searchParams.limit) || 20);
+  const [pageSize, setPageSize] = createSignal(Number(searchParams.limit) || 10);
   const [expandedEmail, setExpandedEmail] = createSignal<AdminEmailItem | null>(null);
   const [loadingMessageId, setLoadingMessageId] = createSignal<string | null>(null);
 

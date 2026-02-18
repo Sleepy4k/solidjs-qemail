@@ -240,7 +240,7 @@ const AboutPage: Component = () => {
             <div class="grid grid-cols-3 gap-4">
               {[
                 { value: "100%", label: "Free Forever" },
-                { value: "0", label: "Registration Required" },
+                { value: "Zero", label: "Registration Required" },
                 { value: "∞", label: "Addresses Available" },
               ].map((s) => (
                 <div class="bg-white rounded-2xl border border-gray-200 p-5 sm:p-6 text-center">

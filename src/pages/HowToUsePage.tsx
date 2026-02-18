@@ -18,7 +18,7 @@ const StepDetail: Component<{
         {props.number}
       </div>
     </div>
-    <div class="flex-1 pb-8 border-l-2 border-gray-100 pl-5 sm:pl-6 -ml-[calc(1.5rem+1px)] sm:-ml-[calc(1.75rem+1px)]">
+    <div class="flex-1 pb-8 pl-5 sm:pl-6 -ml-[calc(1.5rem+1px)] sm:-ml-[calc(1.75rem+1px)]">
       <div class="ml-[calc(1.5rem+1px)] sm:ml-[calc(1.75rem+1px)]">
         <h3 class="text-base sm:text-lg font-bold text-gray-900 mb-2">
           {props.title}

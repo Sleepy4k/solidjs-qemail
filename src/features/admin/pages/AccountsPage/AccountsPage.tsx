@@ -17,10 +17,11 @@ const AccountsPage: Component = () => {
   const [searchParams, setSearchParams] = useSearchParams();
 
   const [currentPage, setCurrentPage] = createSignal(Number(searchParams.page) || 1);
-  const [pageSize, setPageSize] = createSignal(Number(searchParams.limit) || 20);
+  const [pageSize, setPageSize] = createSignal(Number(searchParams.limit) || 10);
   const [inputValue, setInputValue] = createSignal(searchParams.search || "");
   const [searchQuery, setSearchQuery] = createSignal(searchParams.search || "");
   const [error, setError] = createSignal("");
+  const [successMessage, setSuccessMessage] = createSignal("");
 
   const { isOpen, config, confirm, handleConfirm, handleCancel } = useConfirmDialog();
 
@@ -72,7 +73,10 @@ const AccountsPage: Component = () => {
       variant: "danger",
       onConfirm: async () => {
         try {
+          setError("");
+          setSuccessMessage("");
           await adminApiService.deleteAccount(account.id);
+          setSuccessMessage(`Account "${account.email_address}" has been successfully deleted.`);
           refetch();
         } catch (err: any) {
           setError(err.message || "Failed to delete account");
@@ -120,6 +124,10 @@ const AccountsPage: Component = () => {
 
       <Show when={error()}>
         <Alert type="error" message={error()} onClose={() => setError("")} />
+      </Show>
+
+      <Show when={successMessage()}>
+        <Alert type="success" message={successMessage()} onClose={() => setSuccessMessage("")} />
       </Show>
 
       <Card>

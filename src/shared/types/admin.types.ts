@@ -96,5 +96,5 @@ export interface UpdateSettingRequest {
 export interface PaginationQuery {
   page?: number;
   limit?: number;
-  search?: string;
+  search?: string | string[];
 }
