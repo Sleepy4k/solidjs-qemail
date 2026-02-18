@@ -18,6 +18,7 @@ const DomainsPage = lazy(() => import('./features/admin/pages/DomainsPage/Domain
 const AccountsPage = lazy(() => import('./features/admin/pages/AccountsPage/AccountsPage'));
 const AccountInboxPage = lazy(() => import('./features/admin/pages/AccountInboxPage/AccountInboxPage'));
 const SettingsPage = lazy(() => import('./features/admin/pages/SettingsPage/SettingsPage'));
+const LogsPage = lazy(() => import('./features/admin/pages/LogsPage/LogsPage'));
 
 const LoadingFallback: Component = () => {
   onMount(() => {
@@ -117,6 +118,14 @@ const AdminSettingsRoute: Component = () => (
   </PageWrapper>
 );
 
+const AdminLogsRoute: Component = () => (
+  <PageWrapper>
+    <ProtectedAdminRoute>
+      <LogsPage />
+    </ProtectedAdminRoute>
+  </PageWrapper>
+);
+
 const App: Component = () => {
   onMount(() => {
     NProgress.configure({ showSpinner: true, trickleSpeed: 200 });
@@ -138,6 +147,7 @@ const App: Component = () => {
         <Route path="/admin/accounts" component={AdminAccountsRoute} />
         <Route path="/admin/accounts/:accountId/inbox" component={AdminAccountInboxRoute} />
         <Route path="/admin/settings" component={AdminSettingsRoute} />
+        <Route path="/admin/logs" component={AdminLogsRoute} />
       </Suspense>
     </Router>
   );

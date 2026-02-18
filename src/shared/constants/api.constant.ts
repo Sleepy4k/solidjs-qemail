@@ -9,6 +9,7 @@ export const API_ENDPOINTS = {
     DOMAINS: '/api/v1/admin/domains',
     ACCOUNTS: '/api/v1/admin/accounts',
     SETTINGS: '/api/v1/admin/settings',
+    LOGS: '/api/v1/admin/logs',
   },
   
   EMAIL: {

@@ -8,6 +8,7 @@ export const ROUTES = {
     DOMAINS: '/admin/domains',
     ACCOUNTS: '/admin/accounts',
     SETTINGS: '/admin/settings',
+    LOGS: '/admin/logs',
   },
 } as const;
 

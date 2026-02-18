@@ -27,6 +27,9 @@ export interface AdminDomain {
   id: number;
   name: string;
   cloudflare_zone_id?: string;
+  cf_api_token?: string;
+  cf_account_id?: string;
+  cf_worker_name?: string;
   is_active: boolean;
   created_at: string;
   updated_at: string;
@@ -35,11 +38,26 @@ export interface AdminDomain {
 export interface CreateDomainRequest {
   name: string;
   cloudflare_zone_id?: string;
+  cf_api_token?: string;
+  cf_account_id?: string;
+  cf_worker_name?: string;
 }
 
 export interface UpdateDomainRequest {
   is_active?: boolean;
   cloudflare_zone_id?: string;
+  cf_api_token?: string;
+  cf_account_id?: string;
+  cf_worker_name?: string;
+}
+
+export interface CfRule {
+  id: string;
+  type: string;
+  enabled: boolean;
+  pattern?: string;
+  action?: string;
+  [key: string]: unknown;
 }
 
 export interface AdminAccount {
@@ -70,3 +88,35 @@ export interface UpdateSettingRequest {
   key: string;
   value: string;
 }
+
+export interface AdminLog {
+  id: number;
+  actor_type: 'user' | 'admin' | 'system';
+  actor_id: string | null;
+  actor_label: string;
+  action: string;
+  status: 'success' | 'failure';
+  resource_type: string;
+  resource_id: string;
+  meta: Record<string, unknown>;
+  ip_address: string;
+  error: string | null;
+  created_at: string;
+}
+
+export interface AdminLogsMeta {
+  page: number;
+  limit: number;
+  total: number;
+  pages: number;
+}
+
+export interface AdminLogsResponse {
+  data: AdminLog[];
+  meta: AdminLogsMeta;
+}
+
+export type LogSortField = 'created_at' | 'action' | 'actor_label' | 'status';
+export type SortDir = 'asc' | 'desc';
+export type LogActorType = 'user' | 'admin' | 'system';
+export type LogStatus = 'success' | 'failure';

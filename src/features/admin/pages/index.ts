@@ -3,3 +3,4 @@ export * from './DomainsPage';
 export * from './AccountsPage';
 export * from './SettingsPage';
 export * from './LoginPage';
+export * from './LogsPage';

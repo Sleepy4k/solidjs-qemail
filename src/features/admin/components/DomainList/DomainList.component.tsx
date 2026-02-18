@@ -7,6 +7,8 @@ import type { AdminDomain } from '../../types/admin.types';
 export interface DomainListProps {
   domains: AdminDomain[];
   onToggleActive: (domain: AdminDomain) => void;
+  onEditConfig: (domain: AdminDomain) => void;
+  onViewCfRules: (domain: AdminDomain) => void;
   onDelete: (domain: AdminDomain) => void;
   loading?: boolean;
 }
@@ -50,7 +52,8 @@ const DomainList: Component<DomainListProps> = (props) => {
         {(domain) => (
           <div data-domain-item>
             <Card hover padding="lg" shadow="sm">
-              <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+              <div class="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3">
+                {/* Domain info */}
                 <div class="flex-1 min-w-0">
                   <div class="flex items-center gap-3 flex-wrap">
                     <h3 class="text-base sm:text-lg font-semibold text-gray-900">
@@ -70,27 +73,72 @@ const DomainList: Component<DomainListProps> = (props) => {
                     </Show>
                   </div>
 
+                  {/* CF config summary */}
                   <div class="mt-2 space-y-1">
                     <Show when={domain.cloudflare_zone_id}>
-                      <p class="text-sm text-gray-600">
-                        <span class="font-medium">Zone ID:</span>{' '}
-                        <code class="px-2 py-0.5 bg-gray-100 rounded text-xs break-all">
+                      <p class="text-xs text-gray-600 flex items-center gap-1.5">
+                        <span class="font-medium text-gray-500">Zone ID:</span>
+                        <code class="px-1.5 py-0.5 bg-gray-100 rounded text-xs break-all">
                           {domain.cloudflare_zone_id}
                         </code>
                       </p>
                     </Show>
-                    <p class="text-xs text-gray-500">
+                    <Show when={domain.cf_account_id}>
+                      <p class="text-xs text-gray-600 flex items-center gap-1.5">
+                        <span class="font-medium text-gray-500">Account ID:</span>
+                        <code class="px-1.5 py-0.5 bg-gray-100 rounded text-xs break-all">
+                          {domain.cf_account_id}
+                        </code>
+                      </p>
+                    </Show>
+                    <Show when={domain.cf_worker_name}>
+                      <p class="text-xs text-gray-600 flex items-center gap-1.5">
+                        <span class="font-medium text-gray-500">Worker:</span>
+                        <code class="px-1.5 py-0.5 bg-gray-100 rounded text-xs">
+                          {domain.cf_worker_name}
+                        </code>
+                      </p>
+                    </Show>
+                    <Show when={domain.cf_api_token}>
+                      <p class="text-xs flex items-center gap-1.5">
+                        <span class="font-medium text-gray-500">API Token:</span>
+                        <span class="px-1.5 py-0.5 bg-green-50 text-green-700 rounded text-xs font-medium">
+                          ✓ Configured
+                        </span>
+                      </p>
+                    </Show>
+                    <p class="text-xs text-gray-400 mt-1">
                       Created: {formatDateTime(domain.created_at)}
                     </p>
                   </div>
                 </div>
 
-                <div class="flex items-center gap-2 flex-shrink-0">
+                {/* Action buttons — 2x2 grid on mobile, single row on sm+ */}
+                <div class="grid grid-cols-2 sm:flex sm:flex-wrap gap-2 flex-shrink-0">
+                  <Button
+                    variant="secondary"
+                    size="sm"
+                    onClick={() => props.onEditConfig(domain)}
+                    disabled={props.loading}
+                    class="w-full sm:w-auto justify-center"
+                  >
+                    Config
+                  </Button>
+                  <Button
+                    variant="secondary"
+                    size="sm"
+                    onClick={() => props.onViewCfRules(domain)}
+                    disabled={props.loading}
+                    class="w-full sm:w-auto justify-center"
+                  >
+                    CF Rules
+                  </Button>
                   <Button
                     variant={domain.is_active ? 'secondary' : 'success'}
                     size="sm"
                     onClick={() => props.onToggleActive(domain)}
                     disabled={props.loading}
+                    class="w-full sm:w-auto justify-center"
                   >
                     {domain.is_active ? 'Disable' : 'Enable'}
                   </Button>
@@ -99,6 +147,7 @@ const DomainList: Component<DomainListProps> = (props) => {
                     size="sm"
                     onClick={() => props.onDelete(domain)}
                     disabled={props.loading}
+                    class="w-full sm:w-auto justify-center"
                   >
                     Delete
                   </Button>
@@ -113,3 +162,4 @@ const DomainList: Component<DomainListProps> = (props) => {
 };
 
 export default DomainList;
+

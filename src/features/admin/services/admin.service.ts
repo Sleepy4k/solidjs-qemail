@@ -7,7 +7,13 @@ import type {
   AdminDomain,
   CreateDomainRequest,
   UpdateDomainRequest,
+  CfRule,
   AdminAccountsResponse,
+  AdminLogsResponse,
+  LogSortField,
+  SortDir,
+  LogActorType,
+  LogStatus,
   Setting,
   UpdateSettingRequest,
 } from '../types/admin.types';
@@ -53,6 +59,13 @@ class AdminService {
     });
   }
 
+  async getCfRules(id: number): Promise<CfRule[]> {
+    const response = await httpService.get<CfRule[]>(
+      `${API_ENDPOINTS.ADMIN.DOMAINS}/${id}/cf-rules`
+    );
+    return response.data;
+  }
+
   async listAccounts(
     page: number = 1,
     limit: number = 20,
@@ -82,6 +95,36 @@ class AdminService {
     const response = await httpService.put<Setting>(
       API_ENDPOINTS.ADMIN.SETTINGS,
       data
+    );
+    return response.data;
+  }
+
+  async getLogs(params: {
+    page?: number;
+    limit?: number;
+    search?: string;
+    actor_type?: LogActorType;
+    action?: string;
+    status?: LogStatus;
+    resource_type?: string;
+    sort_by?: LogSortField;
+    sort_dir?: SortDir;
+  }): Promise<AdminLogsResponse> {
+    const query = new URLSearchParams({
+      page: (params.page ?? 1).toString(),
+      limit: (params.limit ?? 50).toString(),
+    });
+
+    if (params.search?.trim())    query.append('search', params.search.trim());
+    if (params.actor_type)        query.append('actor_type', params.actor_type);
+    if (params.action?.trim())    query.append('action', params.action.trim());
+    if (params.status)            query.append('status', params.status);
+    if (params.resource_type?.trim()) query.append('resource_type', params.resource_type.trim());
+    if (params.sort_by)           query.append('sort_by', params.sort_by);
+    if (params.sort_dir)          query.append('sort_dir', params.sort_dir);
+
+    const response = await httpService.get<AdminLogsResponse>(
+      `${API_ENDPOINTS.ADMIN.LOGS}?${query.toString()}`
     );
     return response.data;
   }
