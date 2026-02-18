@@ -4,3 +4,9 @@ dist
 *.log
 .env
 .env.local
+
+# Claude
+nul
+claude-*.json
+claude-*.log
+tmpclaude-*
