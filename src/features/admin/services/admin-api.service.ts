@@ -15,7 +15,7 @@ import type {
 } from "../../../shared/types/admin.types";
 
 class AdminApiService {
-  private readonly baseUrl = "/api/v1/admin";
+  private readonly baseUrl = "/v1/admin";
 
   async getHealth(): Promise<{ status: string; uptime: number; timestamp: string }> {
     const response = await httpService.get<{ status: string; uptime: number; timestamp: string }>("/health");

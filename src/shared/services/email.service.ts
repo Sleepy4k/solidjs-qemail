@@ -11,7 +11,7 @@ import type {
 } from "../types/email.types";
 
 class EmailService {
-  private readonly baseUrl = "/api/v1/email";
+  private readonly baseUrl = "/v1/email";
 
   async getDomains(): Promise<Domain[]> {
     const response = await httpService.get<Domain[]>(`${this.baseUrl}/domains`);

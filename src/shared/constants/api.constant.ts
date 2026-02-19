@@ -4,19 +4,19 @@ export const API_BASE_URL = APP_CONFIG.apiUrl;
 
 export const API_ENDPOINTS = {
   ADMIN: {
-    LOGIN: '/api/v1/admin/login',
-    STATS: '/api/v1/admin/stats',
-    DOMAINS: '/api/v1/admin/domains',
-    ACCOUNTS: '/api/v1/admin/accounts',
-    SETTINGS: '/api/v1/admin/settings',
-    LOGS: '/api/v1/admin/logs',
+    LOGIN: '/v1/admin/login',
+    STATS: '/v1/admin/stats',
+    DOMAINS: '/v1/admin/domains',
+    ACCOUNTS: '/v1/admin/accounts',
+    SETTINGS: '/v1/admin/settings',
+    LOGS: '/v1/admin/logs',
   },
   
   EMAIL: {
-    DOMAINS: '/api/v1/email/domains',
-    GENERATE: '/api/v1/email/generate',
-    LOGIN: '/api/v1/email/login',
-    INBOX: '/api/v1/email/inbox',
+    DOMAINS: '/v1/email/domains',
+    GENERATE: '/v1/email/generate',
+    LOGIN: '/v1/email/login',
+    INBOX: '/v1/email/inbox',
   },
 } as const;
 

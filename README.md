@@ -126,23 +126,23 @@ VITE_API_URL=http://localhost:3000
 ```
 
 ### Public Endpoints
-- `GET /api/v1/email/domains` - List available domains
-- `POST /api/v1/email/generate` - Generate temporary email
-- `GET /api/v1/email/inbox/:token` - Get inbox emails
-- `GET /api/v1/email/inbox/:token/:messageId` - Get specific email
-- `DELETE /api/v1/email/inbox/:token/:messageId` - Delete email
+- `GET /v1/email/domains` - List available domains
+- `POST /v1/email/generate` - Generate temporary email
+- `GET /v1/email/inbox/:token` - Get inbox emails
+- `GET /v1/email/inbox/:token/:messageId` - Get specific email
+- `DELETE /v1/email/inbox/:token/:messageId` - Delete email
 
 ### Admin Endpoints (Protected)
-- `POST /api/v1/admin/login` - Admin authentication
-- `GET /api/v1/admin/stats` - Dashboard statistics
-- `GET /api/v1/admin/domains` - List all domains (paginated)
-- `POST /api/v1/admin/domains` - Create new domain
-- `PUT /api/v1/admin/domains/:id` - Update domain
-- `DELETE /api/v1/admin/domains/:id` - Delete domain
-- `GET /api/v1/admin/accounts` - List all accounts
-- `POST /api/v1/admin/accounts` - Create account
-- `PUT /api/v1/admin/accounts/:id` - Update account
-- `DELETE /api/v1/admin/accounts/:id` - Delete account
+- `POST /v1/admin/login` - Admin authentication
+- `GET /v1/admin/stats` - Dashboard statistics
+- `GET /v1/admin/domains` - List all domains (paginated)
+- `POST /v1/admin/domains` - Create new domain
+- `PUT /v1/admin/domains/:id` - Update domain
+- `DELETE /v1/admin/domains/:id` - Delete domain
+- `GET /v1/admin/accounts` - List all accounts
+- `POST /v1/admin/accounts` - Create account
+- `PUT /v1/admin/accounts/:id` - Update account
+- `DELETE /v1/admin/accounts/:id` - Delete account
 
 **Authentication**: Admin routes require `Authorization: Bearer <token>` header. The HTTP service automatically injects the token from localStorage.
 
@@ -244,7 +244,7 @@ import { httpService } from "@/shared/services/http.service";
 
 const fetchDomains = async () => {
   try {
-    const domains = await httpService.get<Domain[]>("/api/v1/email/domains");
+    const domains = await httpService.get<Domain[]>("/v1/email/domains");
     return domains;
   } catch (error) {
     console.error("Failed to fetch domains:", error);
