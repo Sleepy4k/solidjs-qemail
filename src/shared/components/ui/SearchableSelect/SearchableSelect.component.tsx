@@ -86,13 +86,18 @@ export const SearchableSelect: Component<SearchableSelectProps> = (props) => {
     }
   };
 
+  const handleScroll = (e: Event) => {
+    if (dropdownRef && dropdownRef.contains(e.target as Node)) return;
+    close();
+  };
+
   onMount(() => {
     document.addEventListener("mousedown", handleOutside);
-    window.addEventListener("scroll", close, true);
+    window.addEventListener("scroll", handleScroll, true);
     window.addEventListener("resize", close);
     onCleanup(() => {
       document.removeEventListener("mousedown", handleOutside);
-      window.removeEventListener("scroll", close, true);
+      window.removeEventListener("scroll", handleScroll, true);
       window.removeEventListener("resize", close);
     });
   });
