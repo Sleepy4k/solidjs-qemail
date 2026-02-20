@@ -1,8 +1,16 @@
-import { Component, createSignal, onMount, onCleanup, For, Show } from "solid-js";
+import {
+  Component,
+  createSignal,
+  onMount,
+  onCleanup,
+  For,
+  Show,
+} from "solid-js";
 import { useNavigate } from "@solidjs/router";
 import gsap from "gsap";
 import { emailService } from "../../../../shared/services/email.service";
 import { emailStore } from "../../../../shared/stores/email.store";
+import { ROUTES } from "../../../../shared/constants/routes.constant";
 import type { EmailMessage } from "../../../../shared/types/email.types";
 import { Button } from "../../../../shared/components/ui/Button";
 import { Card } from "../../../../shared/components/ui/Card";
@@ -22,7 +30,7 @@ export const InboxPage: Component = () => {
 
   onMount(async () => {
     if (!emailStore.isAuthenticated()) {
-      navigate("/");
+      navigate(ROUTES.EMAIL_LOGIN, { replace: true });
       return;
     }
 
@@ -30,7 +38,7 @@ export const InboxPage: Component = () => {
       gsap.fromTo(
         containerRef,
         { opacity: 0, y: 20 },
-        { opacity: 1, y: 0, duration: 0.6, ease: "power2.out" }
+        { opacity: 1, y: 0, duration: 0.6, ease: "power2.out" },
       );
     }
 
@@ -86,8 +94,10 @@ export const InboxPage: Component = () => {
 
   return (
     <EmailLayout currentPage="inbox" showAdminLink={true}>
-      <div ref={containerRef} class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
-        {/* Header */}
+      <div
+        ref={containerRef}
+        class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8"
+      >
         <div class="mb-6 sm:mb-8">
           <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-4">
             <div class="min-w-0">
@@ -98,15 +108,19 @@ export const InboxPage: Component = () => {
                 {emailStore.session?.email || "Temporary Email"}
               </p>
             </div>
-            <Button variant="secondary" onClick={handleLogout} class="self-start sm:self-auto flex-shrink-0">
+            <Button
+              variant="secondary"
+              onClick={handleLogout}
+              class="self-start sm:self-auto flex-shrink-0"
+            >
               Logout
             </Button>
           </div>
 
           <div class="flex flex-col sm:flex-row sm:items-center gap-3 p-3 sm:p-4 bg-blue-50 border border-blue-200 rounded-xl">
             <p class="text-xs sm:text-sm text-blue-900 flex-1">
-              <span class="font-semibold">Auto-refresh enabled.</span>{" "}
-              New emails will appear automatically every 30 seconds.
+              <span class="font-semibold">Auto-refresh enabled.</span> New
+              emails will appear automatically every 30 seconds.
             </p>
             <Button
               variant="primary"
@@ -155,8 +169,8 @@ export const InboxPage: Component = () => {
                       No emails yet
                     </h3>
                     <p class="text-main-gray text-xs sm:text-base">
-                      Your inbox is empty. Emails sent to your temporary
-                      address will appear here.
+                      Your inbox is empty. Emails sent to your temporary address
+                      will appear here.
                     </p>
                   </div>
                 )}

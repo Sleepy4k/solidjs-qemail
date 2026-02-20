@@ -1,36 +1,36 @@
-import { Component, Show } from 'solid-js';
-import { useNavigate } from '@solidjs/router';
-import { Card, Input, Button, Alert } from '../../../../shared/components/ui';
-import { adminStore } from '../../stores/admin.store';
-import { ROUTES } from '../../../../shared/constants/routes.constant';
-import { useAnimation } from '../../../../shared/hooks/use-animation.hook';
-import { Navigation } from '../../../../shared/components/Navigation';
+import { Component, Show } from "solid-js";
+import { useNavigate } from "@solidjs/router";
+import { Card, Input, Button, Alert } from "../../../../shared/components/ui";
+import { adminStore } from "../../stores/admin.store";
+import { ROUTES } from "../../../../shared/constants/routes.constant";
+import { useAnimation } from "../../../../shared/hooks/use-animation.hook";
+import { Navigation } from "../../../../shared/components/Navigation";
 
 const LoginPage: Component = () => {
   const navigate = useNavigate();
-  
+
   let formRef: HTMLDivElement | undefined;
   let usernameRef: HTMLInputElement | undefined;
   let passwordRef: HTMLInputElement | undefined;
-  
+
   let isLoading = false;
   let errorMessage: string | null = null;
 
   useAnimation(() => formRef, {
-    animation: 'fadeIn',
+    animation: "fadeIn",
     duration: 0.8,
   });
 
   const handleSubmit = async (e: Event) => {
     e.preventDefault();
-    
+
     if (!usernameRef || !passwordRef) return;
 
     const username = usernameRef.value.trim();
     const password = passwordRef.value;
 
     if (!username || !password) {
-      errorMessage = 'Please fill in all fields';
+      errorMessage = "Please fill in all fields";
       return;
     }
 
@@ -41,7 +41,8 @@ const LoginPage: Component = () => {
       await adminStore.login({ username, password });
       navigate(ROUTES.ADMIN.DASHBOARD, { replace: true });
     } catch (err: any) {
-      errorMessage = err.message || 'Login failed. Please check your credentials.';
+      errorMessage =
+        err.message || "Login failed. Please check your credentials.";
     } finally {
       isLoading = false;
     }

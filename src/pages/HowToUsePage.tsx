@@ -149,7 +149,6 @@ const HowToUsePage: Component = () => {
             </div>
           </section>
 
-          {/* Step by Step */}
           <section>
             <h2 class="text-xl sm:text-2xl font-bold text-gray-900 mb-8 flex items-center gap-2">
               <span class="w-1 h-6 bg-main-red rounded-full inline-block" />
@@ -224,7 +223,6 @@ const HowToUsePage: Component = () => {
             </div>
           </section>
 
-          {/* Accessing Inbox Later */}
           <section>
             <h2 class="text-xl sm:text-2xl font-bold text-gray-900 mb-4 flex items-center gap-2">
               <span class="w-1 h-6 bg-main-red rounded-full inline-block" />
@@ -260,7 +258,6 @@ const HowToUsePage: Component = () => {
             </div>
           </section>
 
-          {/* Random vs Custom */}
           <section>
             <h2 class="text-xl sm:text-2xl font-bold text-gray-900 mb-4 flex items-center gap-2">
               <span class="w-1 h-6 bg-main-red rounded-full inline-block" />
@@ -362,7 +359,6 @@ const HowToUsePage: Component = () => {
             </div>
           </section>
 
-          {/* Tips */}
           <section>
             <h2 class="text-xl sm:text-2xl font-bold text-gray-900 mb-4 flex items-center gap-2">
               <span class="w-1 h-6 bg-main-red rounded-full inline-block" />

@@ -1,6 +1,6 @@
-import { onMount, onCleanup } from 'solid-js';
-import gsap from 'gsap';
-import * as animations from '../utils/animation.util';
+import { onMount, onCleanup } from "solid-js";
+import gsap from "gsap";
+import * as animations from "../utils/animation.util";
 
 export interface UseAnimationOptions {
   animation?: keyof typeof animations;
@@ -8,23 +8,20 @@ export interface UseAnimationOptions {
   delay?: number;
   ease?: string;
   stagger?: number;
-  trigger?: 'mount' | 'manual';
+  trigger?: "mount" | "manual";
 }
 
-/**
- * Hook for applying animations to elements
- */
 export const useAnimation = (
   getElement: () => HTMLElement | null | undefined,
-  options: UseAnimationOptions = {}
+  options: UseAnimationOptions = {},
 ) => {
   const {
-    animation = 'fadeIn',
+    animation = "fadeIn",
     duration = 0.6,
     delay = 0,
-    ease = 'power2.out',
+    ease = "power2.out",
     stagger,
-    trigger = 'mount',
+    trigger = "mount",
   } = options;
 
   const animate = () => {
@@ -37,7 +34,7 @@ export const useAnimation = (
     }
   };
 
-  if (trigger === 'mount') {
+  if (trigger === "mount") {
     onMount(() => {
       animate();
     });
@@ -46,19 +43,16 @@ export const useAnimation = (
   return { animate };
 };
 
-/**
- * Hook for list animations with stagger
- */
 export const useStaggerAnimation = (
   getElements: () => HTMLElement[] | NodeListOf<HTMLElement> | null | undefined,
-  options: Omit<UseAnimationOptions, 'animation'> = {}
+  options: Omit<UseAnimationOptions, "animation"> = {},
 ) => {
   const {
     duration = 0.5,
     delay = 0,
-    ease = 'power2.out',
+    ease = "power2.out",
     stagger = 0.1,
-    trigger = 'mount',
+    trigger = "mount",
   } = options;
 
   const animate = () => {
@@ -73,9 +67,8 @@ export const useStaggerAnimation = (
     });
   };
 
-  if (trigger === 'mount') {
+  if (trigger === "mount") {
     onMount(() => {
-      // Add small delay to ensure DOM is ready
       setTimeout(animate, 50);
     });
   }
@@ -83,9 +76,6 @@ export const useStaggerAnimation = (
   return { animate };
 };
 
-/**
- * Hook for timeline animations
- */
 export const useTimeline = () => {
   let timeline: gsap.core.Timeline | null = null;
 
@@ -106,12 +96,9 @@ export const useTimeline = () => {
   };
 };
 
-/**
- * Hook for scroll-triggered animations
- */
 export const useScrollAnimation = (
   getElement: () => HTMLElement | null | undefined,
-  options: UseAnimationOptions = {}
+  options: UseAnimationOptions = {},
 ) => {
   let observer: IntersectionObserver | null = null;
 
@@ -123,13 +110,16 @@ export const useScrollAnimation = (
       (entries) => {
         entries.forEach((entry) => {
           if (entry.isIntersecting) {
-            const { animate } = useAnimation(getElement, { ...options, trigger: 'manual' });
+            const { animate } = useAnimation(getElement, {
+              ...options,
+              trigger: "manual",
+            });
             animate();
             observer?.unobserve(entry.target);
           }
         });
       },
-      { threshold: 0.1 }
+      { threshold: 0.1 },
     );
 
     observer.observe(element);

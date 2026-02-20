@@ -1,19 +1,19 @@
-import { Component, createSignal, onMount, For, Show } from "solid-js";
-import { useNavigate, A } from "@solidjs/router";
+import { Component, createSignal, createMemo, onMount, Show } from "solid-js";
+import { useNavigate } from "@solidjs/router";
 import gsap from "gsap";
 import { emailService } from "../../../../shared/services/email.service";
 import { emailStore } from "../../../../shared/stores/email.store";
 import type { Domain } from "../../../../shared/types/email.types";
 import { Button } from "../../../../shared/components/ui/Button";
 import { Card } from "../../../../shared/components/ui/Card";
-import { Select } from "../../../../shared/components/ui/Select";
+import { SearchableSelect } from "../../../../shared/components/ui/SearchableSelect";
 import { Input } from "../../../../shared/components/ui/Input";
 import { Alert } from "../../../../shared/components/ui/Alert";
 import { EmailLayout } from "../../../../shared/layouts/EmailLayout";
 
 const LandingPage: Component = () => {
   const navigate = useNavigate();
-  
+
   const [domains, setDomains] = createSignal<Domain[]>([]);
   const [selectedDomainId, setSelectedDomainId] = createSignal<number>(0);
   const [username, setUsername] = createSignal("");
@@ -23,7 +23,11 @@ const LandingPage: Component = () => {
   const [forwardTo, setForwardTo] = createSignal("");
   const [error, setError] = createSignal("");
   const [success, setSuccess] = createSignal("");
-  
+
+  const domainOptions = createMemo(() =>
+    domains().map((d) => ({ value: d.id, label: `@${d.name}` })),
+  );
+
   let heroRef: HTMLDivElement | undefined;
   let formRef: HTMLDivElement | undefined;
   let featuresRef: HTMLDivElement | undefined;
@@ -33,7 +37,7 @@ const LandingPage: Component = () => {
       gsap.fromTo(
         heroRef,
         { opacity: 0, y: 30 },
-        { opacity: 1, y: 0, duration: 0.8, ease: "power2.out" }
+        { opacity: 1, y: 0, duration: 0.8, ease: "power2.out" },
       );
     }
 
@@ -41,7 +45,7 @@ const LandingPage: Component = () => {
       gsap.fromTo(
         formRef,
         { opacity: 0, scale: 0.95 },
-        { opacity: 1, scale: 1, duration: 0.6, delay: 0.2, ease: "power2.out" }
+        { opacity: 1, scale: 1, duration: 0.6, delay: 0.2, ease: "power2.out" },
       );
     }
 
@@ -50,11 +54,19 @@ const LandingPage: Component = () => {
       gsap.fromTo(
         featuresRef.children,
         { opacity: 0, y: 20 },
-        { opacity: 1, y: 0, duration: 0.5, stagger: 0.1, delay: 0.4, ease: "power2.out", onStart: () => {
-          if (featuresRef) {
-            gsap.to(featuresRef, { opacity: 1, duration: 0.3 });
-          }
-        }}
+        {
+          opacity: 1,
+          y: 0,
+          duration: 0.5,
+          stagger: 0.1,
+          delay: 0.4,
+          ease: "power2.out",
+          onStart: () => {
+            if (featuresRef) {
+              gsap.to(featuresRef, { opacity: 1, duration: 0.3 });
+            }
+          },
+        },
       );
     }
 
@@ -73,7 +85,10 @@ const LandingPage: Component = () => {
 
   const generateRandomString = (length: number) => {
     const chars = "abcdefghijklmnopqrstuvwxyz0123456789";
-    return Array.from({ length }, () => chars[Math.floor(Math.random() * chars.length)]).join("");
+    return Array.from(
+      { length },
+      () => chars[Math.floor(Math.random() * chars.length)],
+    ).join("");
   };
 
   const handleGenerateRandom = () => {
@@ -125,7 +140,7 @@ const LandingPage: Component = () => {
       });
 
       setSuccess(`Email berhasil di-generate: ${response.email}`);
-      
+
       setTimeout(() => {
         navigate("/inbox");
       }, 1000);
@@ -200,20 +215,13 @@ const LandingPage: Component = () => {
                     </div>
                   }
                 >
-                  <Select
-                    value={selectedDomainId().toString()}
-                    onChange={(value) => setSelectedDomainId(parseInt(value))}
+                  <SearchableSelect
+                    options={domainOptions()}
+                    value={selectedDomainId() || undefined}
+                    onChange={(value) => setSelectedDomainId(value as number)}
+                    placeholder="Choose a domain..."
                     disabled={isLoading()}
-                  >
-                    <option value="0">Choose a domain...</option>
-                    <For each={domains()}>
-                      {(domain) => (
-                        <option value={domain.id.toString()}>
-                          @{domain.name}
-                        </option>
-                      )}
-                    </For>
-                  </Select>
+                  />
                 </Show>
               </div>
 
@@ -358,7 +366,9 @@ const LandingPage: Component = () => {
   );
 };
 
-const FeatureCard: Component<{ title: string; description: string }> = (props) => {
+const FeatureCard: Component<{ title: string; description: string }> = (
+  props,
+) => {
   return (
     <div class="p-6 bg-white rounded-2xl border border-gray-200 hover:border-main-red/30 hover:shadow-xl transition-all duration-300">
       <h3 class="text-lg font-bold text-gray-900 mb-2">{props.title}</h3>

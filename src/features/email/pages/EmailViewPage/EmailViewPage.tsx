@@ -3,11 +3,16 @@ import { useParams, useNavigate } from "@solidjs/router";
 import gsap from "gsap";
 import { emailService } from "../../../../shared/services/email.service";
 import { emailStore } from "../../../../shared/stores/email.store";
+import { ROUTES } from "../../../../shared/constants/routes.constant";
 import type { EmailMessage } from "../../../../shared/types/email.types";
 import { Button } from "../../../../shared/components/ui/Button";
 import { Alert } from "../../../../shared/components/ui/Alert";
 import { EmailLayout } from "../../../../shared/layouts/EmailLayout";
-import { ConfirmDialog, useConfirmDialog } from "../../../../shared/components/ConfirmDialog";
+import {
+  ConfirmDialog,
+  useConfirmDialog,
+} from "../../../../shared/components/ConfirmDialog";
+import { SafeEmailRenderer } from "../../../../shared/components/SafeEmailRenderer";
 
 export const EmailViewPage: Component = () => {
   const params = useParams<{ messageId: string }>();
@@ -17,13 +22,19 @@ export const EmailViewPage: Component = () => {
   const [isLoading, setIsLoading] = createSignal(true);
   const [error, setError] = createSignal("");
   const [isDeleting, setIsDeleting] = createSignal(false);
-  const { isOpen: isConfirmOpen, config: confirmConfig, confirm, handleConfirm, handleCancel } = useConfirmDialog();
+  const {
+    isOpen: isConfirmOpen,
+    config: confirmConfig,
+    confirm,
+    handleConfirm,
+    handleCancel,
+  } = useConfirmDialog();
 
   let containerRef: HTMLDivElement | undefined;
 
   onMount(async () => {
     if (!emailStore.isAuthenticated()) {
-      navigate("/");
+      navigate(ROUTES.EMAIL_LOGIN, { replace: true });
       return;
     }
 
@@ -31,7 +42,7 @@ export const EmailViewPage: Component = () => {
       gsap.fromTo(
         containerRef,
         { opacity: 0, y: 20 },
-        { opacity: 1, y: 0, duration: 0.6, ease: "power2.out" }
+        { opacity: 1, y: 0, duration: 0.6, ease: "power2.out" },
       );
     }
 
@@ -42,7 +53,7 @@ export const EmailViewPage: Component = () => {
     try {
       const token = emailStore.getToken();
       if (!token) {
-        navigate("/");
+        navigate(ROUTES.EMAIL_LOGIN, { replace: true });
         return;
       }
 
@@ -58,9 +69,10 @@ export const EmailViewPage: Component = () => {
 
   const handleDelete = () => {
     confirm({
-      title: 'Delete Email',
-      message: 'Are you sure you want to delete this email? This action cannot be undone.',
-      variant: 'danger',
+      title: "Delete Email",
+      message:
+        "Are you sure you want to delete this email? This action cannot be undone.",
+      variant: "danger",
       onConfirm: async () => {
         setIsDeleting(true);
         try {
@@ -89,7 +101,10 @@ export const EmailViewPage: Component = () => {
 
   return (
     <EmailLayout currentPage="inbox" showAdminLink={true}>
-      <div ref={containerRef} class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
+      <div
+        ref={containerRef}
+        class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8"
+      >
         {/* Back button + title */}
         <div class="flex items-center gap-3 mb-6">
           <button
@@ -97,12 +112,22 @@ export const EmailViewPage: Component = () => {
             class="flex items-center justify-center w-9 h-9 rounded-lg border border-gray-200 hover:bg-gray-100 transition-colors flex-shrink-0"
             aria-label="Back to inbox"
           >
-            <svg class="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+            <svg
+              class="w-5 h-5 text-gray-600"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M15 19l-7-7 7-7"
+              />
             </svg>
           </button>
           <h1 class="text-lg sm:text-2xl font-bold text-gray-900 truncate">
-            {isLoading() ? "Loading..." : (email()?.subject || "(No Subject)")}
+            {isLoading() ? "Loading..." : email()?.subject || "(No Subject)"}
           </h1>
         </div>
 
@@ -140,7 +165,9 @@ export const EmailViewPage: Component = () => {
                           {msg().sender_name || msg().sender}
                         </p>
                         <Show when={msg().sender_name}>
-                          <p class="text-xs sm:text-sm text-main-gray break-all">{msg().sender}</p>
+                          <p class="text-xs sm:text-sm text-main-gray break-all">
+                            {msg().sender}
+                          </p>
                         </Show>
                       </div>
                     </div>
@@ -161,10 +188,7 @@ export const EmailViewPage: Component = () => {
                       </pre>
                     }
                   >
-                    <div
-                      class="prose prose-sm sm:prose max-w-none text-gray-800 overflow-x-auto"
-                      innerHTML={msg().body_html!}
-                    />
+                    <SafeEmailRenderer html={msg().body_html!} />
                   </Show>
                 </div>
 

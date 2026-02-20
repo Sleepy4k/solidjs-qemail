@@ -12,7 +12,7 @@ export interface ApiError {
   details?: any;
 }
 
-export type LoadingState = 'idle' | 'loading' | 'success' | 'error';
+export type LoadingState = "idle" | "loading" | "success" | "error";
 
 export interface AsyncState<T> {
   data: T | null;

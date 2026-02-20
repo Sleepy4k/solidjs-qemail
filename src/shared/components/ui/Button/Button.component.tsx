@@ -1,7 +1,12 @@
-import { Component, JSX, splitProps, mergeProps } from 'solid-js';
+import { Component, JSX, splitProps, mergeProps } from "solid-js";
 
-export type ButtonVariant = 'primary' | 'secondary' | 'danger' | 'success' | 'ghost';
-export type ButtonSize = 'sm' | 'md' | 'lg';
+export type ButtonVariant =
+  | "primary"
+  | "secondary"
+  | "danger"
+  | "success"
+  | "ghost";
+export type ButtonSize = "sm" | "md" | "lg";
 
 export interface ButtonProps extends JSX.ButtonHTMLAttributes<HTMLButtonElement> {
   variant?: ButtonVariant;
@@ -9,31 +14,31 @@ export interface ButtonProps extends JSX.ButtonHTMLAttributes<HTMLButtonElement>
   loading?: boolean;
   fullWidth?: boolean;
   icon?: JSX.Element;
-  iconPosition?: 'left' | 'right';
+  iconPosition?: "left" | "right";
 }
 
 const Button: Component<ButtonProps> = (props) => {
   const merged = mergeProps(
     {
-      variant: 'primary' as ButtonVariant,
-      size: 'md' as ButtonSize,
+      variant: "primary" as ButtonVariant,
+      size: "md" as ButtonSize,
       loading: false,
       fullWidth: false,
-      iconPosition: 'left' as 'left' | 'right',
+      iconPosition: "left" as "left" | "right",
     },
-    props
+    props,
   );
 
   const [local, others] = splitProps(merged, [
-    'variant',
-    'size',
-    'loading',
-    'fullWidth',
-    'icon',
-    'iconPosition',
-    'children',
-    'class',
-    'disabled',
+    "variant",
+    "size",
+    "loading",
+    "fullWidth",
+    "icon",
+    "iconPosition",
+    "children",
+    "class",
+    "disabled",
   ]);
 
   let buttonRef: HTMLButtonElement | undefined;
@@ -49,21 +54,23 @@ const Button: Component<ButtonProps> = (props) => {
   };
 
   const sizeClasses: Record<ButtonSize, string> = {
-    sm: 'px-3 py-1.5 text-sm',
-    md: 'px-4 py-2 text-base',
-    lg: 'px-6 py-3 text-lg',
+    sm: "px-3 py-1.5 text-sm",
+    md: "px-4 py-2 text-base",
+    lg: "px-6 py-3 text-lg",
   };
 
   const baseClasses =
     "inline-flex items-center justify-center font-medium rounded-lg transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed focus:outline-none focus:ring-2 focus:ring-main-red focus:ring-offset-2";
 
-  const handleClick = (e: MouseEvent & { currentTarget: HTMLButtonElement }) => {
+  const handleClick = (
+    e: MouseEvent & { currentTarget: HTMLButtonElement },
+  ) => {
     if (buttonRef) {
       const rect = buttonRef.getBoundingClientRect();
       const x = e.clientX - rect.left;
       const y = e.clientY - rect.top;
-      
-      const ripple = document.createElement('span');
+
+      const ripple = document.createElement("span");
       ripple.style.cssText = `
         position: absolute;
         border-radius: 50%;
@@ -76,7 +83,7 @@ const Button: Component<ButtonProps> = (props) => {
         animation: ripple 0.6s ease-out;
         pointer-events: none;
       `;
-      
+
       buttonRef.appendChild(ripple);
       setTimeout(() => ripple.remove(), 600);
     }
@@ -93,8 +100,8 @@ const Button: Component<ButtonProps> = (props) => {
         ${baseClasses}
         ${variantClasses[local.variant]}
         ${sizeClasses[local.size]}
-        ${local.fullWidth ? 'w-full' : ''}
-        ${local.class || ''}
+        ${local.fullWidth ? "w-full" : ""}
+        ${local.class || ""}
         relative overflow-hidden
       `}
       disabled={local.disabled || local.loading}
@@ -122,14 +129,14 @@ const Button: Component<ButtonProps> = (props) => {
           />
         </svg>
       )}
-      
-      {!local.loading && local.icon && local.iconPosition === 'left' && (
+
+      {!local.loading && local.icon && local.iconPosition === "left" && (
         <span class="mr-2 flex items-center">{local.icon}</span>
       )}
-      
+
       <span>{local.children}</span>
-      
-      {!local.loading && local.icon && local.iconPosition === 'right' && (
+
+      {!local.loading && local.icon && local.iconPosition === "right" && (
         <span class="ml-2 flex items-center">{local.icon}</span>
       )}
     </button>

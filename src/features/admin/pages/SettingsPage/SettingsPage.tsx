@@ -1,29 +1,40 @@
-import { Component, createResource, Show, For, createSignal, onMount } from 'solid-js';
-import gsap from 'gsap';
-import { Card } from '../../../../shared/components/ui/Card';
-import { Button } from '../../../../shared/components/ui/Button';
-import { Input } from '../../../../shared/components/ui/Input';
-import { Alert } from '../../../../shared/components/ui/Alert';
-import { adminApiService } from '../../services/admin-api.service';
-import type { Setting } from '../../../../shared/types/admin.types';
+import {
+  Component,
+  createResource,
+  Show,
+  For,
+  createSignal,
+  onMount,
+} from "solid-js";
+import gsap from "gsap";
+import { Card } from "../../../../shared/components/ui/Card";
+import { Button } from "../../../../shared/components/ui/Button";
+import { Input } from "../../../../shared/components/ui/Input";
+import { Alert } from "../../../../shared/components/ui/Alert";
+import { adminApiService } from "../../services/admin-api.service";
+import type { Setting } from "../../../../shared/types/admin.types";
 
 const SettingsPage: Component = () => {
-  const [editingSetting, setEditingSetting] = createSignal<Setting | null>(null);
-  const [editValue, setEditValue] = createSignal('');
+  const [editingSetting, setEditingSetting] = createSignal<Setting | null>(
+    null,
+  );
+  const [editValue, setEditValue] = createSignal("");
   const [isLoading, setIsLoading] = createSignal(false);
-  const [error, setError] = createSignal('');
-  const [success, setSuccess] = createSignal('');
+  const [error, setError] = createSignal("");
+  const [success, setSuccess] = createSignal("");
 
   let headerRef: HTMLDivElement | undefined;
 
-  const [settings, { refetch }] = createResource(() => adminApiService.getSettings());
+  const [settings, { refetch }] = createResource(() =>
+    adminApiService.getSettings(),
+  );
 
   onMount(() => {
     if (headerRef) {
       gsap.fromTo(
         headerRef,
         { opacity: 0, y: 20 },
-        { opacity: 1, y: 0, duration: 0.6, ease: 'power2.out' }
+        { opacity: 1, y: 0, duration: 0.6, ease: "power2.out" },
       );
     }
   });
@@ -35,7 +46,7 @@ const SettingsPage: Component = () => {
 
   const handleCancel = () => {
     setEditingSetting(null);
-    setEditValue('');
+    setEditValue("");
   };
 
   const handleSave = async () => {
@@ -43,8 +54,8 @@ const SettingsPage: Component = () => {
     if (!setting) return;
 
     setIsLoading(true);
-    setError('');
-    setSuccess('');
+    setError("");
+    setSuccess("");
 
     try {
       await adminApiService.updateSetting({
@@ -52,11 +63,11 @@ const SettingsPage: Component = () => {
         value: editValue(),
       });
 
-      setSuccess('Setting updated successfully!');
+      setSuccess("Setting updated successfully!");
       setEditingSetting(null);
       refetch();
     } catch (err: any) {
-      setError(err.message || 'Failed to update setting');
+      setError(err.message || "Failed to update setting");
     } finally {
       setIsLoading(false);
     }
@@ -64,13 +75,15 @@ const SettingsPage: Component = () => {
 
   const formatDate = (dateStr: string) => {
     const date = new Date(dateStr);
-    return date.toLocaleDateString() + ' ' + date.toLocaleTimeString();
+    return date.toLocaleDateString() + " " + date.toLocaleTimeString();
   };
 
   return (
     <div class="space-y-6">
       <div ref={headerRef}>
-        <h1 class="text-xl sm:text-3xl font-bold text-gray-900">System Settings</h1>
+        <h1 class="text-xl sm:text-3xl font-bold text-gray-900">
+          System Settings
+        </h1>
         <p class="mt-1 sm:mt-2 text-xs sm:text-base text-main-gray">
           Configure application settings and preferences
         </p>
@@ -81,7 +94,11 @@ const SettingsPage: Component = () => {
       </Show>
 
       <Show when={success()}>
-        <Alert type="success" message={success()} onClose={() => setSuccess("")} />
+        <Alert
+          type="success"
+          message={success()}
+          onClose={() => setSuccess("")}
+        />
       </Show>
 
       <Show
@@ -104,9 +121,24 @@ const SettingsPage: Component = () => {
               fallback={
                 <div class="p-10 sm:p-12 text-center">
                   <div class="w-14 h-14 mx-auto mb-4 rounded-full bg-gray-100 flex items-center justify-center">
-                    <svg class="w-7 h-7 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                    <svg
+                      class="w-7 h-7 text-gray-400"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                        d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"
+                      />
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                        d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
+                      />
                     </svg>
                   </div>
                   <p class="text-main-gray">No settings found</p>
@@ -143,10 +175,20 @@ const SettingsPage: Component = () => {
                             disabled={isLoading()}
                           />
                           <div class="flex gap-2">
-                            <Button size="sm" variant="primary" onClick={handleSave} disabled={isLoading()}>
+                            <Button
+                              size="sm"
+                              variant="primary"
+                              onClick={handleSave}
+                              disabled={isLoading()}
+                            >
                               {isLoading() ? "Saving..." : "Save"}
                             </Button>
-                            <Button size="sm" variant="secondary" onClick={handleCancel} disabled={isLoading()}>
+                            <Button
+                              size="sm"
+                              variant="secondary"
+                              onClick={handleCancel}
+                              disabled={isLoading()}
+                            >
                               Cancel
                             </Button>
                           </div>
@@ -175,9 +217,9 @@ const SettingsPage: Component = () => {
       <div class="p-4 bg-blue-50 border border-blue-200 rounded-xl">
         <h3 class="text-sm font-semibold text-blue-900 mb-1">About Settings</h3>
         <p class="text-xs text-blue-700">
-          These settings control various aspects of the application. Be
-          careful when modifying values as incorrect settings may affect
-          system functionality.
+          These settings control various aspects of the application. Be careful
+          when modifying values as incorrect settings may affect system
+          functionality.
         </p>
       </div>
     </div>

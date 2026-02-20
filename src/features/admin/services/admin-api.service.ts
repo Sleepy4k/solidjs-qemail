@@ -17,13 +17,24 @@ import type {
 class AdminApiService {
   private readonly baseUrl = "/v1/admin";
 
-  async getHealth(): Promise<{ status: string; uptime: number; timestamp: string }> {
-    const response = await httpService.get<{ status: string; uptime: number; timestamp: string }>("/health");
+  async getHealth(): Promise<{
+    status: string;
+    uptime: number;
+    timestamp: string;
+  }> {
+    const response = await httpService.get<{
+      status: string;
+      uptime: number;
+      timestamp: string;
+    }>("/health");
     return response.data;
   }
 
   async login(data: AdminLoginRequest): Promise<AdminLoginResponse> {
-    const response = await httpService.post<AdminLoginResponse>(`${this.baseUrl}/login`, data);
+    const response = await httpService.post<AdminLoginResponse>(
+      `${this.baseUrl}/login`,
+      data,
+    );
     return response.data;
   }
 
@@ -33,17 +44,28 @@ class AdminApiService {
   }
 
   async getDomains(): Promise<AdminDomain[]> {
-    const response = await httpService.get<AdminDomain[]>(`${this.baseUrl}/domains`);
+    const response = await httpService.get<AdminDomain[]>(
+      `${this.baseUrl}/domains`,
+    );
     return response.data;
   }
 
   async createDomain(data: CreateDomainRequest): Promise<AdminDomain> {
-    const response = await httpService.post<AdminDomain>(`${this.baseUrl}/domains`, data);
+    const response = await httpService.post<AdminDomain>(
+      `${this.baseUrl}/domains`,
+      data,
+    );
     return response.data;
   }
 
-  async updateDomain(id: number, data: UpdateDomainRequest): Promise<AdminDomain> {
-    const response = await httpService.patch<AdminDomain>(`${this.baseUrl}/domains/${id}`, data);
+  async updateDomain(
+    id: number,
+    data: UpdateDomainRequest,
+  ): Promise<AdminDomain> {
+    const response = await httpService.patch<AdminDomain>(
+      `${this.baseUrl}/domains/${id}`,
+      data,
+    );
     return response.data;
   }
 
@@ -57,7 +79,9 @@ class AdminApiService {
     const queryString = params
       ? `?${new URLSearchParams(params as any).toString()}`
       : "";
-    const response = await httpService.get<AdminAccountsResponse>(`${this.baseUrl}/accounts${queryString}`);
+    const response = await httpService.get<AdminAccountsResponse>(
+      `${this.baseUrl}/accounts${queryString}`,
+    );
     return response.data;
   }
 
@@ -67,30 +91,41 @@ class AdminApiService {
     });
   }
 
-  async getAccountInbox(accountId: number, params?: PaginationQuery): Promise<AdminInboxResponse> {
+  async getAccountInbox(
+    accountId: number,
+    params?: PaginationQuery,
+  ): Promise<AdminInboxResponse> {
     const queryString = params
       ? `?${new URLSearchParams(params as any).toString()}`
       : "";
     const response = await httpService.get<AdminInboxResponse>(
-      `${this.baseUrl}/accounts/${accountId}/inbox${queryString}`
+      `${this.baseUrl}/accounts/${accountId}/inbox${queryString}`,
     );
     return response.data;
   }
 
-  async getAccountMessage(accountId: number, messageId: string): Promise<AdminEmailItem> {
+  async getAccountMessage(
+    accountId: number,
+    messageId: string,
+  ): Promise<AdminEmailItem> {
     const response = await httpService.get<AdminEmailItem>(
-      `${this.baseUrl}/accounts/${accountId}/inbox/${messageId}`
+      `${this.baseUrl}/accounts/${accountId}/inbox/${messageId}`,
     );
     return response.data;
   }
 
   async getSettings(): Promise<Setting[]> {
-    const response = await httpService.get<Setting[]>(`${this.baseUrl}/settings`);
+    const response = await httpService.get<Setting[]>(
+      `${this.baseUrl}/settings`,
+    );
     return response.data;
   }
 
   async updateSetting(data: UpdateSettingRequest): Promise<Setting> {
-    const response = await httpService.put<Setting>(`${this.baseUrl}/settings`, data);
+    const response = await httpService.put<Setting>(
+      `${this.baseUrl}/settings`,
+      data,
+    );
     return response.data;
   }
 }

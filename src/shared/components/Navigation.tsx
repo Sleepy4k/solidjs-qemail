@@ -1,7 +1,7 @@
-import { Component, Show, createSignal, onCleanup } from 'solid-js';
-import { Portal } from 'solid-js/web';
-import { A, useLocation } from '@solidjs/router';
-import Logo from '../../assets/images/logo.png';
+import { Component, Show, createSignal, onCleanup } from "solid-js";
+import { Portal } from "solid-js/web";
+import { A } from "@solidjs/router";
+import Logo from "../../assets/images/logo.png";
 
 interface NavigationProps {
   showAdminLink?: boolean;
@@ -11,50 +11,176 @@ interface NavigationProps {
 
 export const Navigation: Component<NavigationProps> = (props) => {
   const [menuOpen, setMenuOpen] = createSignal(false);
-  const location = useLocation();
 
-  // Close menu on route change
   const closeMenu = () => setMenuOpen(false);
 
-  // Close on Escape key
   const handleKeyDown = (e: KeyboardEvent) => {
-    if (e.key === 'Escape') closeMenu();
+    if (e.key === "Escape") closeMenu();
   };
 
-  document.addEventListener('keydown', handleKeyDown);
-  onCleanup(() => document.removeEventListener('keydown', handleKeyDown));
+  document.addEventListener("keydown", handleKeyDown);
+  onCleanup(() => document.removeEventListener("keydown", handleKeyDown));
 
-  const navLinks = () => [
-    props.showHomeLink !== false
-      ? { href: '/', label: 'Home', page: 'home', icon: <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" /></svg> }
-      : null,
-    { href: '/how-to-use', label: 'How to Use', page: 'how-to-use', icon: <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" /></svg> },
-    { href: '/about', label: 'About', page: 'about', icon: <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg> },
-    { href: '/faq', label: 'FAQ', page: 'faq', icon: <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg> },
-    { href: '/email/login', label: 'My Inbox', page: 'email-login', icon: <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" /></svg> },
-    props.showAdminLink !== false
-      ? { href: '/admin/login', label: 'Admin Panel', page: 'admin', isButton: true, icon: <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4" /></svg> }
-      : null,
-  ].filter(Boolean) as { href: string; label: string; page: string; isButton?: boolean; icon: any }[];
+  const navLinks = () =>
+    [
+      props.showHomeLink !== false
+        ? {
+            href: "/",
+            label: "Home",
+            page: "home",
+            icon: (
+              <svg
+                class="w-5 h-5 flex-shrink-0"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"
+                />
+              </svg>
+            ),
+          }
+        : null,
+      {
+        href: "/how-to-use",
+        label: "How to Use",
+        page: "how-to-use",
+        icon: (
+          <svg
+            class="w-5 h-5 flex-shrink-0"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"
+            />
+          </svg>
+        ),
+      },
+      {
+        href: "/about",
+        label: "About",
+        page: "about",
+        icon: (
+          <svg
+            class="w-5 h-5 flex-shrink-0"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+            />
+          </svg>
+        ),
+      },
+      {
+        href: "/faq",
+        label: "FAQ",
+        page: "faq",
+        icon: (
+          <svg
+            class="w-5 h-5 flex-shrink-0"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+            />
+          </svg>
+        ),
+      },
+      {
+        href: "/inbox/login",
+        label: "My Inbox",
+        page: "email-login",
+        icon: (
+          <svg
+            class="w-5 h-5 flex-shrink-0"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
+            />
+          </svg>
+        ),
+      },
+      props.showAdminLink !== false
+        ? {
+            href: "/admin/login",
+            label: "Admin Panel",
+            page: "admin",
+            isButton: true,
+            icon: (
+              <svg
+                class="w-5 h-5 flex-shrink-0"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"
+                />
+              </svg>
+            ),
+          }
+        : null,
+    ].filter(Boolean) as {
+      href: string;
+      label: string;
+      page: string;
+      isButton?: boolean;
+      icon: any;
+    }[];
 
   return (
     <>
       <nav class="bg-surface-DEFAULT border-b border-border-DEFAULT sticky top-0 z-50 backdrop-blur-sm bg-opacity-95">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div class="flex justify-between items-center h-14">
-
-            {/* Logo */}
             <A href="/" class="flex items-center gap-2 group flex-shrink-0">
               <div class="w-8 h-8 bg-gradient-to-br from-primary-500 to-primary-700 rounded-lg flex items-center justify-center transform group-hover:scale-105 transition-transform">
-                <img src={Logo} alt="QEmail Logo" class="w-4 h-4" loading="lazy" style={{ filter: 'brightness(0) invert(1)' }} />
+                <img
+                  src={Logo}
+                  alt="QEmail Logo"
+                  class="w-4 h-4"
+                  loading="lazy"
+                  style={{ filter: "brightness(0) invert(1)" }}
+                />
               </div>
               <div>
-                <h1 class="text-sm font-bold text-gray-900 leading-tight">QEmail</h1>
-                <p class="text-xs text-gray-500 leading-tight hidden sm:block">Temporary Email</p>
+                <h1 class="text-sm font-bold text-gray-900 leading-tight">
+                  QEmail
+                </h1>
+                <p class="text-xs text-gray-500 leading-tight hidden sm:block">
+                  Temporary Email
+                </p>
               </div>
             </A>
 
-            {/* Desktop nav links */}
             <div class="hidden sm:flex items-center gap-1 lg:gap-2">
               {navLinks().map((link) =>
                 link.isButton ? (
@@ -71,32 +197,54 @@ export const Navigation: Component<NavigationProps> = (props) => {
                     href={link.href}
                     onClick={closeMenu}
                     class="flex items-center gap-2 px-3 lg:px-4 py-2 rounded-lg font-medium transition-colors text-sm text-gray-700 hover:text-primary-600 hover:bg-gray-100"
-                    classList={{ 'text-primary-600 bg-primary-50': props.currentPage === link.page }}
+                    classList={{
+                      "text-primary-600 bg-primary-50":
+                        props.currentPage === link.page,
+                    }}
                   >
                     {link.icon}
                     <span>{link.label}</span>
                   </A>
-                )
+                ),
               )}
             </div>
 
-            {/* Mobile hamburger button */}
             <button
               class="sm:hidden flex items-center justify-center w-8 h-8 rounded-lg text-gray-600 hover:bg-gray-100 transition-colors"
               onClick={() => setMenuOpen(!menuOpen())}
-              aria-label={menuOpen() ? 'Close menu' : 'Open menu'}
+              aria-label={menuOpen() ? "Close menu" : "Open menu"}
               aria-expanded={menuOpen()}
             >
               <Show
                 when={menuOpen()}
                 fallback={
-                  <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+                  <svg
+                    class="w-5 h-5"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M4 6h16M4 12h16M4 18h16"
+                    />
                   </svg>
                 }
               >
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                <svg
+                  class="w-5 h-5"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M6 18L18 6M6 6l12 12"
+                  />
                 </svg>
               </Show>
             </button>
@@ -104,16 +252,14 @@ export const Navigation: Component<NavigationProps> = (props) => {
         </div>
       </nav>
 
-      {/* Mobile dropdown - rendered into document.body via Portal to escape all stacking contexts */}
       <Show when={menuOpen()}>
         <Portal>
-          {/* Backdrop - covers full screen below nav */}
           <div
             class="fixed inset-0 sm:hidden bg-black/20"
             style={{ "z-index": "9998", top: "56px" }}
             onClick={closeMenu}
           />
-          {/* Dropdown panel - sits directly below nav */}
+
           <div
             class="fixed left-0 right-0 sm:hidden bg-white border-b border-gray-200 shadow-xl"
             style={{ "z-index": "9999", top: "56px" }}
@@ -134,12 +280,15 @@ export const Navigation: Component<NavigationProps> = (props) => {
                     href={link.href}
                     onClick={closeMenu}
                     class="flex items-center gap-3 w-full px-4 py-3 rounded-xl font-medium transition-colors text-gray-700 hover:bg-gray-100 text-sm"
-                    classList={{ 'bg-primary-50 text-primary-600': props.currentPage === link.page }}
+                    classList={{
+                      "bg-primary-50 text-primary-600":
+                        props.currentPage === link.page,
+                    }}
                   >
                     {link.icon}
                     <span>{link.label}</span>
                   </A>
-                )
+                ),
               )}
             </div>
           </div>

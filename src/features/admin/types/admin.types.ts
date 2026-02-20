@@ -63,7 +63,7 @@ export interface CfRule {
 export interface AdminAccount {
   id: string;
   address: string;
-  type: 'temporary' | 'custom';
+  type: "temporary" | "custom";
   ip_address: string;
   created_at: string;
   expires_at?: string;
@@ -91,11 +91,11 @@ export interface UpdateSettingRequest {
 
 export interface AdminLog {
   id: number;
-  actor_type: 'user' | 'admin' | 'system';
+  actor_type: "user" | "admin" | "system";
   actor_id: string | null;
   actor_label: string;
   action: string;
-  status: 'success' | 'failure';
+  status: "success" | "failure";
   resource_type: string;
   resource_id: string;
   meta: Record<string, unknown>;
@@ -116,7 +116,7 @@ export interface AdminLogsResponse {
   meta: AdminLogsMeta;
 }
 
-export type LogSortField = 'created_at' | 'action' | 'actor_label' | 'status';
-export type SortDir = 'asc' | 'desc';
-export type LogActorType = 'user' | 'admin' | 'system';
-export type LogStatus = 'success' | 'failure';
+export type LogSortField = "created_at" | "action" | "actor_label" | "status";
+export type SortDir = "asc" | "desc";
+export type LogActorType = "user" | "admin" | "system";
+export type LogStatus = "success" | "failure";

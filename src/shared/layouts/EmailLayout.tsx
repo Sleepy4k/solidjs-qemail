@@ -4,13 +4,19 @@ import { Navigation } from "../components/Navigation";
 interface EmailLayoutProps {
   children: JSX.Element;
   showAdminLink?: boolean;
-  currentPage?: "landing" | "inbox" | "email-login" | "home" | "about" | "how-to-use" | "faq";
+  currentPage?:
+    | "landing"
+    | "inbox"
+    | "email-login"
+    | "home"
+    | "about"
+    | "how-to-use"
+    | "faq";
 }
 
 export const EmailLayout: Component<EmailLayoutProps> = (props) => {
   return (
     <div class="min-h-screen bg-background-DEFAULT relative">
-      {/* Background Pattern */}
       <div class="fixed inset-0 opacity-5 pointer-events-none z-0">
         <div
           class="absolute inset-0"
@@ -20,16 +26,12 @@ export const EmailLayout: Component<EmailLayoutProps> = (props) => {
         />
       </div>
 
-      {/* Navigation */}
       <Navigation
         showAdminLink={props.showAdminLink ?? true}
         currentPage={props.currentPage}
       />
 
-      {/* Content */}
-      <div class="relative z-10">
-        {props.children}
-      </div>
+      <div class="relative z-10">{props.children}</div>
     </div>
   );
 };

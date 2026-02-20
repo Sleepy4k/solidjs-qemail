@@ -1,6 +1,6 @@
-import { Component, JSX } from 'solid-js';
-import { Card } from '../../../../shared/components/ui';
-import { useAnimation } from '../../../../shared/hooks/use-animation.hook';
+import { Component, JSX } from "solid-js";
+import { Card } from "../../../../shared/components/ui";
+import { useAnimation } from "../../../../shared/hooks/use-animation.hook";
 
 export interface StatsCardProps {
   label: string;
@@ -14,7 +14,7 @@ const StatsCard: Component<StatsCardProps> = (props) => {
   let cardRef: HTMLDivElement | undefined;
 
   useAnimation(() => cardRef, {
-    animation: 'scaleIn',
+    animation: "scaleIn",
     duration: 0.5,
     delay: props.delay || 0,
   });
@@ -24,9 +24,7 @@ const StatsCard: Component<StatsCardProps> = (props) => {
       <Card hover padding="lg" shadow="md">
         <div class="flex items-center justify-between">
           <div class="flex-1">
-            <p class="text-sm font-medium text-gray-600 mb-2">
-              {props.label}
-            </p>
+            <p class="text-sm font-medium text-gray-600 mb-2">{props.label}</p>
             <p class="text-4xl font-bold text-gray-900 tabular-nums">
               {props.value}
             </p>

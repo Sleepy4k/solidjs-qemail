@@ -1,6 +1,7 @@
-import { Component, createResource, createSignal, Show, For } from 'solid-js';
-import { DomainList, DomainForm, DomainFormData, DomainEditForm, DomainEditFormData } from '../../components';
-import { Card, Button, Alert, Modal } from '../../../../shared/components/ui';
+import { Component, createResource, createSignal, createMemo, Show, For } from 'solid-js';
+import { DomainList, DomainForm, DomainEditForm } from '../../components';
+import type { DomainFormData, DomainEditFormData } from '../../components';
+import { Card, Button, Alert, Modal, Input } from '../../../../shared/components/ui';
 import { ConfirmDialog, useConfirmDialog } from '../../../../shared/components/ConfirmDialog';
 import { adminService } from '../../services/admin.service';
 import { useAnimation } from '../../../../shared/hooks/use-animation.hook';
@@ -11,30 +12,25 @@ const DomainsPage: Component = () => {
 
   let headerRef: HTMLDivElement | undefined;
 
-  // Add domain modal
   const [isModalOpen, setIsModalOpen] = createSignal(false);
   const [isLoading, setIsLoading] = createSignal(false);
+  const [isRefreshing, setIsRefreshing] = createSignal(false);
   const [errorMessage, setErrorMessage] = createSignal<string | null>(null);
   const [successMessage, setSuccessMessage] = createSignal<string | null>(null);
   const { isOpen: isConfirmOpen, config: confirmConfig, confirm, handleConfirm, handleCancel } = useConfirmDialog();
 
-  const [formData, setFormData] = createSignal<DomainFormData>({
-    name: '',
-    cloudflare_zone_id: '',
+  const [searchDomain, setSearchDomain] = createSignal('');
+
+  const filteredDomains = createMemo(() => {
+    const q = searchDomain().toLowerCase().trim();
+    const list = domains() ?? [];
+    return q ? list.filter((d) => d.name.toLowerCase().includes(q)) : list;
   });
 
-  // Edit config modal
   const [isEditConfigOpen, setIsEditConfigOpen] = createSignal(false);
   const [editingDomain, setEditingDomain] = createSignal<AdminDomain | null>(null);
   const [isEditLoading, setIsEditLoading] = createSignal(false);
-  const [editFormData, setEditFormData] = createSignal<DomainEditFormData>({
-    cloudflare_zone_id: '',
-    cf_api_token: '',
-    cf_account_id: '',
-    cf_worker_name: '',
-  });
 
-  // CF Rules modal
   const [isCfRulesOpen, setIsCfRulesOpen] = createSignal(false);
   const [cfRulesDomain, setCfRulesDomain] = createSignal<AdminDomain | null>(null);
   const [cfRules, setCfRules] = createSignal<CfRule[]>([]);
@@ -46,10 +42,17 @@ const DomainsPage: Component = () => {
     duration: 0.6,
   });
 
-  // --- Add domain ---
+  const handleRefresh = async () => {
+    setIsRefreshing(true);
+    try {
+      await refetch();
+    } finally {
+      setIsRefreshing(false);
+    }
+  };
+
   const handleOpenModal = () => {
     setIsModalOpen(true);
-    setFormData({ name: '', cloudflare_zone_id: '' });
     setErrorMessage(null);
     setSuccessMessage(null);
   };
@@ -58,12 +61,7 @@ const DomainsPage: Component = () => {
     setIsModalOpen(false);
   };
 
-  const handleFormChange = (field: keyof DomainFormData, value: string) => {
-    setFormData(prev => ({ ...prev, [field]: value }));
-  };
-
-  const handleSubmit = async () => {
-    const data = formData();
+  const handleSubmit = async (data: DomainFormData) => {
     if (!data.name.trim()) {
       setErrorMessage('Domain name is required');
       return;
@@ -87,7 +85,6 @@ const DomainsPage: Component = () => {
     }
   };
 
-  // --- Toggle active ---
   const handleToggleActive = (domain: AdminDomain) => {
     const action = domain.is_active ? 'disable' : 'enable';
     confirm({
@@ -112,15 +109,8 @@ const DomainsPage: Component = () => {
     });
   };
 
-  // --- Edit config ---
   const handleOpenEditConfig = (domain: AdminDomain) => {
     setEditingDomain(domain);
-    setEditFormData({
-      cloudflare_zone_id: domain.cloudflare_zone_id || '',
-      cf_api_token: domain.cf_api_token || '',
-      cf_account_id: domain.cf_account_id || '',
-      cf_worker_name: domain.cf_worker_name || '',
-    });
     setIsEditConfigOpen(true);
   };
 
@@ -129,17 +119,12 @@ const DomainsPage: Component = () => {
     setEditingDomain(null);
   };
 
-  const handleEditFormChange = (field: keyof DomainEditFormData, value: string) => {
-    setEditFormData(prev => ({ ...prev, [field]: value }));
-  };
-
-  const handleEditSubmit = async () => {
+  const handleEditSubmit = async (data: DomainEditFormData) => {
     const domain = editingDomain();
     if (!domain) return;
 
     setIsEditLoading(true);
     try {
-      const data = editFormData();
       await adminService.updateDomain(domain.id, {
         cloudflare_zone_id: data.cloudflare_zone_id.trim() || undefined,
         cf_api_token: data.cf_api_token.trim() || undefined,
@@ -156,7 +141,6 @@ const DomainsPage: Component = () => {
     }
   };
 
-  // --- CF Rules ---
   const handleViewCfRules = async (domain: AdminDomain) => {
     setCfRulesDomain(domain);
     setCfRules([]);
@@ -179,7 +163,6 @@ const DomainsPage: Component = () => {
     setCfRulesDomain(null);
   };
 
-  // --- Delete ---
   const handleDelete = (domain: AdminDomain) => {
     confirm({
       title: 'Delete Domain',
@@ -206,17 +189,41 @@ const DomainsPage: Component = () => {
             Manage email domains for your temporary email service
           </p>
         </div>
-        <Button
-          onClick={handleOpenModal}
-          class="self-start sm:self-auto flex-shrink-0"
-          icon={
-            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
-            </svg>
-          }
-        >
-          Add Domain
-        </Button>
+        <div class="flex items-center gap-2 self-start sm:self-auto">
+          <Button
+            variant="secondary"
+            onClick={handleRefresh}
+            disabled={isRefreshing() || domains.loading}
+            icon={
+              <svg
+                class={`w-4 h-4 ${isRefreshing() ? 'animate-spin' : ''}`}
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
+                />
+              </svg>
+            }
+          >
+            {isRefreshing() ? 'Refreshing...' : 'Refresh'}
+          </Button>
+          <Button
+            onClick={handleOpenModal}
+            class="flex-shrink-0"
+            icon={
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+              </svg>
+            }
+          >
+            Add Domain
+          </Button>
+        </div>
       </div>
 
       <Show when={errorMessage()}>
@@ -226,6 +233,33 @@ const DomainsPage: Component = () => {
       <Show when={successMessage()}>
         <Alert type="success" message={successMessage()!} onClose={() => setSuccessMessage(null)} />
       </Show>
+
+      <Card padding="md">
+        <div class="flex items-center gap-3">
+          <div class="flex-1">
+            <Input
+              placeholder="Search domains by name..."
+              value={searchDomain()}
+              onInput={(v) => setSearchDomain(v)}
+              leftIcon={
+                <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                </svg>
+              }
+            />
+          </div>
+          <Show when={searchDomain()}>
+            <Button variant="secondary" size="sm" onClick={() => setSearchDomain('')}>
+              Clear
+            </Button>
+          </Show>
+          <Show when={!domains.loading}>
+            <span class="text-xs text-gray-500 whitespace-nowrap">
+              {filteredDomains().length} / {(domains() ?? []).length} domains
+            </span>
+          </Show>
+        </div>
+      </Card>
 
       <Show
         when={!domains.loading && domains()}
@@ -241,7 +275,7 @@ const DomainsPage: Component = () => {
         }
       >
         <DomainList
-          domains={domains() || []}
+          domains={filteredDomains()}
           onToggleActive={handleToggleActive}
           onEditConfig={handleOpenEditConfig}
           onViewCfRules={handleViewCfRules}
@@ -250,18 +284,14 @@ const DomainsPage: Component = () => {
         />
       </Show>
 
-      {/* Modal: Add Domain */}
       <Modal isOpen={isModalOpen()} onClose={handleCloseModal} title="Add New Domain" size="md">
         <DomainForm
-          data={formData()}
           loading={isLoading()}
           onSubmit={handleSubmit}
           onCancel={handleCloseModal}
-          onChange={handleFormChange}
         />
       </Modal>
 
-      {/* Modal: Edit CF Config */}
       <Modal
         isOpen={isEditConfigOpen()}
         onClose={handleCloseEditConfig}
@@ -271,16 +301,19 @@ const DomainsPage: Component = () => {
         <Show when={editingDomain()}>
           <DomainEditForm
             domainName={editingDomain()!.name}
-            data={editFormData()}
+            initialData={{
+              cloudflare_zone_id: editingDomain()!.cloudflare_zone_id || '',
+              cf_api_token: editingDomain()!.cf_api_token || '',
+              cf_account_id: editingDomain()!.cf_account_id || '',
+              cf_worker_name: editingDomain()!.cf_worker_name || '',
+            }}
             loading={isEditLoading()}
             onSubmit={handleEditSubmit}
             onCancel={handleCloseEditConfig}
-            onChange={handleEditFormChange}
           />
         </Show>
       </Modal>
 
-      {/* Modal: CF Rules */}
       <Modal
         isOpen={isCfRulesOpen()}
         onClose={handleCloseCfRules}
@@ -316,7 +349,6 @@ const DomainsPage: Component = () => {
             <For each={cfRules()}>
               {(rule) => (
                 <div class="flex items-start gap-3 p-3 rounded-lg border border-gray-200 bg-gray-50">
-                  {/* Status dot */}
                   <div class={`mt-1 w-2.5 h-2.5 rounded-full flex-shrink-0 ${rule.enabled ? 'bg-green-500' : 'bg-gray-400'}`} />
                   <div class="flex-1 min-w-0 space-y-1">
                     <div class="flex items-center gap-2 flex-wrap">
@@ -362,4 +394,3 @@ const DomainsPage: Component = () => {
 };
 
 export default DomainsPage;
-

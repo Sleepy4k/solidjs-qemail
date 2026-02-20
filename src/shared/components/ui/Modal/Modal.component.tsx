@@ -1,12 +1,12 @@
-import { Component, JSX, Show, onMount, onCleanup } from 'solid-js';
-import { Portal } from 'solid-js/web';
-import gsap from 'gsap';
+import { Component, JSX, Show, onMount, onCleanup } from "solid-js";
+import { Portal } from "solid-js/web";
+import gsap from "gsap";
 
 export interface ModalProps {
   isOpen: boolean;
   onClose: () => void;
   title?: string;
-  size?: 'sm' | 'md' | 'lg' | 'xl';
+  size?: "sm" | "md" | "lg" | "xl";
   children: JSX.Element;
   footer?: JSX.Element;
 }
@@ -16,37 +16,33 @@ const Modal: Component<ModalProps> = (props) => {
   let contentRef: HTMLDivElement | undefined;
 
   const sizeClasses = {
-    sm: 'max-w-md',
-    md: 'max-w-lg',
-    lg: 'max-w-2xl',
-    xl: 'max-w-4xl',
+    sm: "max-w-md",
+    md: "max-w-lg",
+    lg: "max-w-2xl",
+    xl: "max-w-4xl",
   };
 
   const handleEscape = (e: KeyboardEvent) => {
-    if (e.key === 'Escape' && props.isOpen) {
+    if (e.key === "Escape" && props.isOpen) {
       props.onClose();
     }
   };
 
   onMount(() => {
-    document.addEventListener('keydown', handleEscape);
+    document.addEventListener("keydown", handleEscape);
   });
 
   onCleanup(() => {
-    document.removeEventListener('keydown', handleEscape);
+    document.removeEventListener("keydown", handleEscape);
   });
 
   onMount(() => {
     if (props.isOpen && overlayRef && contentRef) {
-      gsap.fromTo(
-        overlayRef,
-        { opacity: 0 },
-        { opacity: 1, duration: 0.2 }
-      );
+      gsap.fromTo(overlayRef, { opacity: 0 }, { opacity: 1, duration: 0.2 });
       gsap.fromTo(
         contentRef,
         { opacity: 0, scale: 0.9, y: -20 },
-        { opacity: 1, scale: 1, y: 0, duration: 0.3, ease: 'back.out(1.7)' }
+        { opacity: 1, scale: 1, y: 0, duration: 0.3, ease: "back.out(1.7)" },
       );
     }
   });
@@ -66,7 +62,7 @@ const Modal: Component<ModalProps> = (props) => {
               ref={contentRef}
               class={`
                 relative bg-white rounded-xl shadow-2xl w-full
-                ${sizeClasses[props.size || 'md']}
+                ${sizeClasses[props.size || "md"]}
                 transform transition-all
               `}
               onClick={(e) => e.stopPropagation()}
@@ -79,15 +75,23 @@ const Modal: Component<ModalProps> = (props) => {
                   onClick={props.onClose}
                   class="text-gray-400 hover:text-gray-600 transition-colors"
                 >
-                  <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                  <svg
+                    class="w-6 h-6"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M6 18L18 6M6 6l12 12"
+                    />
                   </svg>
                 </button>
               </div>
 
-              <div class="p-6">
-                {props.children}
-              </div>
+              <div class="p-6">{props.children}</div>
 
               <Show when={props.footer}>
                 <div class="flex items-center justify-end gap-3 p-6 border-t border-gray-200 bg-gray-50 rounded-b-xl">
@@ -103,3 +107,4 @@ const Modal: Component<ModalProps> = (props) => {
 };
 
 export default Modal;
+

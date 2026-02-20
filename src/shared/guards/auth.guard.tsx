@@ -1,7 +1,7 @@
-import { Component, JSX, onMount } from 'solid-js';
-import { useNavigate } from '@solidjs/router';
-import { adminStore } from '../../features/admin/stores/admin.store';
-import { ROUTES } from '../constants/routes.constant';
+import { Component, JSX, onMount } from "solid-js";
+import { useNavigate } from "@solidjs/router";
+import { adminStore } from "../../features/admin/stores/admin.store";
+import { ROUTES } from "../constants/routes.constant";
 
 export interface GuardProps {
   children: JSX.Element;

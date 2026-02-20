@@ -1,4 +1,4 @@
-import { Component, createSignal, onMount, Show, For } from "solid-js";
+import { Component, createSignal, createMemo, onMount, Show } from "solid-js";
 import { useNavigate } from "@solidjs/router";
 import gsap from "gsap";
 import { emailService } from "../../../../shared/services/email.service";
@@ -8,19 +8,25 @@ import { Button } from "../../../../shared/components/ui/Button";
 import { Card } from "../../../../shared/components/ui/Card";
 import { Input } from "../../../../shared/components/ui/Input";
 import { Alert } from "../../../../shared/components/ui/Alert";
+import { SearchableSelect } from "../../../../shared/components/ui/SearchableSelect";
 import { EmailLayout } from "../../../../shared/layouts/EmailLayout";
 
 export const EmailLoginPage: Component = () => {
   const navigate = useNavigate();
 
+  let usernameRef: HTMLInputElement | undefined;
+  let passwordRef: HTMLInputElement | undefined;
+
   const [domains, setDomains] = createSignal<Domain[]>([]);
   const [selectedDomainId, setSelectedDomainId] = createSignal<number>(0);
-  const [username, setUsername] = createSignal("");
-  const [password, setPassword] = createSignal("");
   const [isLoading, setIsLoading] = createSignal(false);
   const [error, setError] = createSignal("");
 
   let cardRef: HTMLDivElement | undefined;
+
+  const domainOptions = createMemo(() =>
+    domains().map((d) => ({ value: d.id, label: `@${d.name}` })),
+  );
 
   onMount(async () => {
     if (emailStore.isAuthenticated()) {
@@ -32,7 +38,7 @@ export const EmailLoginPage: Component = () => {
       gsap.fromTo(
         cardRef,
         { opacity: 0, y: 20, scale: 0.95 },
-        { opacity: 1, y: 0, scale: 1, duration: 0.6, ease: "power2.out" }
+        { opacity: 1, y: 0, scale: 1, duration: 0.6, ease: "power2.out" },
       );
     }
 
@@ -42,7 +48,7 @@ export const EmailLoginPage: Component = () => {
       if (domainsData.length > 0) {
         setSelectedDomainId(domainsData[0].id);
       }
-    } catch (err) {
+    } catch {
       setError("Failed to load domains");
     }
   });
@@ -51,7 +57,10 @@ export const EmailLoginPage: Component = () => {
     e.preventDefault();
     setError("");
 
-    if (!username() || !password()) {
+    const username = usernameRef?.value.trim() ?? "";
+    const password = passwordRef?.value ?? "";
+
+    if (!username || !password) {
       setError("Please enter username and password");
       return;
     }
@@ -61,21 +70,17 @@ export const EmailLoginPage: Component = () => {
       return;
     }
 
-    const selectedDomain = domains().find(d => d.id === selectedDomainId());
+    const selectedDomain = domains().find((d) => d.id === selectedDomainId());
     if (!selectedDomain) {
       setError("Invalid domain selected");
       return;
     }
 
-    const email = `${username()}@${selectedDomain.name}`;
-
+    const email = `${username}@${selectedDomain.name}`;
     setIsLoading(true);
 
     try {
-      const response = await emailService.loginEmail({
-        email: email,
-        password: password(),
-      });
+      const response = await emailService.loginEmail({ email, password });
 
       emailStore.setSession({
         email: response.email,
@@ -96,92 +101,82 @@ export const EmailLoginPage: Component = () => {
     <EmailLayout currentPage="email-login">
       <div class="min-h-[calc(100vh-64px)] flex items-center justify-center px-4 py-8">
         <div class="w-full max-w-md">
-          <Card>
-            <div class="mb-8 text-center">
-              <h1 class="text-3xl font-bold text-gray-900 mb-2">
-                Access Your Inbox
-              </h1>
-              <p class="text-main-gray">
-                Login with your temporary email credentials
-              </p>
-            </div>
+          <div ref={cardRef}>
+            <Card>
+              <div class="mb-8 text-center">
+                <h1 class="text-3xl font-bold text-gray-900 mb-2">
+                  Access Your Inbox
+                </h1>
+                <p class="text-main-gray">
+                  Login with your temporary email credentials
+                </p>
+              </div>
 
-            <form onSubmit={handleSubmit} class="space-y-6">
-              {error() && (
-                <Alert
-                  type="error"
-                  message={error()}
-                  onClose={() => setError("")}
+              <form onSubmit={handleSubmit} class="space-y-5">
+                <Show when={error()}>
+                  <Alert
+                    type="error"
+                    message={error()}
+                    onClose={() => setError("")}
+                  />
+                </Show>
+
+                <Input
+                  ref={usernameRef}
+                  label="Username"
+                  type="text"
+                  placeholder="your-username"
+                  required
+                  disabled={isLoading()}
                 />
-              )}
 
-              <Input
-                label="Username"
-                type="text"
-                placeholder="your-username"
-                value={username()}
-                onInput={(value) => setUsername(value)}
-                required
-                disabled={isLoading()}
-              />
-
-              <Show
-                when={domains().length > 0}
-                fallback={
-                  <div class="p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
-                    <p class="text-sm text-yellow-700">Loading domains...</p>
-                  </div>
-                }
-              >
-                <div>
-                  <label class="block text-sm font-medium text-gray-700 mb-2">
-                    Domain
-                  </label>
-                  <select
-                    class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-main-red focus:border-transparent transition-all"
+                <Show
+                  when={domains().length > 0}
+                  fallback={
+                    <div class="p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
+                      <p class="text-sm text-yellow-700">Loading domains...</p>
+                    </div>
+                  }
+                >
+                  <SearchableSelect
+                    label="Domain"
+                    options={domainOptions()}
                     value={selectedDomainId()}
-                    onChange={(e) =>
-                      setSelectedDomainId(Number(e.currentTarget.value))
-                    }
+                    onChange={(val) => setSelectedDomainId(Number(val))}
                     disabled={isLoading()}
-                  >
-                    <For each={domains()}>
-                      {(domain) => (
-                        <option value={domain.id}>{domain.name}</option>
-                      )}
-                    </For>
-                  </select>
-                </div>
-              </Show>
+                    placeholder="Select domain..."
+                    helperText="Choose the domain for your email address"
+                  />
+                </Show>
 
-              <Input
-                label="Password"
-                type="password"
-                placeholder="Enter your password"
-                value={password()}
-                onInput={(value) => setPassword(value)}
-                required
-                disabled={isLoading()}
-              />
+                <Input
+                  ref={passwordRef}
+                  label="Password"
+                  type="password"
+                  placeholder="Enter your password"
+                  required
+                  disabled={isLoading()}
+                />
 
-              <Button
-                type="submit"
-                variant="primary"
-                size="lg"
-                disabled={isLoading()}
-                class="w-full"
-              >
-                {isLoading() ? (
-                  <>
-                    <span class="inline-block w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin mr-2" />
-                    Logging in...
-                  </>
-                ) : (
-                  <>Login to Inbox</>
-                )}
-              </Button>
-            </form>
-          </Card>
+                <Button
+                  type="submit"
+                  variant="primary"
+                  size="lg"
+                  disabled={isLoading()}
+                  class="w-full"
+                >
+                  {isLoading() ? (
+                    <>
+                      <span class="inline-block w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin mr-2" />
+                      Logging in...
+                    </>
+                  ) : (
+                    <>Login to Inbox</>
+                  )}
+                </Button>
+              </form>
+            </Card>
+          </div>
 
           <div class="mt-6 p-4 bg-blue-50 border border-blue-200 rounded-xl">
             <h3 class="text-sm font-semibold text-blue-900 mb-1">

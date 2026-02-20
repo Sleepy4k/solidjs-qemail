@@ -18,26 +18,41 @@ class EmailService {
     return response.data;
   }
 
-  async generateEmail(data: GenerateEmailRequest): Promise<GenerateEmailResponse> {
-    const response = await httpService.post<GenerateEmailResponse>(`${this.baseUrl}/generate`, data);
+  async generateEmail(
+    data: GenerateEmailRequest,
+  ): Promise<GenerateEmailResponse> {
+    const response = await httpService.post<GenerateEmailResponse>(
+      `${this.baseUrl}/generate`,
+      data,
+    );
     return response.data;
   }
 
   async loginEmail(data: EmailLoginRequest): Promise<EmailLoginResponse> {
-    const response = await httpService.post<EmailLoginResponse>(`${this.baseUrl}/login`, data);
+    const response = await httpService.post<EmailLoginResponse>(
+      `${this.baseUrl}/login`,
+      data,
+    );
     return response.data;
   }
 
-  async getInbox(token: string, params?: PaginationParams): Promise<InboxResponse> {
+  async getInbox(
+    token: string,
+    params?: PaginationParams,
+  ): Promise<InboxResponse> {
     const queryString = params
       ? `?${new URLSearchParams(params as any).toString()}`
       : "";
-    const response = await httpService.get<InboxResponse>(`${this.baseUrl}/inbox/${token}${queryString}`);
+    const response = await httpService.get<InboxResponse>(
+      `${this.baseUrl}/inbox/${token}${queryString}`,
+    );
     return response.data;
   }
 
   async getMessage(token: string, messageId: string): Promise<EmailMessage> {
-    const response = await httpService.get<EmailMessage>(`${this.baseUrl}/inbox/${token}/${messageId}`);
+    const response = await httpService.get<EmailMessage>(
+      `${this.baseUrl}/inbox/${token}/${messageId}`,
+    );
     return response.data;
   }
 

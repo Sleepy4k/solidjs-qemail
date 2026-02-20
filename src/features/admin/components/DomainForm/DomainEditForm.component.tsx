@@ -1,5 +1,5 @@
-import { Component } from 'solid-js';
-import { Input, Button } from '../../../../shared/components/ui';
+import { Component, onMount } from "solid-js";
+import { Input, Button } from "../../../../shared/components/ui";
 
 export interface DomainEditFormData {
   cloudflare_zone_id: string;
@@ -10,17 +10,33 @@ export interface DomainEditFormData {
 
 export interface DomainEditFormProps {
   domainName: string;
-  data: DomainEditFormData;
+  initialData: DomainEditFormData;
   loading?: boolean;
-  onSubmit: () => void;
+  onSubmit: (data: DomainEditFormData) => void;
   onCancel: () => void;
-  onChange: (field: keyof DomainEditFormData, value: string) => void;
 }
 
 const DomainEditForm: Component<DomainEditFormProps> = (props) => {
+  let zoneIdRef: HTMLInputElement | undefined;
+  let apiTokenRef: HTMLInputElement | undefined;
+  let accountIdRef: HTMLInputElement | undefined;
+  let workerNameRef: HTMLInputElement | undefined;
+
+  onMount(() => {
+    if (zoneIdRef) zoneIdRef.value = props.initialData.cloudflare_zone_id;
+    if (apiTokenRef) apiTokenRef.value = props.initialData.cf_api_token;
+    if (accountIdRef) accountIdRef.value = props.initialData.cf_account_id;
+    if (workerNameRef) workerNameRef.value = props.initialData.cf_worker_name;
+  });
+
   const handleSubmit = (e: Event) => {
     e.preventDefault();
-    props.onSubmit();
+    props.onSubmit({
+      cloudflare_zone_id: zoneIdRef?.value ?? "",
+      cf_api_token: apiTokenRef?.value ?? "",
+      cf_account_id: accountIdRef?.value ?? "",
+      cf_worker_name: workerNameRef?.value ?? "",
+    });
   };
 
   return (
@@ -36,36 +52,36 @@ const DomainEditForm: Component<DomainEditFormProps> = (props) => {
         </p>
         <div class="space-y-3">
           <Input
+            ref={zoneIdRef}
             label="Zone ID"
             placeholder="xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
-            value={props.data.cloudflare_zone_id}
-            onInput={(value) => props.onChange('cloudflare_zone_id', value)}
             helperText="Cloudflare Zone ID untuk domain ini"
+            disabled={props.loading}
           />
 
           <Input
+            ref={apiTokenRef}
             label="API Token"
             placeholder="Cloudflare API Token"
             type="password"
-            value={props.data.cf_api_token}
-            onInput={(value) => props.onChange('cf_api_token', value)}
             helperText="Token dengan permission DNS Edit dan Email Routing"
+            disabled={props.loading}
           />
 
           <Input
+            ref={accountIdRef}
             label="Account ID"
             placeholder="Cloudflare Account ID"
-            value={props.data.cf_account_id}
-            onInput={(value) => props.onChange('cf_account_id', value)}
             helperText="ID akun Cloudflare yang mengelola domain ini"
+            disabled={props.loading}
           />
 
           <Input
+            ref={workerNameRef}
             label="Worker Name"
             placeholder="Nama Cloudflare Worker"
-            value={props.data.cf_worker_name}
-            onInput={(value) => props.onChange('cf_worker_name', value)}
             helperText="Nama Worker yang digunakan untuk routing email"
+            disabled={props.loading}
           />
         </div>
       </div>

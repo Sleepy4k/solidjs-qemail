@@ -1,4 +1,11 @@
-import { Component, createSignal, onMount, For, Show, createResource } from "solid-js";
+import {
+  Component,
+  createSignal,
+  onMount,
+  For,
+  Show,
+  createResource,
+} from "solid-js";
 import { useNavigate, useSearchParams } from "@solidjs/router";
 import gsap from "gsap";
 import { adminApiService } from "../../services/admin-api.service";
@@ -9,21 +16,30 @@ import { Input } from "../../../../shared/components/ui/Input";
 import { Alert } from "../../../../shared/components/ui/Alert";
 import { Pagination } from "../../../../shared/components/ui/Pagination";
 import { SkeletonTable } from "../../../../shared/components/Skeleton";
-import { ConfirmDialog, useConfirmDialog } from "../../../../shared/components/ConfirmDialog";
+import {
+  ConfirmDialog,
+  useConfirmDialog,
+} from "../../../../shared/components/ConfirmDialog";
 import { debounce } from "../../../../shared/utils/debounce.util";
 
 const AccountsPage: Component = () => {
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
 
-  const [currentPage, setCurrentPage] = createSignal(Number(searchParams.page) || 1);
-  const [pageSize, setPageSize] = createSignal(Number(searchParams.limit) || 10);
+  const [currentPage, setCurrentPage] = createSignal(
+    Number(searchParams.page) || 1,
+  );
+  const [pageSize, setPageSize] = createSignal(
+    Number(searchParams.limit) || 10,
+  );
   const [inputValue, setInputValue] = createSignal(searchParams.search || "");
   const [searchQuery, setSearchQuery] = createSignal(searchParams.search || "");
   const [error, setError] = createSignal("");
   const [successMessage, setSuccessMessage] = createSignal("");
+  const [isRefreshing, setIsRefreshing] = createSignal(false);
 
-  const { isOpen, config, confirm, handleConfirm, handleCancel } = useConfirmDialog();
+  const { isOpen, config, confirm, handleConfirm, handleCancel } =
+    useConfirmDialog();
 
   let headerRef: HTMLDivElement | undefined;
 
@@ -31,7 +47,7 @@ const AccountsPage: Component = () => {
     () => ({ page: currentPage(), limit: pageSize(), search: searchQuery() }),
     async ({ page, limit, search }) => {
       return adminApiService.getAccounts({ page, limit, search: search || "" });
-    }
+    },
   );
 
   onMount(() => {
@@ -39,15 +55,24 @@ const AccountsPage: Component = () => {
       gsap.fromTo(
         headerRef,
         { opacity: 0, y: 20 },
-        { opacity: 1, y: 0, duration: 0.6, ease: "power2.out" }
+        { opacity: 1, y: 0, duration: 0.6, ease: "power2.out" },
       );
     }
   });
 
+  const handleRefresh = async () => {
+    setIsRefreshing(true);
+    try {
+      await refetch();
+    } finally {
+      setIsRefreshing(false);
+    }
+  };
+
   const debouncedSearch = debounce((value: string) => {
     setSearchQuery(value);
     setCurrentPage(1);
-    setSearchParams({ search: value || undefined, page: '1' });
+    setSearchParams({ search: value || undefined, page: "1" });
   }, 500);
 
   const handleSearchInput = (value: string) => {
@@ -59,7 +84,7 @@ const AccountsPage: Component = () => {
     setInputValue("");
     setSearchQuery("");
     setCurrentPage(1);
-    setSearchParams({ search: undefined, page: '1' });
+    setSearchParams({ search: undefined, page: "1" });
   };
 
   const handleViewInbox = (account: AdminAccount) => {
@@ -76,7 +101,9 @@ const AccountsPage: Component = () => {
           setError("");
           setSuccessMessage("");
           await adminApiService.deleteAccount(account.id);
-          setSuccessMessage(`Account "${account.email_address}" has been successfully deleted.`);
+          setSuccessMessage(
+            `Account "${account.email_address}" has been successfully deleted.`,
+          );
           refetch();
         } catch (err: any) {
           setError(err.message || "Failed to delete account");
@@ -94,7 +121,7 @@ const AccountsPage: Component = () => {
   const handlePageSizeChange = (size: number) => {
     setPageSize(size);
     setCurrentPage(1);
-    setSearchParams({ limit: size.toString(), page: '1' });
+    setSearchParams({ limit: size.toString(), page: "1" });
   };
 
   const formatDate = (dateStr: string | null) => {
@@ -116,10 +143,39 @@ const AccountsPage: Component = () => {
   return (
     <div class="space-y-6">
       <div ref={headerRef}>
-        <h1 class="text-xl sm:text-3xl font-bold text-gray-900">Account Management</h1>
-        <p class="mt-1 sm:mt-2 text-xs sm:text-base text-main-gray">
-          Browse accounts and inspect their inboxes
-        </p>
+        <div class="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3">
+          <div>
+            <h1 class="text-xl sm:text-3xl font-bold text-gray-900">
+              Account Management
+            </h1>
+            <p class="mt-1 sm:mt-2 text-xs sm:text-base text-main-gray">
+              Browse accounts and inspect their inboxes
+            </p>
+          </div>
+          <Button
+            variant="secondary"
+            onClick={handleRefresh}
+            disabled={isRefreshing() || accounts.loading}
+            class="self-start sm:self-auto flex-shrink-0"
+            icon={
+              <svg
+                class={`w-4 h-4 ${isRefreshing() ? "animate-spin" : ""}`}
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
+                />
+              </svg>
+            }
+          >
+            {isRefreshing() ? "Refreshing..." : "Refresh"}
+          </Button>
+        </div>
       </div>
 
       <Show when={error()}>
@@ -127,7 +183,11 @@ const AccountsPage: Component = () => {
       </Show>
 
       <Show when={successMessage()}>
-        <Alert type="success" message={successMessage()} onClose={() => setSuccessMessage("")} />
+        <Alert
+          type="success"
+          message={successMessage()}
+          onClose={() => setSuccessMessage("")}
+        />
       </Show>
 
       <Card>
@@ -141,7 +201,9 @@ const AccountsPage: Component = () => {
           </div>
           <select
             value={pageSize()}
-            onChange={(e) => handlePageSizeChange(Number(e.currentTarget.value))}
+            onChange={(e) =>
+              handlePageSizeChange(Number(e.currentTarget.value))
+            }
             class="text-sm border border-gray-300 rounded-lg px-3 py-2.5 bg-white text-gray-700 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-colors"
           >
             <option value={10}>10</option>
@@ -162,7 +224,6 @@ const AccountsPage: Component = () => {
           when={!accounts.loading && accounts()}
           fallback={<SkeletonTable rows={10} columns={8} />}
         >
-          {/* Desktop table */}
           <div class="hidden md:block overflow-x-auto">
             <table class="w-full">
               <thead class="bg-main-lightGray border-b border-gray-200">
@@ -198,7 +259,9 @@ const AccountsPage: Component = () => {
                       <td colspan="7" class="px-6 py-16 text-center">
                         <div class="text-5xl mb-4">📭</div>
                         <p class="text-main-gray font-medium">
-                          {searchQuery() ? "No accounts found" : "No accounts yet"}
+                          {searchQuery()
+                            ? "No accounts found"
+                            : "No accounts yet"}
                         </p>
                       </td>
                     </tr>
@@ -207,7 +270,10 @@ const AccountsPage: Component = () => {
                   {(account) => (
                     <tr class="hover:bg-gray-50 transition-colors">
                       <td class="px-4 py-4">
-                        <span class="font-mono text-sm text-gray-900" title={account.email_address}>
+                        <span
+                          class="font-mono text-sm text-gray-900"
+                          title={account.email_address}
+                        >
                           {truncateEmail(account.email_address, 32)}
                         </span>
                       </td>
@@ -215,11 +281,13 @@ const AccountsPage: Component = () => {
                         {account.domain_name}
                       </td>
                       <td class="px-4 py-4">
-                        <span class={`px-2.5 py-1 rounded-full text-xs font-medium ${
-                          account.is_custom
-                            ? "bg-purple-100 text-purple-800"
-                            : "bg-blue-100 text-blue-800"
-                        }`}>
+                        <span
+                          class={`px-2.5 py-1 rounded-full text-xs font-medium ${
+                            account.is_custom
+                              ? "bg-purple-100 text-purple-800"
+                              : "bg-blue-100 text-blue-800"
+                          }`}
+                        >
                           {account.is_custom ? "Custom" : "Random"}
                         </span>
                       </td>
@@ -231,11 +299,13 @@ const AccountsPage: Component = () => {
                           when={account.expires_at}
                           fallback={<span class="text-gray-400">—</span>}
                         >
-                          <span class={`${
-                            new Date(account.expires_at!) < new Date()
-                              ? "text-red-500"
-                              : "text-main-gray"
-                          }`}>
+                          <span
+                            class={`${
+                              new Date(account.expires_at!) < new Date()
+                                ? "text-red-500"
+                                : "text-main-gray"
+                            }`}
+                          >
                             {formatDate(account.expires_at)}
                           </span>
                         </Show>
@@ -270,7 +340,6 @@ const AccountsPage: Component = () => {
             </table>
           </div>
 
-          {/* Mobile card list */}
           <div class="md:hidden divide-y divide-gray-200">
             <For
               each={accounts()?.accounts}
@@ -290,7 +359,9 @@ const AccountsPage: Component = () => {
                       <p class="font-mono text-sm text-gray-900 font-semibold break-all">
                         {account.email_address}
                       </p>
-                      <p class="text-xs text-main-gray mt-0.5">{account.domain_name}</p>
+                      <p class="text-xs text-main-gray mt-0.5">
+                        {account.domain_name}
+                      </p>
                     </div>
                     <div class="flex gap-1.5 flex-shrink-0">
                       <Button
@@ -310,11 +381,13 @@ const AccountsPage: Component = () => {
                     </div>
                   </div>
                   <div class="flex items-center gap-3 flex-wrap">
-                    <span class={`px-2 py-0.5 rounded-full text-xs font-medium ${
-                      account.is_custom
-                        ? "bg-purple-100 text-purple-800"
-                        : "bg-blue-100 text-blue-800"
-                    }`}>
+                    <span
+                      class={`px-2 py-0.5 rounded-full text-xs font-medium ${
+                        account.is_custom
+                          ? "bg-purple-100 text-purple-800"
+                          : "bg-blue-100 text-blue-800"
+                      }`}
+                    >
                       {account.is_custom ? "Custom" : "Random"}
                     </span>
                     <span class="px-2 py-0.5 bg-main-red/10 text-main-red rounded-full text-xs font-semibold">
@@ -323,16 +396,25 @@ const AccountsPage: Component = () => {
                   </div>
                   <div class="grid grid-cols-2 gap-x-4 gap-y-1 mt-1">
                     <div>
-                      <p class="text-[10px] text-gray-400 uppercase tracking-wide font-medium">Created</p>
-                      <p class="text-xs text-main-gray">{formatDate(account.created_at)}</p>
+                      <p class="text-[10px] text-gray-400 uppercase tracking-wide font-medium">
+                        Created
+                      </p>
+                      <p class="text-xs text-main-gray">
+                        {formatDate(account.created_at)}
+                      </p>
                     </div>
                     <div>
-                      <p class="text-[10px] text-gray-400 uppercase tracking-wide font-medium">Expires</p>
-                      <p class={`text-xs ${
-                        account.expires_at && new Date(account.expires_at) < new Date()
-                          ? "text-red-500"
-                          : "text-main-gray"
-                      }`}>
+                      <p class="text-[10px] text-gray-400 uppercase tracking-wide font-medium">
+                        Expires
+                      </p>
+                      <p
+                        class={`text-xs ${
+                          account.expires_at &&
+                          new Date(account.expires_at) < new Date()
+                            ? "text-red-500"
+                            : "text-main-gray"
+                        }`}
+                      >
                         {formatDate(account.expires_at ?? null)}
                       </p>
                     </div>
@@ -342,7 +424,6 @@ const AccountsPage: Component = () => {
             </For>
           </div>
 
-          {/* Pagination */}
           <Show when={accounts()}>
             {(data) => (
               <Pagination

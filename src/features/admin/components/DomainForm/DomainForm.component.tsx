@@ -1,5 +1,5 @@
-import { Component } from 'solid-js';
-import { Input, Button } from '../../../../shared/components/ui';
+import { Component } from "solid-js";
+import { Input, Button } from "../../../../shared/components/ui";
 
 export interface DomainFormData {
   name: string;
@@ -7,36 +7,40 @@ export interface DomainFormData {
 }
 
 export interface DomainFormProps {
-  data: DomainFormData;
   loading?: boolean;
-  onSubmit: () => void;
+  onSubmit: (data: DomainFormData) => void;
   onCancel: () => void;
-  onChange: (field: keyof DomainFormData, value: string) => void;
 }
 
 const DomainForm: Component<DomainFormProps> = (props) => {
+  let nameRef: HTMLInputElement | undefined;
+  let zoneIdRef: HTMLInputElement | undefined;
+
   const handleSubmit = (e: Event) => {
     e.preventDefault();
-    props.onSubmit();
+    props.onSubmit({
+      name: nameRef?.value ?? "",
+      cloudflare_zone_id: zoneIdRef?.value ?? "",
+    });
   };
 
   return (
     <form onSubmit={handleSubmit} class="space-y-4">
       <Input
+        ref={nameRef}
         label="Domain Name"
         placeholder="example.com"
-        value={props.data.name}
-        onInput={(value) => props.onChange('name', value)}
         required
         helperText="Enter the domain name (e.g., example.com)"
+        disabled={props.loading}
       />
 
       <Input
+        ref={zoneIdRef}
         label="Cloudflare Zone ID"
         placeholder="Optional"
-        value={props.data.cloudflare_zone_id}
-        onInput={(value) => props.onChange('cloudflare_zone_id', value)}
         helperText="Optional: Cloudflare Zone ID for email routing"
+        disabled={props.loading}
       />
 
       <div class="flex items-center gap-3 pt-4">

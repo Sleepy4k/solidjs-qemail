@@ -1,4 +1,4 @@
-import { Component, For, Show } from 'solid-js';
+import { Component, For, Show } from "solid-js";
 
 export interface PaginationProps {
   currentPage: number;
@@ -8,7 +8,7 @@ export interface PaginationProps {
   onPageChange: (page: number) => void;
 }
 
-function getPageNumbers(current: number, total: number): (number | '...')[] {
+function getPageNumbers(current: number, total: number): (number | "...")[] {
   if (total <= 7) {
     return Array.from({ length: total }, (_, i) => i + 1);
   }
@@ -21,11 +21,11 @@ function getPageNumbers(current: number, total: number): (number | '...')[] {
   alwaysShow.add(Math.min(total, current + 1));
 
   const sorted = Array.from(alwaysShow).sort((a, b) => a - b);
-  const result: (number | '...')[] = [];
+  const result: (number | "...")[] = [];
 
   for (let i = 0; i < sorted.length; i++) {
     if (i > 0 && sorted[i] - sorted[i - 1] > 2) {
-      result.push('...');
+      result.push("...");
     } else if (i > 0 && sorted[i] - sorted[i - 1] === 2) {
       result.push(sorted[i] - 1);
     }
@@ -38,46 +38,49 @@ function getPageNumbers(current: number, total: number): (number | '...')[] {
 const Pagination: Component<PaginationProps> = (props) => {
   const pages = () => getPageNumbers(props.currentPage, props.totalPages);
 
-  const start = () => Math.min((props.currentPage - 1) * props.pageSize + 1, props.total);
+  const start = () =>
+    Math.min((props.currentPage - 1) * props.pageSize + 1, props.total);
   const end = () => Math.min(props.currentPage * props.pageSize, props.total);
 
   return (
     <div class="px-4 sm:px-5 py-3 border-t border-gray-200 bg-gray-50 flex flex-col sm:flex-row items-center justify-between gap-3">
-      {/* Left: range info */}
       <p class="text-xs text-gray-500">
-        <span class="font-semibold text-gray-700">{start().toLocaleString()}–{end().toLocaleString()}</span>
-        {' '}of{' '}
-        <span class="font-semibold text-gray-700">{props.total.toLocaleString()}</span>
-        {' '}entries
+        <span class="font-semibold text-gray-700">
+          {start().toLocaleString()}–{end().toLocaleString()}
+        </span>{" "}
+        of{" "}
+        <span class="font-semibold text-gray-700">
+          {props.total.toLocaleString()}
+        </span>{" "}
+        entries
       </p>
 
-      {/* Right: page number buttons — always visible */}
       <div class="flex items-center gap-1">
-        {/* Prev */}
         <button
           onClick={() => props.onPageChange(props.currentPage - 1)}
           disabled={props.currentPage === 1}
           class="h-8 px-2.5 flex items-center gap-1 rounded-md text-xs font-medium border border-gray-200 bg-white text-gray-600 hover:bg-gray-100 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
           aria-label="Previous page"
         >
-          ‹ Prev
+          {"< Prev"}
         </button>
 
-        {/* Page numbers */}
         <For each={pages()}>
           {(page) => (
             <Show
-              when={page !== '...'}
+              when={page !== "..."}
               fallback={
-                <span class="w-8 h-8 flex items-center justify-center text-xs text-gray-400 select-none">…</span>
+                <span class="w-8 h-8 flex items-center justify-center text-xs text-gray-400 select-none">
+                  …
+                </span>
               }
             >
               <button
                 onClick={() => props.onPageChange(page as number)}
                 class={`w-8 h-8 flex items-center justify-center rounded-md text-xs font-medium border transition-colors ${
                   page === props.currentPage
-                    ? 'bg-primary-600 border-primary-600 text-white shadow-sm'
-                    : 'border-gray-200 bg-white text-gray-600 hover:bg-gray-100'
+                    ? "bg-primary-600 border-primary-600 text-white shadow-sm"
+                    : "border-gray-200 bg-white text-gray-600 hover:bg-gray-100"
                 }`}
               >
                 {page}
@@ -86,14 +89,13 @@ const Pagination: Component<PaginationProps> = (props) => {
           )}
         </For>
 
-        {/* Next */}
         <button
           onClick={() => props.onPageChange(props.currentPage + 1)}
           disabled={props.currentPage >= props.totalPages}
           class="h-8 px-2.5 flex items-center gap-1 rounded-md text-xs font-medium border border-gray-200 bg-white text-gray-600 hover:bg-gray-100 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
           aria-label="Next page"
         >
-          Next ›
+          {"Next >"}
         </button>
       </div>
     </div>

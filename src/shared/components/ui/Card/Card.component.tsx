@@ -1,10 +1,10 @@
-import { Component, JSX, splitProps, mergeProps, onMount } from 'solid-js';
-import * as animations from '../../../utils/animation.util';
+import { Component, JSX, splitProps, mergeProps, onMount } from "solid-js";
+import * as animations from "../../../utils/animation.util";
 
 export interface CardProps extends JSX.HTMLAttributes<HTMLDivElement> {
   hover?: boolean;
-  padding?: 'none' | 'sm' | 'md' | 'lg';
-  shadow?: 'none' | 'sm' | 'md' | 'lg' | 'xl';
+  padding?: "none" | "sm" | "md" | "lg";
+  shadow?: "none" | "sm" | "md" | "lg" | "xl";
   bordered?: boolean;
   animated?: boolean;
 }
@@ -13,22 +13,22 @@ const Card: Component<CardProps> = (props) => {
   const merged = mergeProps(
     {
       hover: false,
-      padding: 'md' as const,
-      shadow: 'md' as const,
+      padding: "md" as const,
+      shadow: "md" as const,
       bordered: true,
       animated: true,
     },
-    props
+    props,
   );
 
   const [local, others] = splitProps(merged, [
-    'hover',
-    'padding',
-    'shadow',
-    'bordered',
-    'animated',
-    'children',
-    'class',
+    "hover",
+    "padding",
+    "shadow",
+    "bordered",
+    "animated",
+    "children",
+    "class",
   ]);
 
   let cardRef: HTMLDivElement | undefined;
@@ -40,23 +40,25 @@ const Card: Component<CardProps> = (props) => {
   });
 
   const paddingClasses = {
-    none: '',
-    sm: 'p-3',
-    md: 'p-6',
-    lg: 'p-8',
+    none: "",
+    sm: "p-3",
+    md: "p-6",
+    lg: "p-8",
   };
 
   const shadowClasses = {
-    none: '',
-    sm: 'shadow-sm',
-    md: 'shadow-md',
-    lg: 'shadow-lg',
-    xl: 'shadow-xl',
+    none: "",
+    sm: "shadow-sm",
+    md: "shadow-md",
+    lg: "shadow-lg",
+    xl: "shadow-xl",
   };
 
-  const baseClasses = 'bg-white rounded-lg transition-all duration-300';
-  const hoverClasses = local.hover ? 'hover:shadow-lg hover:-translate-y-1 cursor-pointer' : '';
-  const borderClasses = local.bordered ? 'border border-gray-200' : '';
+  const baseClasses = "bg-white rounded-lg transition-all duration-300";
+  const hoverClasses = local.hover
+    ? "hover:shadow-lg hover:-translate-y-1 cursor-pointer"
+    : "";
+  const borderClasses = local.bordered ? "border border-gray-200" : "";
 
   return (
     <div
@@ -67,7 +69,7 @@ const Card: Component<CardProps> = (props) => {
         ${shadowClasses[local.shadow]}
         ${hoverClasses}
         ${borderClasses}
-        ${local.class || ''}
+        ${local.class || ""}
       `}
       {...others}
     >

@@ -1,5 +1,5 @@
-import { Component, JSX, onMount } from 'solid-js';
-import * as animations from '../../../shared/utils/animation.util';
+import { Component, JSX, onMount } from "solid-js";
+import * as animations from "../../../shared/utils/animation.util";
 
 interface FeatureCardProps {
   emoji: string;
@@ -79,12 +79,8 @@ export const StepCard: Component<StepCardProps> = (props) => {
         {props.number}
       </div>
 
-      <h3 class="text-xl font-bold text-gray-900 mb-3">
-        {props.title}
-      </h3>
-      <p class="text-gray-600 leading-relaxed">
-        {props.description}
-      </p>
+      <h3 class="text-xl font-bold text-gray-900 mb-3">{props.title}</h3>
+      <p class="text-gray-600 leading-relaxed">{props.description}</p>
 
       <div class="hidden lg:block absolute top-8 left-full w-full h-0.5 bg-gradient-to-r from-primary-200 to-transparent" />
     </div>
@@ -92,22 +88,24 @@ export const StepCard: Component<StepCardProps> = (props) => {
 };
 
 interface ButtonProps extends JSX.ButtonHTMLAttributes<HTMLButtonElement> {
-  variant?: 'primary' | 'secondary' | 'ghost';
-  size?: 'sm' | 'md' | 'lg';
+  variant?: "primary" | "secondary" | "ghost";
+  size?: "sm" | "md" | "lg";
   icon?: JSX.Element;
 }
 
 export const CTAButton: Component<ButtonProps> = (props) => {
   const variants = {
-    primary: 'bg-gradient-to-r from-primary-600 via-purple-600 to-pink-600 text-white shadow-lg shadow-primary-500/50 hover:shadow-xl hover:shadow-primary-500/60',
-    secondary: 'bg-white/90 backdrop-blur-sm text-gray-900 border-2 border-gray-200 hover:border-primary-500 hover:bg-white',
-    ghost: 'bg-transparent text-gray-900 hover:bg-white/50',
+    primary:
+      "bg-gradient-to-r from-primary-600 via-purple-600 to-pink-600 text-white shadow-lg shadow-primary-500/50 hover:shadow-xl hover:shadow-primary-500/60",
+    secondary:
+      "bg-white/90 backdrop-blur-sm text-gray-900 border-2 border-gray-200 hover:border-primary-500 hover:bg-white",
+    ghost: "bg-transparent text-gray-900 hover:bg-white/50",
   };
 
   const sizes = {
-    sm: 'px-6 py-3 text-sm',
-    md: 'px-8 py-4 text-base',
-    lg: 'px-10 py-5 text-lg',
+    sm: "px-6 py-3 text-sm",
+    md: "px-8 py-4 text-base",
+    lg: "px-10 py-5 text-lg",
   };
 
   return (
@@ -115,12 +113,12 @@ export const CTAButton: Component<ButtonProps> = (props) => {
       {...props}
       class={`
         inline-flex items-center justify-center gap-3
-        ${variants[props.variant || 'primary']}
-        ${sizes[props.size || 'md']}
+        ${variants[props.variant || "primary"]}
+        ${sizes[props.size || "md"]}
         rounded-full font-bold
         transform hover:scale-105 active:scale-95
         transition-all duration-200
-        ${props.class || ''}
+        ${props.class || ""}
       `}
     >
       {props.icon}

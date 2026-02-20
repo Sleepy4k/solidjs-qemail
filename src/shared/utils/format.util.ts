@@ -1,30 +1,21 @@
-/**
- * Format date to locale string
- */
 export const formatDate = (date: string | Date): string => {
-  return new Date(date).toLocaleDateString('en-US', {
-    year: 'numeric',
-    month: 'short',
-    day: 'numeric',
+  return new Date(date).toLocaleDateString("en-US", {
+    year: "numeric",
+    month: "short",
+    day: "numeric",
   });
 };
 
-/**
- * Format date time to locale string
- */
 export const formatDateTime = (date: string | Date): string => {
-  return new Date(date).toLocaleString('en-US', {
-    year: 'numeric',
-    month: 'short',
-    day: 'numeric',
-    hour: '2-digit',
-    minute: '2-digit',
+  return new Date(date).toLocaleString("en-US", {
+    year: "numeric",
+    month: "short",
+    day: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
   });
 };
 
-/**
- * Format relative time (e.g., "2 hours ago")
- */
 export const formatRelativeTime = (date: string | Date): string => {
   const now = new Date();
   const past = new Date(date);
@@ -38,41 +29,32 @@ export const formatRelativeTime = (date: string | Date): string => {
     return formatDate(date);
   }
   if (diffDay > 0) {
-    return `${diffDay} day${diffDay > 1 ? 's' : ''} ago`;
+    return `${diffDay} day${diffDay > 1 ? "s" : ""} ago`;
   }
   if (diffHour > 0) {
-    return `${diffHour} hour${diffHour > 1 ? 's' : ''} ago`;
+    return `${diffHour} hour${diffHour > 1 ? "s" : ""} ago`;
   }
   if (diffMin > 0) {
-    return `${diffMin} minute${diffMin > 1 ? 's' : ''} ago`;
+    return `${diffMin} minute${diffMin > 1 ? "s" : ""} ago`;
   }
-  return 'Just now';
+  return "Just now";
 };
 
-/**
- * Format file size
- */
 export const formatFileSize = (bytes: number): string => {
-  if (bytes === 0) return '0 Bytes';
-  
+  if (bytes === 0) return "0 Bytes";
+
   const k = 1024;
-  const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+  const sizes = ["Bytes", "KB", "MB", "GB"];
   const i = Math.floor(Math.log(bytes) / Math.log(k));
-  
+
   return `${parseFloat((bytes / Math.pow(k, i)).toFixed(2))} ${sizes[i]}`;
 };
 
-/**
- * Truncate text with ellipsis
- */
 export const truncateText = (text: string, maxLength: number): string => {
   if (text.length <= maxLength) return text;
   return `${text.substring(0, maxLength)}...`;
 };
 
-/**
- * Format number with commas
- */
 export const formatNumber = (num: number): string => {
-  return num.toLocaleString('en-US');
+  return num.toLocaleString("en-US");
 };

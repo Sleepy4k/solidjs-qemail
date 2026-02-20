@@ -1,1 +1,1 @@
-export { default as DomainsPage } from './DomainsPage';
+export { default as DomainsPage } from "./DomainsPage";

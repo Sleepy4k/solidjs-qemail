@@ -26,7 +26,6 @@ const AboutPage: Component = () => {
   return (
     <EmailLayout currentPage="about">
       <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-16">
-        {/* Hero */}
         <div ref={heroRef} class="text-center mb-12 sm:mb-16">
           <div class="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-main-red to-red-700 rounded-2xl mb-6 shadow-lg">
             <svg
@@ -56,7 +55,6 @@ const AboutPage: Component = () => {
         </div>
 
         <div ref={bodyRef} class="space-y-12">
-          {/* What is QEmail */}
           <section>
             <h2 class="text-xl sm:text-2xl font-bold text-gray-900 mb-4 flex items-center gap-2">
               <span class="w-1 h-6 bg-main-red rounded-full inline-block" />
@@ -83,7 +81,6 @@ const AboutPage: Component = () => {
             </div>
           </section>
 
-          {/* Mission */}
           <section>
             <h2 class="text-xl sm:text-2xl font-bold text-gray-900 mb-4 flex items-center gap-2">
               <span class="w-1 h-6 bg-main-red rounded-full inline-block" />
@@ -104,7 +101,6 @@ const AboutPage: Component = () => {
             </div>
           </section>
 
-          {/* Key Features */}
           <section>
             <h2 class="text-xl sm:text-2xl font-bold text-gray-900 mb-4 flex items-center gap-2">
               <span class="w-1 h-6 bg-main-red rounded-full inline-block" />
@@ -172,7 +168,6 @@ const AboutPage: Component = () => {
             </div>
           </section>
 
-          {/* Privacy */}
           <section>
             <h2 class="text-xl sm:text-2xl font-bold text-gray-900 mb-4 flex items-center gap-2">
               <span class="w-1 h-6 bg-main-red rounded-full inline-block" />
@@ -235,7 +230,6 @@ const AboutPage: Component = () => {
             </div>
           </section>
 
-          {/* Stats */}
           <section>
             <div class="grid grid-cols-3 gap-4">
               {[

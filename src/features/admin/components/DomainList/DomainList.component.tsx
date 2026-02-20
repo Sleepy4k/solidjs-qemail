@@ -1,8 +1,8 @@
-import { Component, For, Show } from 'solid-js';
-import { Card, Button } from '../../../../shared/components/ui';
-import { useStaggerAnimation } from '../../../../shared/hooks/use-animation.hook';
-import { formatDateTime } from '../../../../shared/utils/format.util';
-import type { AdminDomain } from '../../types/admin.types';
+import { Component, For, Show } from "solid-js";
+import { Card, Button } from "../../../../shared/components/ui";
+import { useStaggerAnimation } from "../../../../shared/hooks/use-animation.hook";
+import { formatDateTime } from "../../../../shared/utils/format.util";
+import type { AdminDomain } from "../../types/admin.types";
 
 export interface DomainListProps {
   domains: AdminDomain[];
@@ -17,8 +17,8 @@ const DomainList: Component<DomainListProps> = (props) => {
   let listRef: HTMLDivElement | undefined;
 
   useStaggerAnimation(
-    () => listRef?.querySelectorAll('[data-domain-item]') || [],
-    { stagger: 0.05 }
+    () => listRef?.querySelectorAll("[data-domain-item]") || [],
+    { stagger: 0.05 },
   );
 
   return (
@@ -89,7 +89,9 @@ const DomainList: Component<DomainListProps> = (props) => {
                     </Show>
                     <Show when={domain.cf_account_id}>
                       <p class="text-xs text-gray-600 flex items-center gap-1.5">
-                        <span class="font-medium text-gray-500">Account ID:</span>
+                        <span class="font-medium text-gray-500">
+                          Account ID:
+                        </span>
                         <code class="px-1.5 py-0.5 bg-gray-100 rounded text-xs break-all">
                           {domain.cf_account_id}
                         </code>
@@ -105,7 +107,9 @@ const DomainList: Component<DomainListProps> = (props) => {
                     </Show>
                     <Show when={domain.cf_api_token}>
                       <p class="text-xs flex items-center gap-1.5">
-                        <span class="font-medium text-gray-500">API Token:</span>
+                        <span class="font-medium text-gray-500">
+                          API Token:
+                        </span>
                         <span class="px-1.5 py-0.5 bg-green-50 text-green-700 rounded text-xs font-medium">
                           ✓ Configured
                         </span>
@@ -117,7 +121,6 @@ const DomainList: Component<DomainListProps> = (props) => {
                   </div>
                 </div>
 
-                {/* Action buttons — 2x2 grid on mobile, single row on sm+ */}
                 <div class="grid grid-cols-2 sm:flex sm:flex-wrap gap-2 flex-shrink-0">
                   <Button
                     variant="secondary"
@@ -138,13 +141,13 @@ const DomainList: Component<DomainListProps> = (props) => {
                     CF Rules
                   </Button>
                   <Button
-                    variant={domain.is_active ? 'secondary' : 'success'}
+                    variant={domain.is_active ? "secondary" : "success"}
                     size="sm"
                     onClick={() => props.onToggleActive(domain)}
                     disabled={props.loading}
                     class="w-full sm:w-auto justify-center"
                   >
-                    {domain.is_active ? 'Disable' : 'Enable'}
+                    {domain.is_active ? "Disable" : "Enable"}
                   </Button>
                   <Button
                     variant="danger"
@@ -166,4 +169,3 @@ const DomainList: Component<DomainListProps> = (props) => {
 };
 
 export default DomainList;
-
