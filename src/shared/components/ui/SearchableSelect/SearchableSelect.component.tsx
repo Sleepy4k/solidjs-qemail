@@ -7,6 +7,7 @@ import {
   onMount,
   onCleanup,
 } from "solid-js";
+import { Portal } from "solid-js/web";
 
 export interface SearchableSelectOption {
   value: string | number;
@@ -29,9 +30,11 @@ export interface SearchableSelectProps {
 export const SearchableSelect: Component<SearchableSelectProps> = (props) => {
   const [isOpen, setIsOpen] = createSignal(false);
   const [search, setSearch] = createSignal("");
+  const [pos, setPos] = createSignal({ top: 0, left: 0, width: 0 });
 
   let containerRef: HTMLDivElement | undefined;
   let searchRef: HTMLInputElement | undefined;
+  let dropdownRef: HTMLDivElement | undefined;
 
   const selectedLabel = createMemo(
     () => props.options.find((o) => o.value === props.value)?.label ?? "",
@@ -44,8 +47,19 @@ export const SearchableSelect: Component<SearchableSelectProps> = (props) => {
       : props.options;
   });
 
+  const updatePos = () => {
+    if (!containerRef) return;
+    const rect = containerRef.getBoundingClientRect();
+    setPos({
+      top: rect.bottom + 4,
+      left: rect.left,
+      width: rect.width,
+    });
+  };
+
   const open = () => {
     if (props.disabled) return;
+    updatePos();
     setIsOpen(true);
     setTimeout(() => searchRef?.focus(), 10);
   };
@@ -61,12 +75,26 @@ export const SearchableSelect: Component<SearchableSelectProps> = (props) => {
   };
 
   const handleOutside = (e: MouseEvent) => {
-    if (containerRef && !containerRef.contains(e.target as Node)) close();
+    const target = e.target as Node;
+    if (
+      containerRef &&
+      !containerRef.contains(target) &&
+      dropdownRef &&
+      !dropdownRef.contains(target)
+    ) {
+      close();
+    }
   };
 
   onMount(() => {
     document.addEventListener("mousedown", handleOutside);
-    onCleanup(() => document.removeEventListener("mousedown", handleOutside));
+    window.addEventListener("scroll", close, true);
+    window.addEventListener("resize", close);
+    onCleanup(() => {
+      document.removeEventListener("mousedown", handleOutside);
+      window.removeEventListener("scroll", close, true);
+      window.removeEventListener("resize", close);
+    });
   });
 
   return (
@@ -114,62 +142,74 @@ export const SearchableSelect: Component<SearchableSelectProps> = (props) => {
       </button>
 
       <Show when={isOpen()}>
-        <div class="absolute z-50 w-full mt-1 bg-white border border-gray-200 rounded-lg shadow-lg overflow-hidden">
-          <div class="p-2 border-b border-gray-100">
-            <div class="relative">
-              <svg
-                class="absolute left-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-gray-400 pointer-events-none"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-              >
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="2"
-                  d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+        <Portal>
+          <div
+            ref={dropdownRef}
+            style={{
+              position: "fixed",
+              top: `${pos().top}px`,
+              left: `${pos().left}px`,
+              width: `${pos().width}px`,
+              "z-index": "9999",
+            }}
+            class="bg-white border border-gray-200 rounded-lg shadow-lg overflow-hidden"
+          >
+            <div class="p-2 border-b border-gray-100">
+              <div class="relative">
+                <svg
+                  class="absolute left-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-gray-400 pointer-events-none"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+                  />
+                </svg>
+                <input
+                  ref={searchRef}
+                  type="text"
+                  placeholder="Search..."
+                  class="w-full pl-7 pr-3 py-2 text-sm border border-gray-200 rounded-md focus:outline-none focus:ring-2 focus:ring-main-red/30 focus:border-main-red"
+                  value={search()}
+                  onInput={(e) => setSearch(e.currentTarget.value)}
+                  onKeyDown={(e) => e.key === "Escape" && close()}
                 />
-              </svg>
-              <input
-                ref={searchRef}
-                type="text"
-                placeholder="Search..."
-                class="w-full pl-7 pr-3 py-2 text-sm border border-gray-200 rounded-md focus:outline-none focus:ring-2 focus:ring-main-red/30 focus:border-main-red"
-                value={search()}
-                onInput={(e) => setSearch(e.currentTarget.value)}
-                onKeyDown={(e) => e.key === "Escape" && close()}
-              />
+              </div>
+            </div>
+
+            <div class="max-h-52 overflow-y-auto">
+              <Show
+                when={filtered().length > 0}
+                fallback={
+                  <p class="px-4 py-3 text-sm text-gray-400 text-center">
+                    No options found
+                  </p>
+                }
+              >
+                <For each={filtered()}>
+                  {(option) => (
+                    <button
+                      type="button"
+                      disabled={option.disabled}
+                      onClick={() => select(option.value)}
+                      class={`w-full px-4 py-2.5 text-left text-sm transition-colors ${
+                        props.value === option.value
+                          ? "bg-primary-50 text-primary-700 font-medium"
+                          : "text-gray-700 hover:bg-gray-50"
+                      } ${option.disabled ? "opacity-50 cursor-not-allowed" : "cursor-pointer"}`}
+                    >
+                      {option.label}
+                    </button>
+                  )}
+                </For>
+              </Show>
             </div>
           </div>
-
-          <div class="max-h-52 overflow-y-auto">
-            <Show
-              when={filtered().length > 0}
-              fallback={
-                <p class="px-4 py-3 text-sm text-gray-400 text-center">
-                  No options found
-                </p>
-              }
-            >
-              <For each={filtered()}>
-                {(option) => (
-                  <button
-                    type="button"
-                    disabled={option.disabled}
-                    onClick={() => select(option.value)}
-                    class={`w-full px-4 py-2.5 text-left text-sm transition-colors ${
-                      props.value === option.value
-                        ? "bg-primary-50 text-primary-700 font-medium"
-                        : "text-gray-700 hover:bg-gray-50"
-                    } ${option.disabled ? "opacity-50 cursor-not-allowed" : "cursor-pointer"}`}
-                  >
-                    {option.label}
-                  </button>
-                )}
-              </For>
-            </Show>
-          </div>
-        </div>
+        </Portal>
       </Show>
 
       <Show when={props.error}>
