@@ -20,7 +20,6 @@ export default defineConfig(({ mode }) => {
       rollupOptions: {
         output: {
           manualChunks: {
-            "logo": ["src/assets/images/logo.png"],
             "vendor-solid": ["solid-js", "@solidjs/router"],
             "vendor-gsap": ["gsap"],
             "vendor-nprogress": ["nprogress", "src/assets/css/nprogress.css"],
