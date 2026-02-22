@@ -76,11 +76,18 @@ class AdminApiService {
   }
 
   async getAccounts(params?: PaginationQuery): Promise<AdminAccountsResponse> {
-    const queryString = params
-      ? `?${new URLSearchParams(params as any).toString()}`
-      : "";
+    const qs = new URLSearchParams();
+    if (params?.page !== undefined) qs.set("page", String(params.page));
+    if (params?.limit !== undefined) qs.set("limit", String(params.limit));
+    if (params?.search) qs.set("search", String(params.search));
+    if (params?.domain_id !== undefined && params.domain_id !== 0)
+      qs.set("domain_id", String(params.domain_id));
+    if (params?.is_custom !== undefined)
+      qs.set("is_custom", String(params.is_custom));
+
+    const query = qs.toString() ? `?${qs.toString()}` : "";
     const response = await httpService.get<AdminAccountsResponse>(
-      `${this.baseUrl}/accounts${queryString}`,
+      `${this.baseUrl}/accounts${query}`,
     );
     return response.data;
   }

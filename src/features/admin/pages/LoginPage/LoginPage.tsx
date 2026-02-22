@@ -1,4 +1,4 @@
-import { Component, Show } from "solid-js";
+import { Component, Show, createSignal } from "solid-js";
 import { useNavigate } from "@solidjs/router";
 import { Card, Input, Button, Alert } from "../../../../shared/components/ui";
 import { adminStore } from "../../stores/admin.store";
@@ -13,8 +13,8 @@ const LoginPage: Component = () => {
   let usernameRef: HTMLInputElement | undefined;
   let passwordRef: HTMLInputElement | undefined;
 
-  let isLoading = false;
-  let errorMessage: string | null = null;
+  const [isLoading, setIsLoading] = createSignal(false);
+  const [errorMessage, setErrorMessage] = createSignal<string>("");
 
   useAnimation(() => formRef, {
     animation: "fadeIn",
@@ -30,28 +30,50 @@ const LoginPage: Component = () => {
     const password = passwordRef.value;
 
     if (!username || !password) {
-      errorMessage = "Please fill in all fields";
+      setErrorMessage("Please fill in all fields");
       return;
     }
 
-    isLoading = true;
-    errorMessage = null;
+    setIsLoading(true);
+    setErrorMessage("");
 
     try {
       await adminStore.login({ username, password });
       navigate(ROUTES.ADMIN.DASHBOARD, { replace: true });
     } catch (err: any) {
-      errorMessage =
-        err.message || "Login failed. Please check your credentials.";
+      // Parse friendly error messages
+      const raw: string = err?.message ?? "";
+      let message = "Login failed. Please check your credentials.";
+
+      if (
+        raw.toLowerCase().includes("401") ||
+        raw.toLowerCase().includes("unauthorized") ||
+        raw.toLowerCase().includes("invalid") ||
+        raw.toLowerCase().includes("incorrect") ||
+        raw.toLowerCase().includes("wrong")
+      ) {
+        message = "Invalid username or password. Please try again.";
+      } else if (
+        raw.toLowerCase().includes("network") ||
+        raw.toLowerCase().includes("fetch") ||
+        raw.toLowerCase().includes("connect")
+      ) {
+        message =
+          "Cannot reach the server. Please check your connection and try again.";
+      } else if (raw) {
+        message = raw;
+      }
+
+      setErrorMessage(message);
     } finally {
-      isLoading = false;
+      setIsLoading(false);
     }
   };
 
   return (
-    <div class="min-h-screen bg-background-DEFAULT">
+    <div class="min-h-screen bg-background-DEFAULT dark:bg-[#0f1117]">
       <Navigation showHomeLink={true} showAdminLink={false} />
-      <div class="min-h-[calc(100vh-64px)] bg-gradient-to-br from-main-red/5 via-white to-main-red/10 flex items-center justify-center p-4">
+      <div class="min-h-[calc(100vh-64px)] bg-gradient-to-br from-main-red/5 via-white dark:via-transparent to-main-red/10 flex items-center justify-center p-4">
         <div ref={formRef} class="w-full max-w-md">
           <div class="text-center mb-8">
             <div class="inline-flex items-center justify-center w-16 h-16 bg-main-red rounded-2xl shadow-lg mb-4">
@@ -75,11 +97,11 @@ const LoginPage: Component = () => {
 
           <Card padding="lg" shadow="xl">
             <form onSubmit={handleSubmit} class="space-y-5">
-              <Show when={errorMessage}>
+              <Show when={errorMessage()}>
                 <Alert
                   type="error"
-                  message={errorMessage!}
-                  onClose={() => (errorMessage = null)}
+                  message={errorMessage()}
+                  onClose={() => setErrorMessage("")}
                 />
               </Show>
 
@@ -88,7 +110,7 @@ const LoginPage: Component = () => {
                 label="Username"
                 type="text"
                 placeholder="Enter your username"
-                disabled={isLoading}
+                disabled={isLoading()}
                 leftIcon={
                   <svg
                     class="w-5 h-5"
@@ -112,7 +134,7 @@ const LoginPage: Component = () => {
                 label="Password"
                 type="password"
                 placeholder="Enter your password"
-                disabled={isLoading}
+                disabled={isLoading()}
                 leftIcon={
                   <svg
                     class="w-5 h-5"
@@ -135,8 +157,8 @@ const LoginPage: Component = () => {
                 type="submit"
                 fullWidth
                 size="lg"
-                loading={isLoading}
-                disabled={isLoading}
+                loading={isLoading()}
+                disabled={isLoading()}
               >
                 Sign In
               </Button>

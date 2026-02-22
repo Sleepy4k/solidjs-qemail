@@ -13,6 +13,7 @@ import {
   useConfirmDialog,
 } from "../../../../shared/components/ConfirmDialog";
 import { SafeEmailRenderer } from "../../../../shared/components/SafeEmailRenderer";
+import { AttachmentList } from "../../../../shared/components/AttachmentList";
 
 export const EmailViewPage: Component = () => {
   const params = useParams<{ messageId: string }>();
@@ -109,11 +110,11 @@ export const EmailViewPage: Component = () => {
         <div class="flex items-center gap-3 mb-6">
           <button
             onClick={() => navigate("/inbox")}
-            class="flex items-center justify-center w-9 h-9 rounded-lg border border-gray-200 hover:bg-gray-100 transition-colors flex-shrink-0"
+            class="flex items-center justify-center w-9 h-9 rounded-lg border border-gray-200 dark:border-navy-600 hover:bg-gray-100 dark:hover:bg-navy-700 transition-colors flex-shrink-0"
             aria-label="Back to inbox"
           >
             <svg
-              class="w-5 h-5 text-gray-600"
+              class="w-5 h-5 text-gray-600 dark:text-navy-300"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
@@ -126,7 +127,7 @@ export const EmailViewPage: Component = () => {
               />
             </svg>
           </button>
-          <h1 class="text-lg sm:text-2xl font-bold text-gray-900 truncate">
+          <h1 class="text-lg sm:text-2xl font-bold text-gray-900 dark:text-white truncate">
             {isLoading() ? "Loading..." : email()?.subject || "(No Subject)"}
           </h1>
         </div>
@@ -138,18 +139,18 @@ export const EmailViewPage: Component = () => {
         <Show
           when={!isLoading()}
           fallback={
-            <div class="bg-white rounded-xl border border-gray-200 shadow-sm p-8 text-center">
+            <div class="bg-white dark:bg-navy-800 rounded-xl border border-gray-200 dark:border-navy-600 shadow-sm p-8 text-center">
               <div class="inline-block w-8 h-8 border-4 border-main-red border-t-transparent rounded-full animate-spin mb-4" />
-              <p class="text-main-gray">Loading email...</p>
+              <p class="text-main-gray dark:text-navy-300">Loading email...</p>
             </div>
           }
         >
           <Show when={email()}>
             {(msg) => (
-              <div class="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
+              <div class="bg-white dark:bg-navy-800 rounded-xl border border-gray-200 dark:border-navy-600 shadow-sm overflow-hidden">
                 {/* Email header */}
-                <div class="px-4 sm:px-8 py-5 sm:py-6 border-b border-gray-200 bg-gray-50">
-                  <h2 class="text-base sm:text-2xl font-bold text-gray-900 mb-3 sm:mb-4 break-words">
+                <div class="px-4 sm:px-8 py-5 sm:py-6 border-b border-gray-200 dark:border-navy-600 bg-gray-50 dark:bg-navy-700">
+                  <h2 class="text-base sm:text-2xl font-bold text-gray-900 dark:text-white mb-3 sm:mb-4 break-words">
                     {msg().subject || "(No Subject)"}
                   </h2>
                   <div class="flex flex-col sm:flex-row sm:items-start gap-3 sm:gap-6">
@@ -161,18 +162,18 @@ export const EmailViewPage: Component = () => {
                         </span>
                       </div>
                       <div class="min-w-0">
-                        <p class="font-semibold text-gray-900 text-sm sm:text-base">
+                        <p class="font-semibold text-gray-900 dark:text-white text-sm sm:text-base">
                           {msg().sender_name || msg().sender}
                         </p>
                         <Show when={msg().sender_name}>
-                          <p class="text-xs sm:text-sm text-main-gray break-all">
+                          <p class="text-xs sm:text-sm text-main-gray dark:text-navy-300 break-all">
                             {msg().sender}
                           </p>
                         </Show>
                       </div>
                     </div>
                     {/* Date */}
-                    <p class="text-xs sm:text-sm text-main-gray flex-shrink-0 pl-13 sm:pl-0">
+                    <p class="text-xs sm:text-sm text-main-gray dark:text-navy-300 flex-shrink-0 pl-13 sm:pl-0">
                       {formatDate(msg().received_at)}
                     </p>
                   </div>
@@ -183,7 +184,7 @@ export const EmailViewPage: Component = () => {
                   <Show
                     when={msg().body_html}
                     fallback={
-                      <pre class="whitespace-pre-wrap text-sm sm:text-base text-gray-800 font-sans leading-relaxed break-words">
+                      <pre class="whitespace-pre-wrap text-sm sm:text-base text-gray-800 dark:text-navy-100 font-sans leading-relaxed break-words">
                         {msg().body_text || "(No content)"}
                       </pre>
                     }
@@ -192,8 +193,13 @@ export const EmailViewPage: Component = () => {
                   </Show>
                 </div>
 
+                {/* Attachments */}
+                <Show when={msg().attachments && msg().attachments!.length > 0}>
+                  <AttachmentList attachments={msg().attachments!} />
+                </Show>
+
                 {/* Actions */}
-                <div class="px-4 sm:px-8 py-4 sm:py-5 border-t border-gray-200 bg-gray-50 flex flex-col sm:flex-row gap-3">
+                <div class="px-4 sm:px-8 py-4 sm:py-5 border-t border-gray-200 dark:border-navy-600 bg-gray-50 dark:bg-navy-700 flex flex-col sm:flex-row gap-3">
                   <Button
                     variant="secondary"
                     onClick={() => navigate("/inbox")}

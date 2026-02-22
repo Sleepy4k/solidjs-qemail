@@ -16,6 +16,7 @@ import { Button } from "../../../../shared/components/ui/Button";
 import { Card } from "../../../../shared/components/ui/Card";
 import { Alert } from "../../../../shared/components/ui/Alert";
 import { EmailLayout } from "../../../../shared/layouts/EmailLayout";
+import { AttachmentBadge } from "../../../../shared/components/AttachmentList";
 
 export const InboxPage: Component = () => {
   const navigate = useNavigate();
@@ -101,10 +102,10 @@ export const InboxPage: Component = () => {
         <div class="mb-6 sm:mb-8">
           <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-4">
             <div class="min-w-0">
-              <h1 class="text-xl sm:text-3xl font-bold text-gray-900 mb-1">
+              <h1 class="text-xl sm:text-3xl font-bold text-gray-900 dark:text-white mb-1">
                 Your Inbox
               </h1>
-              <p class="text-xs sm:text-base text-main-gray truncate">
+              <p class="text-xs sm:text-base text-main-gray dark:text-navy-300 truncate">
                 {emailStore.session?.email || "Temporary Email"}
               </p>
             </div>
@@ -117,8 +118,8 @@ export const InboxPage: Component = () => {
             </Button>
           </div>
 
-          <div class="flex flex-col sm:flex-row sm:items-center gap-3 p-3 sm:p-4 bg-blue-50 border border-blue-200 rounded-xl">
-            <p class="text-xs sm:text-sm text-blue-900 flex-1">
+          <div class="flex flex-col sm:flex-row sm:items-center gap-3 p-3 sm:p-4 bg-blue-50 dark:bg-navy-800 border border-blue-200 dark:border-navy-600 rounded-xl">
+            <p class="text-xs sm:text-sm text-blue-900 dark:text-navy-200 flex-1">
               <span class="font-semibold">Auto-refresh enabled.</span> New
               emails will appear automatically every 30 seconds.
             </p>
@@ -150,9 +151,9 @@ export const InboxPage: Component = () => {
                   </div>
                 ) : (
                   <div>
-                    <div class="w-16 h-16 mx-auto mb-4 rounded-full bg-gray-100 flex items-center justify-center">
+                    <div class="w-16 h-16 mx-auto mb-4 rounded-full bg-gray-100 dark:bg-navy-700 flex items-center justify-center">
                       <svg
-                        class="w-8 h-8 text-gray-400"
+                        class="w-8 h-8 text-gray-400 dark:text-navy-400"
                         fill="none"
                         stroke="currentColor"
                         viewBox="0 0 24 24"
@@ -165,10 +166,10 @@ export const InboxPage: Component = () => {
                         />
                       </svg>
                     </div>
-                    <h3 class="text-lg sm:text-xl font-bold text-gray-900 mb-2">
+                    <h3 class="text-lg sm:text-xl font-bold text-gray-900 dark:text-white mb-2">
                       No emails yet
                     </h3>
-                    <p class="text-main-gray text-xs sm:text-base">
+                    <p class="text-main-gray dark:text-navy-300 text-xs sm:text-base">
                       Your inbox is empty. Emails sent to your temporary address
                       will appear here.
                     </p>
@@ -182,8 +183,8 @@ export const InboxPage: Component = () => {
                 {(email) => (
                   <button
                     onClick={() => handleOpenEmail(email)}
-                    class={`w-full text-left px-4 sm:px-6 py-4 hover:bg-gray-50 transition-colors ${
-                      !email.is_read ? "bg-blue-50/50" : ""
+                    class={`w-full text-left px-4 sm:px-6 py-4 hover:bg-gray-100 dark:hover:bg-navy-700 transition-colors ${
+                      !email.is_read ? "bg-blue-50/50 dark:bg-navy-800/70" : ""
                     }`}
                   >
                     <div class="flex items-start justify-between gap-3">
@@ -192,18 +193,19 @@ export const InboxPage: Component = () => {
                           {!email.is_read && (
                             <span class="w-2 h-2 bg-main-red rounded-full flex-shrink-0" />
                           )}
-                          <span class="font-semibold text-gray-900 truncate text-sm sm:text-base">
+                          <span class="font-semibold text-gray-900 dark:text-white truncate text-sm sm:text-base">
                             {email.sender_name || email.sender}
                           </span>
                         </div>
-                        <p class="text-sm text-gray-600 truncate mb-1">
-                          {email.subject || "(No Subject)"}
-                        </p>
-                        <p class="text-xs text-main-gray truncate hidden sm:block">
+                        <p class="text-sm text-gray-600 dark:text-navy-300 truncate mb-1 flex items-center gap-1.5">
+                        <span class="truncate">{email.subject || "(No Subject)"}</span>
+                        <AttachmentBadge count={email.attachments?.length ?? 0} />
+                      </p>
+                        <p class="text-xs text-main-gray dark:text-navy-400 truncate hidden sm:block">
                           {email.body_text?.substring(0, 100)}...
                         </p>
                       </div>
-                      <span class="text-xs text-main-gray whitespace-nowrap flex-shrink-0 mt-0.5">
+                      <span class="text-xs text-main-gray dark:text-navy-400 whitespace-nowrap flex-shrink-0 mt-0.5">
                         {formatDate(email.received_at)}
                       </span>
                     </div>
@@ -225,7 +227,7 @@ export const InboxPage: Component = () => {
                 >
                   ← Prev
                 </Button>
-                <span class="text-sm text-main-gray px-2 sm:px-4">
+                <span class="text-sm text-main-gray dark:text-navy-300 px-2 sm:px-4">
                   {currentPage()} / {totalPages()}
                 </span>
                 <Button

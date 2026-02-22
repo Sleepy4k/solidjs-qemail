@@ -1,7 +1,7 @@
 import { Component, createResource, createSignal, createMemo, Show, For } from 'solid-js';
 import { DomainList, DomainForm, DomainEditForm } from '../../components';
 import type { DomainFormData, DomainEditFormData } from '../../components';
-import { Card, Button, Alert, Modal, Input } from '../../../../shared/components/ui';
+import { Card, Button, Alert, Modal } from '../../../../shared/components/ui';
 import { ConfirmDialog, useConfirmDialog } from '../../../../shared/components/ConfirmDialog';
 import { adminService } from '../../services/admin.service';
 import { useAnimation } from '../../../../shared/hooks/use-animation.hook';
@@ -20,12 +20,25 @@ const DomainsPage: Component = () => {
   const { isOpen: isConfirmOpen, config: confirmConfig, confirm, handleConfirm, handleCancel } = useConfirmDialog();
 
   const [searchDomain, setSearchDomain] = createSignal('');
+  const [activeFilter, setActiveFilter] = createSignal<'all' | 'active' | 'inactive'>('all');
 
   const filteredDomains = createMemo(() => {
     const q = searchDomain().toLowerCase().trim();
+    const af = activeFilter();
     const list = domains() ?? [];
-    return q ? list.filter((d) => d.name.toLowerCase().includes(q)) : list;
+    return list.filter((d) => {
+      const matchesSearch = !q || d.name.toLowerCase().includes(q);
+      const matchesStatus = af === 'all' || (af === 'active' ? d.is_active : !d.is_active);
+      return matchesSearch && matchesStatus;
+    });
   });
+
+  const hasFilters = () => searchDomain() !== '' || activeFilter() !== 'all';
+
+  const resetFilters = () => {
+    setSearchDomain('');
+    setActiveFilter('all');
+  };
 
   const [isEditConfigOpen, setIsEditConfigOpen] = createSignal(false);
   const [editingDomain, setEditingDomain] = createSignal<AdminDomain | null>(null);
@@ -234,29 +247,113 @@ const DomainsPage: Component = () => {
         <Alert type="success" message={successMessage()!} onClose={() => setSuccessMessage(null)} />
       </Show>
 
-      <Card padding="md">
-        <div class="flex items-center gap-3">
-          <div class="flex-1">
-            <Input
+      <Card padding="none">
+        <div class="p-4 border-b border-gray-100 dark:border-navy-700 flex items-center justify-between gap-3">
+          <div class="flex items-center gap-2">
+            <svg class="w-4 h-4 text-gray-400 dark:text-navy-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2a1 1 0 01-.293.707L13 13.414V19a1 1 0 01-.553.894l-4 2A1 1 0 017 21v-7.586L3.293 6.707A1 1 0 013 6V4z" />
+            </svg>
+            <span class="text-sm font-semibold text-gray-700 dark:text-navy-200">Filters</span>
+            <Show when={hasFilters()}>
+              <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-primary-100 text-primary-700 dark:bg-primary-900/30 dark:text-primary-400">
+                Active
+              </span>
+            </Show>
+          </div>
+          <div class="flex items-center gap-3">
+            <Show when={!domains.loading}>
+              <span class="text-xs text-gray-400 dark:text-navy-400 whitespace-nowrap">
+                {filteredDomains().length} / {(domains() ?? []).length} domains
+              </span>
+            </Show>
+            <Show when={hasFilters()}>
+              <button
+                onClick={resetFilters}
+                class="flex items-center gap-1.5 text-xs font-medium text-gray-500 dark:text-navy-400 hover:text-red-500 dark:hover:text-red-400 transition-colors"
+              >
+                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+                Clear all
+              </button>
+            </Show>
+          </div>
+        </div>
+
+        <div class="p-4 space-y-4">
+          <div class="relative">
+            <div class="absolute inset-y-0 left-3 flex items-center pointer-events-none">
+              <svg class="w-4 h-4 text-gray-400 dark:text-navy-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+              </svg>
+            </div>
+            <input
+              type="text"
               placeholder="Search domains by name..."
               value={searchDomain()}
-              onInput={(v) => setSearchDomain(v)}
-              leftIcon={
-                <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                </svg>
-              }
+              onInput={(e) => setSearchDomain(e.currentTarget.value)}
+              class="w-full pl-9 pr-9 py-2.5 text-sm border border-gray-200 dark:border-navy-600 rounded-xl bg-gray-50 dark:bg-navy-800 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-navy-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 focus:bg-white dark:focus:bg-navy-700 transition-all"
             />
+            <Show when={searchDomain()}>
+              <button
+                onClick={() => setSearchDomain('')}
+                class="absolute inset-y-0 right-3 flex items-center text-gray-400 hover:text-gray-600 dark:text-navy-400 dark:hover:text-navy-200 transition-colors"
+              >
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+            </Show>
           </div>
-          <Show when={searchDomain()}>
-            <Button variant="secondary" size="sm" onClick={() => setSearchDomain('')}>
-              Clear
-            </Button>
-          </Show>
-          <Show when={!domains.loading}>
-            <span class="text-xs text-gray-500 whitespace-nowrap">
-              {filteredDomains().length} / {(domains() ?? []).length} domains
-            </span>
+
+          <div class="space-y-1.5">
+            <label class="block text-xs font-semibold text-gray-500 dark:text-navy-400 uppercase tracking-wide">Status</label>
+            <div class="flex items-center gap-2 flex-wrap">
+              {(['all', 'active', 'inactive'] as const).map((opt) => (
+                <button
+                  onClick={() => setActiveFilter(opt)}
+                  class={`px-4 py-2 rounded-xl text-sm font-medium border transition-all ${
+                    activeFilter() === opt
+                      ? opt === 'all'
+                        ? 'bg-gray-900 dark:bg-white text-white dark:text-gray-900 border-gray-900 dark:border-white'
+                        : opt === 'active'
+                          ? 'bg-emerald-600 text-white border-emerald-600'
+                          : 'bg-red-500 text-white border-red-500'
+                      : 'bg-gray-50 dark:bg-navy-800 text-gray-600 dark:text-navy-300 border-gray-200 dark:border-navy-600 hover:bg-gray-100 dark:hover:bg-navy-700'
+                  }`}
+                >
+                  {opt === 'all' ? 'All' : opt === 'active' ? 'Active' : 'Inactive'}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          <Show when={hasFilters()}>
+            <div class="flex flex-wrap gap-2 pt-1">
+              <Show when={searchDomain()}>
+                <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium bg-gray-100 dark:bg-navy-700 text-gray-700 dark:text-navy-200 border border-gray-200 dark:border-navy-600">
+                  <svg class="w-3 h-3 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                  </svg>
+                  "{searchDomain()}"
+                  <button onClick={() => setSearchDomain('')} class="ml-0.5 text-gray-400 hover:text-red-500 transition-colors">
+                    <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg>
+                  </button>
+                </span>
+              </Show>
+              <Show when={activeFilter() !== 'all'}>
+                <span class={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium border ${
+                  activeFilter() === 'active'
+                    ? 'bg-emerald-50 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-300 border-emerald-200 dark:border-emerald-700'
+                    : 'bg-red-50 dark:bg-red-900/30 text-red-700 dark:text-red-300 border-red-200 dark:border-red-700'
+                }`}>
+                  Status: {activeFilter()}
+                  <button onClick={() => setActiveFilter('all')} class="ml-0.5 text-current opacity-60 hover:text-red-500 hover:opacity-100 transition-colors">
+                    <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg>
+                  </button>
+                </span>
+              </Show>
+            </div>
           </Show>
         </div>
       </Card>

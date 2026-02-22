@@ -42,13 +42,13 @@ const AboutPage: Component = () => {
               />
             </svg>
           </div>
-          <h1 class="text-3xl sm:text-5xl font-black text-gray-900 mb-4">
+          <h1 class="text-3xl sm:text-5xl font-black text-gray-900 dark:text-white mb-4">
             About{" "}
             <span class="bg-gradient-to-r from-main-red to-red-700 bg-clip-text text-transparent">
               QEmail
             </span>
           </h1>
-          <p class="text-base sm:text-lg text-gray-500 max-w-2xl mx-auto leading-relaxed">
+          <p class="text-base sm:text-lg text-gray-600 dark:text-navy-300 max-w-2xl mx-auto leading-relaxed">
             A free, fast, and privacy-focused temporary email service. No
             accounts. No tracking. Just a clean inbox when you need one.
           </p>
@@ -56,24 +56,24 @@ const AboutPage: Component = () => {
 
         <div ref={bodyRef} class="space-y-12">
           <section>
-            <h2 class="text-xl sm:text-2xl font-bold text-gray-900 mb-4 flex items-center gap-2">
+            <h2 class="text-xl sm:text-2xl font-bold text-gray-900 dark:text-white mb-4 flex items-center gap-2">
               <span class="w-1 h-6 bg-main-red rounded-full inline-block" />
               What is QEmail?
             </h2>
-            <div class="bg-white rounded-2xl border border-gray-200 p-6 sm:p-8 space-y-4">
-              <p class="text-gray-600 leading-relaxed">
-                <strong class="text-gray-900">QEmail</strong> is a disposable,
+            <div class="bg-white dark:bg-navy-800 rounded-2xl border border-gray-200 dark:border-navy-700 p-6 sm:p-8 space-y-4">
+              <p class="text-gray-600 dark:text-navy-200 leading-relaxed">
+                <strong class="text-gray-900 dark:text-white">QEmail</strong> is a disposable,
                 temporary email service that lets you create a working inbox in
                 seconds without any registration, personal data, or password.
                 Simply visit the home page, pick a domain, and your inbox is
                 ready to use.
               </p>
-              <p class="text-gray-600 leading-relaxed">
+              <p class="text-gray-600 dark:text-navy-200 leading-relaxed">
                 Each address is fully functional: it can receive emails from any
                 sender in real-time. Once you're done, the inbox expires on its
                 own there's nothing to delete or manage.
               </p>
-              <p class="text-gray-600 leading-relaxed">
+              <p class="text-gray-600 dark:text-navy-200 leading-relaxed">
                 QEmail was built for people who value their privacy and want to
                 keep their real inbox free from marketing emails, spam, one-time
                 verifications, and unwanted newsletters.
@@ -82,16 +82,16 @@ const AboutPage: Component = () => {
           </section>
 
           <section>
-            <h2 class="text-xl sm:text-2xl font-bold text-gray-900 mb-4 flex items-center gap-2">
+            <h2 class="text-xl sm:text-2xl font-bold text-gray-900 dark:text-white mb-4 flex items-center gap-2">
               <span class="w-1 h-6 bg-main-red rounded-full inline-block" />
               Our Mission
             </h2>
-            <div class="bg-gradient-to-br from-main-red/5 to-red-50 rounded-2xl border border-main-red/10 p-6 sm:p-8">
-              <p class="text-gray-700 leading-relaxed text-base sm:text-lg font-medium italic">
+            <div class="bg-gradient-to-br from-main-red/5 to-red-50 dark:from-primary-900/20 dark:to-navy-900 rounded-2xl border border-main-red/10 dark:border-navy-700 p-6 sm:p-8">
+              <p class="text-gray-700 dark:text-navy-100 leading-relaxed text-base sm:text-lg font-medium italic">
                 "To give everyone a simple, reliable way to protect their real
                 email identity for free, forever."
               </p>
-              <p class="text-gray-600 leading-relaxed mt-4">
+              <p class="text-gray-600 dark:text-navy-300 leading-relaxed mt-4">
                 The internet requires an email address for almost everything:
                 signing up for services, downloading files, reading articles, or
                 joining communities. Most of the time, you don't want those
@@ -102,7 +102,7 @@ const AboutPage: Component = () => {
           </section>
 
           <section>
-            <h2 class="text-xl sm:text-2xl font-bold text-gray-900 mb-4 flex items-center gap-2">
+            <h2 class="text-xl sm:text-2xl font-bold text-gray-900 dark:text-white mb-4 flex items-center gap-2">
               <span class="w-1 h-6 bg-main-red rounded-full inline-block" />
               Key Features
             </h2>
@@ -139,8 +139,8 @@ const AboutPage: Component = () => {
                   desc: "Inboxes expire automatically after their set period. No cleanup required they simply disappear.",
                 },
               ].map((f) => (
-                <div class="flex gap-4 p-5 bg-white rounded-xl border border-gray-200 hover:border-main-red/30 hover:shadow-md transition-all">
-                  <div class="flex-shrink-0 w-10 h-10 bg-main-red/10 rounded-lg flex items-center justify-center">
+                <div class="flex gap-4 p-5 bg-white dark:bg-navy-800 rounded-xl border border-gray-200 dark:border-navy-700 hover:border-main-red/40 dark:hover:border-primary-500/40 hover:shadow-md transition-all">
+                  <div class="flex-shrink-0 w-10 h-10 bg-main-red/10 dark:bg-primary-900/30 rounded-lg flex items-center justify-center">
                     <svg
                       class="w-5 h-5 text-main-red"
                       fill="none"
@@ -156,10 +156,10 @@ const AboutPage: Component = () => {
                     </svg>
                   </div>
                   <div>
-                    <h3 class="font-semibold text-gray-900 text-sm sm:text-base mb-1">
+                    <h3 class="font-semibold text-gray-900 dark:text-white text-sm sm:text-base mb-1">
                       {f.title}
                     </h3>
-                    <p class="text-xs sm:text-sm text-gray-500 leading-relaxed">
+                    <p class="text-xs sm:text-sm text-gray-600 dark:text-navy-300 leading-relaxed">
                       {f.desc}
                     </p>
                   </div>
@@ -169,12 +169,12 @@ const AboutPage: Component = () => {
           </section>
 
           <section>
-            <h2 class="text-xl sm:text-2xl font-bold text-gray-900 mb-4 flex items-center gap-2">
+            <h2 class="text-xl sm:text-2xl font-bold text-gray-900 dark:text-white mb-4 flex items-center gap-2">
               <span class="w-1 h-6 bg-main-red rounded-full inline-block" />
-              Privacy & Security
+              Privacy &amp; Security
             </h2>
-            <div class="bg-white rounded-2xl border border-gray-200 p-6 sm:p-8 space-y-4">
-              <p class="text-gray-600 leading-relaxed">
+            <div class="bg-white dark:bg-navy-800 rounded-2xl border border-gray-200 dark:border-navy-700 p-6 sm:p-8 space-y-4">
+              <p class="text-gray-600 dark:text-navy-200 leading-relaxed">
                 We take your privacy seriously. Here's exactly what QEmail does
                 and doesn't do:
               </p>
@@ -205,10 +205,18 @@ const AboutPage: Component = () => {
                 ].map((item) => (
                   <div class="flex items-start gap-3">
                     <span
-                      class={`flex-shrink-0 w-5 h-5 rounded-full flex items-center justify-center mt-0.5 ${item.ok ? "bg-green-100" : "bg-red-100"}`}
+                      class={`flex-shrink-0 w-5 h-5 rounded-full flex items-center justify-center mt-0.5 ${
+                        item.ok
+                          ? "bg-green-100 dark:bg-green-900/40"
+                          : "bg-red-100 dark:bg-red-900/30"
+                      }`}
                     >
                       <svg
-                        class={`w-3 h-3 ${item.ok ? "text-green-600" : "text-red-600"}`}
+                        class={`w-3 h-3 ${
+                          item.ok
+                            ? "text-green-600 dark:text-green-400"
+                            : "text-red-600 dark:text-red-400"
+                        }`}
                         fill="none"
                         stroke="currentColor"
                         viewBox="0 0 24 24"
@@ -223,7 +231,7 @@ const AboutPage: Component = () => {
                         />
                       </svg>
                     </span>
-                    <p class="text-sm text-gray-600">{item.text}</p>
+                    <p class="text-sm text-gray-700 dark:text-navy-200">{item.text}</p>
                   </div>
                 ))}
               </div>
@@ -237,11 +245,11 @@ const AboutPage: Component = () => {
                 { value: "Zero", label: "Registration Required" },
                 { value: "∞", label: "Addresses Available" },
               ].map((s) => (
-                <div class="bg-white rounded-2xl border border-gray-200 p-5 sm:p-6 text-center">
+                <div class="bg-white dark:bg-navy-800 rounded-2xl border border-gray-200 dark:border-navy-700 p-5 sm:p-6 text-center">
                   <p class="text-2xl sm:text-3xl font-black text-main-red">
                     {s.value}
                   </p>
-                  <p class="text-xs sm:text-sm text-gray-500 mt-1">{s.label}</p>
+                  <p class="text-xs sm:text-sm text-gray-600 dark:text-navy-300 mt-1">{s.label}</p>
                 </div>
               ))}
             </div>

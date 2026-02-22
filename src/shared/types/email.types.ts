@@ -29,6 +29,14 @@ export interface EmailLoginResponse {
   session_token: string;
 }
 
+export interface EmailAttachment {
+  id: string;
+  original_filename: string;
+  mime_type: string;
+  size: number;
+  url: string;
+}
+
 export interface EmailMessage {
   id: number;
   message_id: string;
@@ -39,6 +47,7 @@ export interface EmailMessage {
   body_html: string | null;
   is_read: boolean;
   received_at: string;
+  attachments?: EmailAttachment[];
 }
 
 export interface EmailMeta {

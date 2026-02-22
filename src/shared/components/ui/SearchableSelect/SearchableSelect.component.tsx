@@ -35,6 +35,10 @@ export const SearchableSelect: Component<SearchableSelectProps> = (props) => {
   let containerRef: HTMLDivElement | undefined;
   let searchRef: HTMLInputElement | undefined;
   let dropdownRef: HTMLDivElement | undefined;
+  // Prevents immediate close that happens when the opening tap
+  // also fires a scroll/pointerdown event on mobile browsers.
+  let justOpenedTimer: ReturnType<typeof setTimeout> | undefined;
+  let justOpened = false;
 
   const selectedLabel = createMemo(
     () => props.options.find((o) => o.value === props.value)?.label ?? "",
@@ -50,8 +54,18 @@ export const SearchableSelect: Component<SearchableSelectProps> = (props) => {
   const updatePos = () => {
     if (!containerRef) return;
     const rect = containerRef.getBoundingClientRect();
+    const spaceBelow = window.innerHeight - rect.bottom;
+    const spaceAbove = rect.top;
+    const dropdownHeight = 256; // max-h-52 ≈ 208px + search bar ≈ 56px
+
+    // Flip upward only when there is not enough space below
+    const top =
+      spaceBelow < dropdownHeight && spaceAbove > spaceBelow
+        ? rect.top - Math.min(dropdownHeight, spaceAbove) - 4
+        : rect.bottom + 4;
+
     setPos({
-      top: rect.bottom + 4,
+      top,
       left: rect.left,
       width: rect.width,
     });
@@ -61,10 +75,19 @@ export const SearchableSelect: Component<SearchableSelectProps> = (props) => {
     if (props.disabled) return;
     updatePos();
     setIsOpen(true);
+    // Mark as just-opened so that stray scroll / pointerdown events that
+    // are part of the same touch gesture don't immediately close us.
+    justOpened = true;
+    clearTimeout(justOpenedTimer);
+    justOpenedTimer = setTimeout(() => {
+      justOpened = false;
+    }, 320);
     setTimeout(() => searchRef?.focus(), 10);
   };
 
   const close = () => {
+    clearTimeout(justOpenedTimer);
+    justOpened = false;
     setIsOpen(false);
     setSearch("");
   };
@@ -74,7 +97,10 @@ export const SearchableSelect: Component<SearchableSelectProps> = (props) => {
     close();
   };
 
-  const handleOutside = (e: MouseEvent) => {
+  // Use pointerdown instead of mousedown so it works on both touch and mouse.
+  const handleOutside = (e: PointerEvent) => {
+    if (justOpened) return;
+    if (!isOpen()) return;
     const target = e.target as Node;
     if (
       containerRef &&
@@ -87,18 +113,32 @@ export const SearchableSelect: Component<SearchableSelectProps> = (props) => {
   };
 
   const handleScroll = (e: Event) => {
+    if (justOpened) return;
+    if (!isOpen()) return;
+    // If the scroll originated inside the dropdown, let it pass through
     if (dropdownRef && dropdownRef.contains(e.target as Node)) return;
-    close();
+    // If the scroll originated inside the trigger container, ignore too
+    if (containerRef && containerRef.contains(e.target as Node)) return;
+    // Otherwise the page is scrolling – update position to stay anchored
+    // (don't close; instead reposition so UX is smooth on desktop)
+    updatePos();
+  };
+
+  const handleResize = () => {
+    if (isOpen()) {
+      updatePos();
+    }
   };
 
   onMount(() => {
-    document.addEventListener("mousedown", handleOutside);
-    window.addEventListener("scroll", handleScroll, true);
-    window.addEventListener("resize", close);
+    document.addEventListener("pointerdown", handleOutside);
+    window.addEventListener("scroll", handleScroll, { capture: true, passive: true });
+    window.addEventListener("resize", handleResize);
     onCleanup(() => {
-      document.removeEventListener("mousedown", handleOutside);
+      clearTimeout(justOpenedTimer);
+      document.removeEventListener("pointerdown", handleOutside);
       window.removeEventListener("scroll", handleScroll, true);
-      window.removeEventListener("resize", close);
+      window.removeEventListener("resize", handleResize);
     });
   });
 
@@ -155,7 +195,7 @@ export const SearchableSelect: Component<SearchableSelectProps> = (props) => {
               top: `${pos().top}px`,
               left: `${pos().left}px`,
               width: `${pos().width}px`,
-              "z-index": "9999",
+              "z-index": "99999",
             }}
             class="bg-white border border-gray-200 rounded-lg shadow-lg overflow-hidden"
           >
@@ -186,7 +226,10 @@ export const SearchableSelect: Component<SearchableSelectProps> = (props) => {
               </div>
             </div>
 
-            <div class="max-h-52 overflow-y-auto">
+            <div
+              class="max-h-52 overflow-y-auto overscroll-contain"
+              onTouchMove={(e) => e.stopPropagation()}
+            >
               <Show
                 when={filtered().length > 0}
                 fallback={
@@ -200,10 +243,15 @@ export const SearchableSelect: Component<SearchableSelectProps> = (props) => {
                     <button
                       type="button"
                       disabled={option.disabled}
-                      onClick={() => select(option.value)}
+                      onPointerDown={(e) => {
+                        // Prevent the global pointerdown handler from running
+                        // before the click/select logic fires
+                        e.stopPropagation();
+                      }}
+                      onClick={() => !option.disabled && select(option.value)}
                       class={`w-full px-4 py-2.5 text-left text-sm transition-colors ${
                         props.value === option.value
-                          ? "bg-primary-50 text-primary-700 font-medium"
+                          ? "bg-primary-50 dark:bg-primary-900 dark:text-primary-100 font-medium"
                           : "text-gray-700 hover:bg-gray-50"
                       } ${option.disabled ? "opacity-50 cursor-not-allowed" : "cursor-pointer"}`}
                     >
@@ -228,3 +276,4 @@ export const SearchableSelect: Component<SearchableSelectProps> = (props) => {
 };
 
 export default SearchableSelect;
+

@@ -7,6 +7,7 @@ import { adminApiService } from "../../services/admin-api.service";
 import type { AdminEmailItem } from "../../../../shared/types/admin.types";
 import { Pagination } from "../../../../shared/components/ui/Pagination";
 import { SafeEmailRenderer } from "../../../../shared/components/SafeEmailRenderer";
+import { AttachmentList, AttachmentBadge } from "../../../../shared/components/AttachmentList";
 
 const SUBJECT_LIMIT = 50;
 const SENDER_LIMIT = 30;
@@ -333,15 +334,18 @@ const AccountInboxPage: Component = () => {
                             </Show>
                           </td>
                           <td class="px-4 py-3.5 align-middle">
-                            <span
-                              class={`text-sm ${!email.is_read ? "font-semibold text-gray-900" : "text-gray-700"}`}
-                              title={email.subject || "(No Subject)"}
-                            >
-                              {truncate(
-                                email.subject || "(No Subject)",
-                                SUBJECT_LIMIT,
-                              )}
-                            </span>
+                            <div class="flex items-center gap-2">
+                              <span
+                                class={`text-sm truncate ${!email.is_read ? "font-semibold text-gray-900" : "text-gray-700"}`}
+                                title={email.subject || "(No Subject)"}
+                              >
+                                {truncate(
+                                  email.subject || "(No Subject)",
+                                  SUBJECT_LIMIT,
+                                )}
+                              </span>
+                              <AttachmentBadge count={email.attachments?.length ?? 0} />
+                            </div>
                           </td>
                           <td class="px-4 py-3.5 align-middle">
                             <div class="text-xs text-gray-500 whitespace-nowrap">
@@ -441,6 +445,9 @@ const AccountInboxPage: Component = () => {
                                       />
                                     </Show>
                                   </div>
+                                  <Show when={msg().attachments && msg().attachments!.length > 0}>
+                                    <AttachmentList attachments={msg().attachments!} />
+                                  </Show>
                                 </div>
                               </td>
                             </tr>
@@ -580,6 +587,9 @@ const AccountInboxPage: Component = () => {
                               />
                             </Show>
                           </div>
+                          <Show when={msg().attachments && msg().attachments!.length > 0}>
+                            <AttachmentList attachments={msg().attachments!} compact />
+                          </Show>
                         </div>
                       )}
                     </Show>

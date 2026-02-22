@@ -15,6 +15,7 @@ const LandingPage: Component = () => {
   const navigate = useNavigate();
 
   const [domains, setDomains] = createSignal<Domain[]>([]);
+  const [domainsLoading, setDomainsLoading] = createSignal(true);
   const [selectedDomainId, setSelectedDomainId] = createSignal<number>(0);
   const [username, setUsername] = createSignal("");
   const [password, setPassword] = createSignal("");
@@ -75,11 +76,11 @@ const LandingPage: Component = () => {
       setDomains(domainsData);
       if (domainsData.length > 0) {
         setSelectedDomainId(domainsData[0].id);
-      } else {
-        setError("No domains available. Please contact administrator.");
       }
     } catch (err) {
       setError("Failed to load domains. Please try again.");
+    } finally {
+      setDomainsLoading(false);
     }
   });
 
@@ -203,25 +204,34 @@ const LandingPage: Component = () => {
                   Select Domain
                 </label>
                 <Show
-                  when={domains().length > 0}
+                  when={!domainsLoading()}
                   fallback={
-                    <div class="p-4 bg-red-50 border border-red-200 rounded-lg text-center">
-                      <p class="text-sm text-red-600 font-medium">
-                        No domains available
-                      </p>
-                      <p class="text-xs text-red-500 mt-1">
-                        Please contact administrator to add domains
-                      </p>
+                    <div class="p-4 bg-gray-50 border border-gray-200 rounded-lg text-center animate-pulse">
+                      <p class="text-sm text-gray-500">Loading domains...</p>
                     </div>
                   }
                 >
-                  <SearchableSelect
-                    options={domainOptions()}
-                    value={selectedDomainId() || undefined}
-                    onChange={(value) => setSelectedDomainId(value as number)}
-                    placeholder="Choose a domain..."
-                    disabled={isLoading()}
-                  />
+                  <Show
+                    when={domains().length > 0}
+                    fallback={
+                      <div class="p-4 bg-red-50 border border-red-200 rounded-lg text-center">
+                        <p class="text-sm text-red-600 font-medium">
+                          No domains available
+                        </p>
+                        <p class="text-xs text-red-500 mt-1">
+                          Please contact administrator to add domains
+                        </p>
+                      </div>
+                    }
+                  >
+                    <SearchableSelect
+                      options={domainOptions()}
+                      value={selectedDomainId() || undefined}
+                      onChange={(value) => setSelectedDomainId(value as number)}
+                      placeholder="Choose a domain..."
+                      disabled={isLoading()}
+                    />
+                  </Show>
                 </Show>
               </div>
 
@@ -326,6 +336,7 @@ const LandingPage: Component = () => {
                 size="lg"
                 disabled={
                   isLoading() ||
+                  domainsLoading() ||
                   selectedDomainId() === 0 ||
                   domains().length === 0
                 }

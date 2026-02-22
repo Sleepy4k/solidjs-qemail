@@ -18,6 +18,7 @@ export const EmailLoginPage: Component = () => {
   let passwordRef: HTMLInputElement | undefined;
 
   const [domains, setDomains] = createSignal<Domain[]>([]);
+  const [domainsLoading, setDomainsLoading] = createSignal(true);
   const [selectedDomainId, setSelectedDomainId] = createSignal<number>(0);
   const [isLoading, setIsLoading] = createSignal(false);
   const [error, setError] = createSignal("");
@@ -50,6 +51,8 @@ export const EmailLoginPage: Component = () => {
       }
     } catch {
       setError("Failed to load domains");
+    } finally {
+      setDomainsLoading(false);
     }
   });
 
@@ -131,22 +134,31 @@ export const EmailLoginPage: Component = () => {
                 />
 
                 <Show
-                  when={domains().length > 0}
+                  when={!domainsLoading()}
                   fallback={
-                    <div class="p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
-                      <p class="text-sm text-yellow-700">Loading domains...</p>
+                    <div class="p-4 bg-gray-50 border border-gray-200 rounded-lg animate-pulse">
+                      <p class="text-sm text-gray-500">Loading domains...</p>
                     </div>
                   }
                 >
-                  <SearchableSelect
-                    label="Domain"
-                    options={domainOptions()}
-                    value={selectedDomainId()}
-                    onChange={(val) => setSelectedDomainId(Number(val))}
-                    disabled={isLoading()}
-                    placeholder="Select domain..."
-                    helperText="Choose the domain for your email address"
-                  />
+                  <Show
+                    when={domains().length > 0}
+                    fallback={
+                      <div class="p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
+                        <p class="text-sm text-yellow-700">No domains available. Please contact administrator.</p>
+                      </div>
+                    }
+                  >
+                    <SearchableSelect
+                      label="Domain"
+                      options={domainOptions()}
+                      value={selectedDomainId()}
+                      onChange={(val) => setSelectedDomainId(Number(val))}
+                      disabled={isLoading()}
+                      placeholder="Select domain..."
+                      helperText="Choose the domain for your email address"
+                    />
+                  </Show>
                 </Show>
 
                 <Input

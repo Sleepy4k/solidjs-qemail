@@ -2,6 +2,7 @@ import { Component, Show, createSignal, onCleanup } from "solid-js";
 import { Portal } from "solid-js/web";
 import { A } from "@solidjs/router";
 import Logo from "../../assets/images/logo.png";
+import { ThemeToggle } from "./ThemeToggle";
 
 interface NavigationProps {
   showAdminLink?: boolean;
@@ -30,7 +31,7 @@ export const Navigation: Component<NavigationProps> = (props) => {
             page: "home",
             icon: (
               <svg
-                class="w-5 h-5 flex-shrink-0"
+                class="w-4 h-4 flex-shrink-0"
                 fill="none"
                 stroke="currentColor"
                 viewBox="0 0 24 24"
@@ -51,7 +52,7 @@ export const Navigation: Component<NavigationProps> = (props) => {
         page: "how-to-use",
         icon: (
           <svg
-            class="w-5 h-5 flex-shrink-0"
+            class="w-4 h-4 flex-shrink-0"
             fill="none"
             stroke="currentColor"
             viewBox="0 0 24 24"
@@ -71,7 +72,7 @@ export const Navigation: Component<NavigationProps> = (props) => {
         page: "about",
         icon: (
           <svg
-            class="w-5 h-5 flex-shrink-0"
+            class="w-4 h-4 flex-shrink-0"
             fill="none"
             stroke="currentColor"
             viewBox="0 0 24 24"
@@ -91,7 +92,7 @@ export const Navigation: Component<NavigationProps> = (props) => {
         page: "faq",
         icon: (
           <svg
-            class="w-5 h-5 flex-shrink-0"
+            class="w-4 h-4 flex-shrink-0"
             fill="none"
             stroke="currentColor"
             viewBox="0 0 24 24"
@@ -111,7 +112,7 @@ export const Navigation: Component<NavigationProps> = (props) => {
         page: "email-login",
         icon: (
           <svg
-            class="w-5 h-5 flex-shrink-0"
+            class="w-4 h-4 flex-shrink-0"
             fill="none"
             stroke="currentColor"
             viewBox="0 0 24 24"
@@ -133,7 +134,7 @@ export const Navigation: Component<NavigationProps> = (props) => {
             isButton: true,
             icon: (
               <svg
-                class="w-5 h-5 flex-shrink-0"
+                class="w-4 h-4 flex-shrink-0"
                 fill="none"
                 stroke="currentColor"
                 viewBox="0 0 24 24"
@@ -158,7 +159,7 @@ export const Navigation: Component<NavigationProps> = (props) => {
 
   return (
     <>
-      <nav class="bg-surface-DEFAULT border-b border-border-DEFAULT sticky top-0 z-50 backdrop-blur-sm bg-opacity-95">
+        <nav class="bg-surface-DEFAULT sticky top-0 z-50 backdrop-blur-sm bg-opacity-95 dark:bg-navy-900/95 border-b-2 border-primary-500 dark:border-primary-600">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div class="flex justify-between items-center h-14">
             <A href="/" class="flex items-center gap-2 group flex-shrink-0">
@@ -172,52 +173,110 @@ export const Navigation: Component<NavigationProps> = (props) => {
                 />
               </div>
               <div>
-                <h1 class="text-sm font-bold text-gray-900 leading-tight">
+                <h1 class="text-sm font-bold text-primary-600 dark:text-white leading-tight">
                   QEmail
                 </h1>
-                <p class="text-xs text-gray-500 leading-tight hidden sm:block">
+                <p class="text-xs text-gray-600 dark:text-navy-300 leading-tight hidden sm:block">
                   Temporary Email
                 </p>
               </div>
             </A>
 
-            <div class="hidden sm:flex items-center gap-1 lg:gap-2">
+            <div class="hidden lg:flex items-center gap-0.5 xl:gap-1">
               {navLinks().map((link) =>
                 link.isButton ? (
                   <A
                     href={link.href}
                     onClick={closeMenu}
-                    class="flex items-center gap-2 px-3 lg:px-4 py-2 bg-primary-500 text-white rounded-lg hover:bg-primary-600 font-medium transition-colors text-sm"
+                    class="flex items-center gap-1.5 px-3 xl:px-4 py-2 bg-primary-500 text-white rounded-lg hover:bg-primary-600 font-medium transition-colors text-sm whitespace-nowrap"
                   >
                     {link.icon}
-                    <span>{link.label}</span>
+                    <span class="hidden xl:inline">{link.label}</span>
+                    <span class="xl:hidden">Admin</span>
                   </A>
                 ) : (
                   <A
                     href={link.href}
                     onClick={closeMenu}
-                    class="flex items-center gap-2 px-3 lg:px-4 py-2 rounded-lg font-medium transition-colors text-sm text-gray-700 hover:text-primary-600 hover:bg-gray-100"
+                    class="flex items-center gap-1.5 px-2.5 xl:px-3 py-2 rounded-lg font-medium transition-colors text-sm text-gray-900 hover:text-gray-900 hover:bg-gray-100 whitespace-nowrap dark:text-navy-200 dark:hover:text-white dark:hover:bg-navy-700"
                     classList={{
-                      "text-primary-600 bg-primary-50":
+                      "text-gray-900 bg-gray-200 dark:bg-navy-700 dark:text-white font-semibold":
                         props.currentPage === link.page,
                     }}
                   >
                     {link.icon}
-                    <span>{link.label}</span>
+                    <span class="hidden xl:inline">{link.label}</span>
+                    <span class="xl:hidden">
+                      {link.label === "How to Use"
+                        ? "Guide"
+                        : link.label === "My Inbox"
+                          ? "Inbox"
+                          : link.label}
+                    </span>
                   </A>
                 ),
               )}
+              <div class="w-px h-5 bg-gray-200 dark:bg-navy-600 mx-1 flex-shrink-0" />
+              <ThemeToggle />
             </div>
 
-            <button
-              class="sm:hidden flex items-center justify-center w-8 h-8 rounded-lg text-gray-600 hover:bg-gray-100 transition-colors"
-              onClick={() => setMenuOpen(!menuOpen())}
-              aria-label={menuOpen() ? "Close menu" : "Open menu"}
-              aria-expanded={menuOpen()}
-            >
-              <Show
-                when={menuOpen()}
-                fallback={
+            <div class="hidden md:flex lg:hidden items-center gap-0.5">
+              {navLinks().map((link) =>
+                link.isButton ? (
+                  <A
+                    href={link.href}
+                    onClick={closeMenu}
+                    class="flex items-center justify-center w-9 h-9 bg-primary-500 text-white rounded-lg hover:bg-primary-600 transition-colors"
+                    title={link.label}
+                  >
+                    {link.icon}
+                  </A>
+                ) : (
+                  <A
+                    href={link.href}
+                    onClick={closeMenu}
+                    class="flex items-center justify-center w-9 h-9 rounded-lg transition-colors text-gray-900 hover:text-gray-900 hover:bg-gray-100 dark:text-navy-300 dark:hover:text-white dark:hover:bg-navy-700"
+                    classList={{
+                      "text-gray-900 bg-gray-200 dark:text-white dark:bg-navy-700":
+                        props.currentPage === link.page,
+                    }}
+                    title={link.label}
+                  >
+                    {link.icon}
+                  </A>
+                ),
+              )}
+              <div class="w-px h-5 bg-gray-200 dark:bg-navy-600 mx-0.5 flex-shrink-0" />
+              <ThemeToggle />
+            </div>
+
+            <div class="md:hidden flex items-center gap-1">
+              <ThemeToggle />
+              <div class="w-px h-5 bg-gray-200 dark:bg-navy-600 flex-shrink-0" />
+              <button
+                class="flex items-center justify-center w-8 h-8 rounded-lg text-gray-700 hover:bg-gray-100 hover:text-gray-900 transition-colors dark:text-navy-300 dark:hover:bg-navy-700 dark:hover:text-white"
+                onClick={() => setMenuOpen(!menuOpen())}
+                aria-label={menuOpen() ? "Close menu" : "Open menu"}
+                aria-expanded={menuOpen()}
+              >
+                <Show
+                  when={menuOpen()}
+                  fallback={
+                    <svg
+                      class="w-5 h-5"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                        d="M4 6h16M4 12h16M4 18h16"
+                      />
+                    </svg>
+                  }
+                >
                   <svg
                     class="w-5 h-5"
                     fill="none"
@@ -228,26 +287,12 @@ export const Navigation: Component<NavigationProps> = (props) => {
                       stroke-linecap="round"
                       stroke-linejoin="round"
                       stroke-width="2"
-                      d="M4 6h16M4 12h16M4 18h16"
+                      d="M6 18L18 6M6 6l12 12"
                     />
                   </svg>
-                }
-              >
-                <svg
-                  class="w-5 h-5"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    stroke-width="2"
-                    d="M6 18L18 6M6 6l12 12"
-                  />
-                </svg>
-              </Show>
-            </button>
+                </Show>
+              </button>
+            </div>
           </div>
         </div>
       </nav>
@@ -255,13 +300,12 @@ export const Navigation: Component<NavigationProps> = (props) => {
       <Show when={menuOpen()}>
         <Portal>
           <div
-            class="fixed inset-0 sm:hidden bg-black/20"
+            class="fixed inset-0 md:hidden bg-black/20 dark:bg-black/50"
             style={{ "z-index": "9998", top: "56px" }}
             onClick={closeMenu}
           />
-
           <div
-            class="fixed left-0 right-0 sm:hidden bg-white border-b border-gray-200 shadow-xl"
+            class="fixed left-0 right-0 md:hidden bg-white dark:bg-navy-900 border-b border-primary-100 dark:border-navy-700 shadow-xl"
             style={{ "z-index": "9999", top: "56px" }}
           >
             <div class="px-4 py-3 space-y-1">
@@ -272,20 +316,24 @@ export const Navigation: Component<NavigationProps> = (props) => {
                     onClick={closeMenu}
                     class="flex items-center gap-3 w-full px-4 py-3 bg-primary-500 text-white rounded-xl font-medium transition-colors hover:bg-primary-600 text-sm"
                   >
-                    {link.icon}
+                    <span class="w-5 h-5 flex items-center justify-center flex-shrink-0">
+                      {link.icon}
+                    </span>
                     <span>{link.label}</span>
                   </A>
                 ) : (
                   <A
                     href={link.href}
                     onClick={closeMenu}
-                    class="flex items-center gap-3 w-full px-4 py-3 rounded-xl font-medium transition-colors text-gray-700 hover:bg-gray-100 text-sm"
+                    class="flex items-center gap-3 w-full px-4 py-3 rounded-xl font-medium transition-colors text-gray-900 hover:bg-gray-100 hover:text-gray-900 dark:text-navy-200 dark:hover:bg-navy-700 dark:hover:text-white text-sm"
                     classList={{
-                      "bg-primary-50 text-primary-600":
+                      "bg-gray-200 text-gray-900 font-semibold dark:bg-navy-700 dark:text-white":
                         props.currentPage === link.page,
                     }}
                   >
-                    {link.icon}
+                    <span class="w-5 h-5 flex items-center justify-center flex-shrink-0">
+                      {link.icon}
+                    </span>
                     <span>{link.label}</span>
                   </A>
                 ),

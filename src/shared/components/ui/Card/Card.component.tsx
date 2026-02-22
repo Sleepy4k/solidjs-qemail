@@ -54,11 +54,11 @@ const Card: Component<CardProps> = (props) => {
     xl: "shadow-xl",
   };
 
-  const baseClasses = "bg-white rounded-lg transition-all duration-300";
+  const baseClasses = "bg-white dark:bg-navy-800 rounded-lg transition-all duration-300";
   const hoverClasses = local.hover
     ? "hover:shadow-lg hover:-translate-y-1 cursor-pointer"
     : "";
-  const borderClasses = local.bordered ? "border border-gray-200" : "";
+  const borderClasses = local.bordered ? "border border-gray-200 dark:border-navy-700" : "";
 
   return (
     <div

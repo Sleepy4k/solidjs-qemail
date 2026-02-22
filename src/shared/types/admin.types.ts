@@ -55,6 +55,14 @@ export interface AdminAccountsResponse {
   total_pages: number;
 }
 
+export interface EmailAttachment {
+  id: string;
+  original_filename: string;
+  mime_type: string;
+  size: number;
+  url: string;
+}
+
 export interface AdminEmailItem {
   id: number;
   message_id: string;
@@ -65,6 +73,7 @@ export interface AdminEmailItem {
   body_html: string | null;
   is_read: boolean;
   received_at: string;
+  attachments?: EmailAttachment[];
 }
 
 export interface AdminInboxResponse {
@@ -97,4 +106,6 @@ export interface PaginationQuery {
   page?: number;
   limit?: number;
   search?: string | string[];
+  domain_id?: number;
+  is_custom?: boolean;
 }

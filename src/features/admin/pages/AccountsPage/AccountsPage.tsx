@@ -9,10 +9,9 @@ import {
 import { useNavigate, useSearchParams } from "@solidjs/router";
 import gsap from "gsap";
 import { adminApiService } from "../../services/admin-api.service";
-import type { AdminAccount } from "../../../../shared/types/admin.types";
+import type { AdminAccount, AdminDomain } from "../../../../shared/types/admin.types";
 import { Button } from "../../../../shared/components/ui/Button";
 import { Card } from "../../../../shared/components/ui/Card";
-import { Input } from "../../../../shared/components/ui/Input";
 import { Alert } from "../../../../shared/components/ui/Alert";
 import { Pagination } from "../../../../shared/components/ui/Pagination";
 import { SkeletonTable } from "../../../../shared/components/Skeleton";
@@ -21,6 +20,8 @@ import {
   useConfirmDialog,
 } from "../../../../shared/components/ConfirmDialog";
 import { debounce } from "../../../../shared/utils/debounce.util";
+
+type TypeFilter = "all" | "random" | "custom";
 
 const AccountsPage: Component = () => {
   const navigate = useNavigate();
@@ -34,6 +35,13 @@ const AccountsPage: Component = () => {
   );
   const [inputValue, setInputValue] = createSignal(searchParams.search || "");
   const [searchQuery, setSearchQuery] = createSignal(searchParams.search || "");
+  const [domainFilter, setDomainFilter] = createSignal<number>(
+    Number(searchParams.domain_id) || 0,
+  );
+  const [typeFilter, setTypeFilter] = createSignal<TypeFilter>(
+    (searchParams.type as TypeFilter) || "all",
+  );
+  const [domains, setDomains] = createSignal<AdminDomain[]>([]);
   const [error, setError] = createSignal("");
   const [successMessage, setSuccessMessage] = createSignal("");
   const [isRefreshing, setIsRefreshing] = createSignal(false);
@@ -43,20 +51,44 @@ const AccountsPage: Component = () => {
 
   let headerRef: HTMLDivElement | undefined;
 
+  const isCustomFilter = () => {
+    if (typeFilter() === "custom") return true;
+    if (typeFilter() === "random") return false;
+    return undefined;
+  };
+
   const [accounts, { refetch }] = createResource(
-    () => ({ page: currentPage(), limit: pageSize(), search: searchQuery() }),
-    async ({ page, limit, search }) => {
-      return adminApiService.getAccounts({ page, limit, search: search || "" });
+    () => ({
+      page: currentPage(),
+      limit: pageSize(),
+      search: searchQuery(),
+      domain_id: domainFilter(),
+      is_custom: isCustomFilter(),
+    }),
+    async ({ page, limit, search, domain_id, is_custom }) => {
+      return adminApiService.getAccounts({
+        page,
+        limit,
+        search: search || undefined,
+        domain_id: domain_id || undefined,
+        is_custom,
+      });
     },
   );
 
-  onMount(() => {
+  onMount(async () => {
     if (headerRef) {
       gsap.fromTo(
         headerRef,
         { opacity: 0, y: 20 },
         { opacity: 1, y: 0, duration: 0.6, ease: "power2.out" },
       );
+    }
+    try {
+      const data = await adminApiService.getDomains();
+      setDomains(data);
+    } catch {
+      /* non-critical */
     }
   });
 
@@ -85,6 +117,19 @@ const AccountsPage: Component = () => {
     setSearchQuery("");
     setCurrentPage(1);
     setSearchParams({ search: undefined, page: "1" });
+  };
+
+  const handleDomainFilter = (value: string) => {
+    const id = Number(value);
+    setDomainFilter(id);
+    setCurrentPage(1);
+    setSearchParams({ domain_id: id ? String(id) : undefined, page: "1" });
+  };
+
+  const handleTypeFilter = (value: string) => {
+    setTypeFilter(value as TypeFilter);
+    setCurrentPage(1);
+    setSearchParams({ type: value !== "all" ? value : undefined, page: "1" });
   };
 
   const handleViewInbox = (account: AdminAccount) => {
@@ -140,6 +185,9 @@ const AccountsPage: Component = () => {
   const truncateEmail = (email: string, max = 28) =>
     email.length > max ? email.substring(0, max) + "…" : email;
 
+  const hasFilters = () =>
+    searchQuery() || domainFilter() !== 0 || typeFilter() !== "all";
+
   return (
     <div class="space-y-6">
       <div ref={headerRef}>
@@ -190,35 +238,155 @@ const AccountsPage: Component = () => {
         />
       </Show>
 
-      <Card>
-        <div class="flex items-center gap-3 flex-wrap">
-          <div class="flex-1 min-w-0">
-            <Input
+      <Card padding="none">
+        <div class="p-4 border-b border-gray-100 dark:border-navy-700 flex items-center justify-between gap-3">
+          <div class="flex items-center gap-2">
+            <svg class="w-4 h-4 text-gray-400 dark:text-navy-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2a1 1 0 01-.293.707L13 13.414V19a1 1 0 01-.553.894l-4 2A1 1 0 017 21v-7.586L3.293 6.707A1 1 0 013 6V4z" />
+            </svg>
+            <span class="text-sm font-semibold text-gray-700 dark:text-navy-200">Filters</span>
+            <Show when={hasFilters()}>
+              <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-primary-100 text-primary-700 dark:bg-primary-900/30 dark:text-primary-400">
+                Active
+              </span>
+            </Show>
+          </div>
+          <Show when={hasFilters()}>
+            <button
+              onClick={() => {
+                setInputValue("");
+                setSearchQuery("");
+                setDomainFilter(0);
+                setTypeFilter("all");
+                setCurrentPage(1);
+                setSearchParams({ search: undefined, domain_id: undefined, type: undefined, page: "1" });
+              }}
+              class="flex items-center gap-1.5 text-xs font-medium text-gray-500 dark:text-navy-400 hover:text-red-500 dark:hover:text-red-400 transition-colors"
+            >
+              <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+              </svg>
+              Clear all
+            </button>
+          </Show>
+        </div>
+
+        <div class="p-4 space-y-4">
+          <div class="relative">
+            <div class="absolute inset-y-0 left-3 flex items-center pointer-events-none">
+              <svg class="w-4 h-4 text-gray-400 dark:text-navy-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+              </svg>
+            </div>
+            <input
+              type="text"
               placeholder="Search by email address..."
               value={inputValue()}
-              onInput={handleSearchInput}
+              onInput={(e) => handleSearchInput(e.currentTarget.value)}
+              class="w-full pl-9 pr-9 py-2.5 text-sm border border-gray-200 dark:border-navy-600 rounded-xl bg-gray-50 dark:bg-navy-800 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-navy-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 focus:bg-white dark:focus:bg-navy-700 transition-all"
             />
+            <Show when={inputValue()}>
+              <button
+                onClick={handleClearSearch}
+                class="absolute inset-y-0 right-3 flex items-center text-gray-400 hover:text-gray-600 dark:text-navy-400 dark:hover:text-navy-200 transition-colors"
+              >
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+            </Show>
           </div>
-          <select
-            value={pageSize()}
-            onChange={(e) =>
-              handlePageSizeChange(Number(e.currentTarget.value))
-            }
-            class="text-sm border border-gray-300 rounded-lg px-3 py-2.5 bg-white text-gray-700 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-colors"
-          >
-            <option value={10}>10</option>
-            <option value={20}>20</option>
-            <option value={50}>50</option>
-            <option value={100}>100</option>
-          </select>
-          <Show when={inputValue()}>
-            <Button variant="secondary" onClick={handleClearSearch} size="sm">
-              Clear
-            </Button>
+
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+            <div class="space-y-1.5">
+              <label class="block text-xs font-semibold text-gray-500 dark:text-navy-400 uppercase tracking-wide">
+                Domain
+              </label>
+              <select
+                value={domainFilter()}
+                onChange={(e) => handleDomainFilter(e.currentTarget.value)}
+                class="w-full text-sm border border-gray-200 dark:border-navy-600 rounded-xl px-3 py-2.5 bg-gray-50 dark:bg-navy-800 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 focus:bg-white dark:focus:bg-navy-700 transition-all"
+              >
+                <option value={0}>All Domains</option>
+                <For each={domains()}>
+                  {(d) => <option value={d.id}>{d.name}</option>}
+                </For>
+              </select>
+            </div>
+
+            <div class="space-y-1.5">
+              <label class="block text-xs font-semibold text-gray-500 dark:text-navy-400 uppercase tracking-wide">
+                Account Type
+              </label>
+              <select
+                value={typeFilter()}
+                onChange={(e) => handleTypeFilter(e.currentTarget.value)}
+                class="w-full text-sm border border-gray-200 dark:border-navy-600 rounded-xl px-3 py-2.5 bg-gray-50 dark:bg-navy-800 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 focus:bg-white dark:focus:bg-navy-700 transition-all"
+              >
+                <option value="all">All Types</option>
+                <option value="random">Random</option>
+                <option value="custom">Custom</option>
+              </select>
+            </div>
+
+            <div class="space-y-1.5">
+              <label class="block text-xs font-semibold text-gray-500 dark:text-navy-400 uppercase tracking-wide">
+                Rows per page
+              </label>
+              <select
+                value={pageSize()}
+                onChange={(e) => handlePageSizeChange(Number(e.currentTarget.value))}
+                class="w-full text-sm border border-gray-200 dark:border-navy-600 rounded-xl px-3 py-2.5 bg-gray-50 dark:bg-navy-800 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 focus:bg-white dark:focus:bg-navy-700 transition-all"
+              >
+                <option value={10}>10 rows</option>
+                <option value={20}>20 rows</option>
+                <option value={50}>50 rows</option>
+                <option value={100}>100 rows</option>
+              </select>
+            </div>
+          </div>
+
+          <Show when={hasFilters()}>
+            <div class="flex flex-wrap gap-2 pt-1">
+              <Show when={searchQuery()}>
+                <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium bg-gray-100 dark:bg-navy-700 text-gray-700 dark:text-navy-200 border border-gray-200 dark:border-navy-600">
+                  <svg class="w-3 h-3 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                  </svg>
+                  "{searchQuery()}"
+                  <button onClick={handleClearSearch} class="ml-0.5 text-gray-400 hover:text-red-500 transition-colors">
+                    <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                  </button>
+                </span>
+              </Show>
+              <Show when={domainFilter() !== 0}>
+                <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium bg-blue-50 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 border border-blue-200 dark:border-blue-700">
+                  Domain: {domains().find((d) => d.id === domainFilter())?.name ?? domainFilter()}
+                  <button onClick={() => { setDomainFilter(0); setCurrentPage(1); setSearchParams({ domain_id: undefined, page: "1" }); }} class="ml-0.5 text-blue-400 hover:text-red-500 transition-colors">
+                    <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                  </button>
+                </span>
+              </Show>
+              <Show when={typeFilter() !== "all"}>
+                <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium bg-purple-50 dark:bg-purple-900/30 text-purple-700 dark:text-purple-300 border border-purple-200 dark:border-purple-700">
+                  Type: {typeFilter()}
+                  <button onClick={() => { setTypeFilter("all"); setCurrentPage(1); setSearchParams({ type: undefined, page: "1" }); }} class="ml-0.5 text-purple-400 hover:text-red-500 transition-colors">
+                    <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                  </button>
+                </span>
+              </Show>
+            </div>
           </Show>
         </div>
       </Card>
 
+      {/* ── Table ── */}
       <Card>
         <Show
           when={!accounts.loading && accounts()}
@@ -259,10 +427,15 @@ const AccountsPage: Component = () => {
                       <td colspan="7" class="px-6 py-16 text-center">
                         <div class="text-5xl mb-4">📭</div>
                         <p class="text-main-gray font-medium">
-                          {searchQuery()
-                            ? "No accounts found"
+                          {hasFilters()
+                            ? "No accounts match your filters"
                             : "No accounts yet"}
                         </p>
+                        <Show when={hasFilters()}>
+                          <p class="text-xs text-gray-400 mt-1">
+                            Try adjusting your search or filter criteria
+                          </p>
+                        </Show>
                       </td>
                     </tr>
                   }
@@ -347,7 +520,9 @@ const AccountsPage: Component = () => {
                 <div class="py-12 text-center">
                   <div class="text-5xl mb-4">📭</div>
                   <p class="text-main-gray font-medium">
-                    {searchQuery() ? "No accounts found" : "No accounts yet"}
+                    {hasFilters()
+                      ? "No accounts match your filters"
+                      : "No accounts yet"}
                   </p>
                 </div>
               }

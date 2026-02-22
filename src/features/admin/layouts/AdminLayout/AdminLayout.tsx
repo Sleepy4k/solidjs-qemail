@@ -7,6 +7,7 @@ import {
   ConfirmDialog,
   useConfirmDialog,
 } from "../../../../shared/components/ConfirmDialog";
+import { ThemeToggle } from "../../../../shared/components/ThemeToggle";
 import Logo from "../../../../assets/images/logo.png";
 
 export interface AdminLayoutProps {
@@ -148,7 +149,7 @@ const AdminLayout: Component<AdminLayoutProps> = (props) => {
 
   const SidebarContent = () => (
     <>
-      <div class="p-5 border-b border-gray-200">
+      <div class="p-5 border-b border-gray-200 dark:border-navy-700">
         <a
           href="/"
           class="flex items-center gap-3 hover:opacity-80 transition-opacity"
@@ -163,8 +164,8 @@ const AdminLayout: Component<AdminLayoutProps> = (props) => {
             />
           </div>
           <div>
-            <h1 class="font-bold text-gray-900">QEmail</h1>
-            <p class="text-xs text-gray-600">Admin Panel</p>
+            <h1 class="font-bold text-gray-900 dark:text-white">QEmail</h1>
+            <p class="text-xs text-gray-600 dark:text-navy-300">Admin Panel</p>
           </div>
         </a>
       </div>
@@ -176,8 +177,8 @@ const AdminLayout: Component<AdminLayoutProps> = (props) => {
             onClick={() => setSidebarOpen(false)}
             class={`flex items-center gap-3 px-4 py-3 rounded-lg font-medium transition-all duration-200 ${
               isActive(item.path)
-                ? "bg-primary-50 text-primary-700 shadow-sm"
-                : "text-gray-700 hover:bg-gray-50"
+                ? "bg-primary-50 dark:bg-primary-900/20 text-primary-700 dark:text-primary-400 shadow-sm"
+                : "text-gray-700 dark:text-navy-200 hover:bg-gray-100 dark:hover:bg-navy-700 hover:text-gray-900 dark:hover:text-white"
             }`}
           >
             {item.icon}
@@ -186,21 +187,22 @@ const AdminLayout: Component<AdminLayoutProps> = (props) => {
         ))}
       </nav>
 
-      <div class="p-4 border-t border-gray-200">
-        <div class="flex items-center gap-3 px-3 py-3 bg-gray-50 rounded-lg mb-2">
+      <div class="p-4 border-t border-gray-200 dark:border-navy-700">
+        <div class="flex items-center gap-3 px-3 py-3 bg-gray-50 dark:bg-navy-800 rounded-lg mb-2">
           <div class="w-9 h-9 bg-primary-600 rounded-full flex items-center justify-center text-white font-semibold text-sm flex-shrink-0">
             {adminUser()?.username.charAt(0).toUpperCase()}
           </div>
           <div class="flex-1 min-w-0">
-            <p class="text-sm font-medium text-gray-900 truncate">
+            <p class="text-sm font-medium text-gray-900 dark:text-white truncate">
               {adminUser()?.username}
             </p>
-            <p class="text-xs text-gray-600 truncate">{adminUser()?.role}</p>
+            <p class="text-xs text-gray-600 dark:text-navy-300 truncate">{adminUser()?.role}</p>
           </div>
+          <ThemeToggle />
         </div>
         <button
           onClick={handleLogout}
-          class="w-full flex items-center gap-3 px-4 py-3 text-red-600 hover:bg-red-50 rounded-lg font-medium transition-colors"
+          class="w-full flex items-center gap-3 px-4 py-3 text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg font-medium transition-colors"
         >
           <svg
             class="w-5 h-5"
@@ -222,10 +224,10 @@ const AdminLayout: Component<AdminLayoutProps> = (props) => {
   );
 
   return (
-    <div class="min-h-screen bg-gray-50 flex">
+    <div class="min-h-screen bg-gray-50 dark:bg-navy-950 flex">
       <aside
         ref={sidebarRef}
-        class="hidden lg:flex w-64 bg-white border-r border-gray-200 flex-col shadow-sm flex-shrink-0 sticky top-0 h-screen"
+        class="hidden lg:flex w-64 bg-white dark:bg-navy-900 border-r border-gray-200 dark:border-navy-700 flex-col shadow-sm flex-shrink-0 sticky top-0 h-screen"
       >
         <SidebarContent />
       </aside>
@@ -235,16 +237,16 @@ const AdminLayout: Component<AdminLayoutProps> = (props) => {
           class="fixed inset-0 z-40 bg-black/40 lg:hidden"
           onClick={() => setSidebarOpen(false)}
         />
-        <aside class="fixed inset-y-0 left-0 z-50 w-72 bg-white border-r border-gray-200 flex flex-col shadow-xl lg:hidden">
+        <aside class="fixed inset-y-0 left-0 z-50 w-72 bg-white dark:bg-navy-900 border-r border-gray-200 dark:border-navy-700 flex flex-col shadow-xl lg:hidden">
           <SidebarContent />
         </aside>
       </Show>
 
       <div class="flex-1 flex flex-col min-w-0">
-        <header class="lg:hidden flex items-center justify-between px-4 py-3 bg-white border-b border-gray-200 sticky top-0 z-30">
+        <header class="lg:hidden flex items-center justify-between px-4 py-3 bg-white dark:bg-navy-900 border-b border-gray-200 dark:border-navy-700 sticky top-0 z-30">
           <button
             onClick={() => setSidebarOpen(true)}
-            class="p-2 rounded-lg text-gray-600 hover:bg-gray-100 transition-colors"
+            class="p-2 rounded-lg text-gray-700 dark:text-navy-300 hover:bg-gray-100 dark:hover:bg-navy-700 transition-colors"
             aria-label="Open menu"
           >
             <svg
@@ -271,9 +273,9 @@ const AdminLayout: Component<AdminLayoutProps> = (props) => {
                 style={{ filter: "brightness(0) invert(1)" }}
               />
             </div>
-            <span class="font-bold text-gray-900 text-sm">QEmail Admin</span>
+            <span class="font-bold text-gray-900 dark:text-white text-sm">QEmail Admin</span>
           </a>
-          <div class="w-9" />
+          <ThemeToggle />
         </header>
 
         <main ref={mainRef} class="flex-1 overflow-auto">
