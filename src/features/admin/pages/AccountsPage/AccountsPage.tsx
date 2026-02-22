@@ -6,6 +6,7 @@ import {
   Show,
   createResource,
 } from "solid-js";
+import { Portal } from "solid-js/web";
 import { useNavigate, useSearchParams } from "@solidjs/router";
 import gsap from "gsap";
 import { adminApiService } from "../../services/admin-api.service";
@@ -668,6 +669,7 @@ const AccountsPage: Component = () => {
       {/* ── Account Detail Modal ── */}
       <Show when={detailAccount()}>
         {(acc) => (
+          <Portal>
           <div
             class="fixed inset-0 z-50 flex items-center justify-center p-4"
             onClick={() => setDetailAccount(null)}
@@ -776,7 +778,7 @@ const AccountsPage: Component = () => {
 
               {/* Modal footer */}
               <div class="px-6 py-4 border-t border-gray-100 dark:border-navy-700 bg-gray-50 dark:bg-navy-700/50 flex items-center justify-end gap-2">
-                <Button variant="primary" size="sm" onClick={() => { setDetailAccount(null); handleViewInbox(acc()); }}>
+                <Button variant="primary" size="sm" onClick={() => { const account = acc(); setDetailAccount(null); handleViewInbox(account); }}>
                   Buka Inbox
                 </Button>
                 <Button variant="secondary" size="sm" onClick={() => setDetailAccount(null)}>
@@ -785,6 +787,7 @@ const AccountsPage: Component = () => {
               </div>
             </div>
           </div>
+          </Portal>
         )}
       </Show>
     </div>

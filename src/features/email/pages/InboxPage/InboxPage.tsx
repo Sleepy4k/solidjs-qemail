@@ -17,15 +17,24 @@ import { Card } from "../../../../shared/components/ui/Card";
 import { Alert } from "../../../../shared/components/ui/Alert";
 import { EmailLayout } from "../../../../shared/layouts/EmailLayout";
 import { AttachmentBadge } from "../../../../shared/components/AttachmentList";
+import {
+  ConfirmDialog,
+  useConfirmDialog,
+} from "../../../../shared/components/ConfirmDialog";
 
 export const InboxPage: Component = () => {
   const navigate = useNavigate();
 
   const [emails, setEmails] = createSignal<EmailMessage[]>([]);
   const [isLoading, setIsLoading] = createSignal(true);
+  const [isRefreshing, setIsRefreshing] = createSignal(false);
+  const [refreshSuccess, setRefreshSuccess] = createSignal("");
   const [error, setError] = createSignal("");
   const [currentPage, setCurrentPage] = createSignal(1);
   const [totalPages, setTotalPages] = createSignal(1);
+
+  const { isOpen, config, confirm, handleConfirm, handleCancel } =
+    useConfirmDialog();
 
   let containerRef: HTMLDivElement | undefined;
 
@@ -73,9 +82,31 @@ export const InboxPage: Component = () => {
     navigate(`/inbox/${email.message_id}`);
   };
 
+  const handleRefresh = async () => {
+    setIsRefreshing(true);
+    setRefreshSuccess("");
+    setError("");
+    try {
+      await loadInbox();
+      setRefreshSuccess("Inbox berhasil di-refresh!");
+      setTimeout(() => setRefreshSuccess(""), 3000);
+    } catch {
+      // error already set inside loadInbox
+    } finally {
+      setIsRefreshing(false);
+    }
+  };
+
   const handleLogout = () => {
-    emailStore.clearSession();
-    navigate("/");
+    confirm({
+      title: "Konfirmasi Logout",
+      message: "Apakah kamu yakin ingin logout? Sesi email temporermu akan berakhir.",
+      variant: "warning",
+      onConfirm: () => {
+        emailStore.clearSession();
+        navigate("/");
+      },
+    });
   };
 
   const formatDate = (dateStr: string) => {
@@ -113,6 +144,11 @@ export const InboxPage: Component = () => {
               variant="secondary"
               onClick={handleLogout}
               class="self-start sm:self-auto flex-shrink-0"
+              icon={
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                </svg>
+              }
             >
               Logout
             </Button>
@@ -126,17 +162,36 @@ export const InboxPage: Component = () => {
             <Button
               variant="primary"
               size="sm"
-              onClick={loadInbox}
-              disabled={isLoading()}
+              onClick={handleRefresh}
+              disabled={isRefreshing() || isLoading()}
               class="self-start sm:self-auto flex-shrink-0"
+              icon={
+                <svg
+                  class={`w-4 h-4 ${isRefreshing() ? "animate-spin" : ""}`}
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
+                  />
+                </svg>
+              }
             >
-              {isLoading() ? "Refreshing..." : "Refresh Now"}
+              {isRefreshing() ? "Memuat..." : "Refresh Now"}
             </Button>
           </div>
         </div>
 
         <Show when={error()}>
           <Alert type="error" message={error()} onClose={() => setError("")} />
+        </Show>
+
+        <Show when={refreshSuccess()}>
+          <Alert type="success" message={refreshSuccess()} onClose={() => setRefreshSuccess("")} />
         </Show>
 
         <Card>
@@ -246,6 +301,17 @@ export const InboxPage: Component = () => {
           </Show>
         </Card>
       </div>
+
+      <ConfirmDialog
+        isOpen={isOpen()}
+        title={config().title}
+        message={config().message}
+        confirmText="Ya, Logout"
+        cancelText="Batal"
+        variant={config().variant}
+        onConfirm={handleConfirm}
+        onCancel={handleCancel}
+      />
     </EmailLayout>
   );
 };
