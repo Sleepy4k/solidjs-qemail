@@ -97,23 +97,23 @@ const ActionPill: Component<{ action: string }> = (p) => (
 );
 
 const LogDetail: Component<{ log: AdminLog }> = (p) => (
-  <div class="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-3 px-4 py-4 bg-gray-50 border-t border-dashed border-gray-200 text-xs">
+  <div class="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-3 px-4 py-4 bg-gray-50 dark:bg-navy-800/60 border-t border-dashed border-gray-200 dark:border-navy-600 text-xs">
     <div class="sm:col-span-2 space-y-0.5">
-      <p class="text-gray-400 font-medium uppercase tracking-wide text-[10px]">
+      <p class="text-gray-400 dark:text-navy-500 font-medium uppercase tracking-wide text-[10px]">
         Full actor label
       </p>
-      <p class="text-gray-700 font-mono break-all">{p.log.actor_label}</p>
+      <p class="text-gray-700 dark:text-navy-200 font-mono break-all">{p.log.actor_label}</p>
     </div>
 
     <Show when={p.log.resource_type}>
       <div class="space-y-0.5">
-        <p class="text-gray-400 font-medium uppercase tracking-wide text-[10px]">
+        <p class="text-gray-400 dark:text-navy-500 font-medium uppercase tracking-wide text-[10px]">
           Resource
         </p>
         <div class="flex items-center gap-1.5">
-          <span class="text-gray-700 font-semibold">{p.log.resource_type}</span>
+          <span class="text-gray-700 dark:text-navy-200 font-semibold">{p.log.resource_type}</span>
           <Show when={p.log.resource_id}>
-            <span class="text-gray-400 font-mono">#{p.log.resource_id}</span>
+            <span class="text-gray-400 dark:text-navy-500 font-mono">#{p.log.resource_id}</span>
           </Show>
         </div>
       </div>
@@ -121,10 +121,10 @@ const LogDetail: Component<{ log: AdminLog }> = (p) => (
 
     <Show when={p.log.actor_id}>
       <div class="space-y-0.5">
-        <p class="text-gray-400 font-medium uppercase tracking-wide text-[10px]">
+        <p class="text-gray-400 dark:text-navy-500 font-medium uppercase tracking-wide text-[10px]">
           Actor ID
         </p>
-        <p class="text-gray-700 font-mono">{p.log.actor_id}</p>
+        <p class="text-gray-700 dark:text-navy-200 font-mono">{p.log.actor_id}</p>
       </div>
     </Show>
 
@@ -153,7 +153,7 @@ const LogDetail: Component<{ log: AdminLog }> = (p) => (
     </Show>
 
     <Show when={!p.log.resource_type && !p.log.actor_id && !p.log.error}>
-      <p class="sm:col-span-2 text-gray-400 italic text-xs">
+      <p class="sm:col-span-2 text-gray-400 dark:text-navy-500 italic text-xs">
         No additional details
       </p>
     </Show>
@@ -414,16 +414,16 @@ const LogsPage: Component = () => {
         class="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-3"
       >
         <div>
-          <h1 class="text-xl sm:text-3xl font-bold text-gray-900">
+          <h1 class="text-xl sm:text-3xl font-bold text-gray-900 dark:text-white">
             System Logs
           </h1>
-          <p class="mt-1 text-xs sm:text-sm text-gray-500">
+          <p class="mt-1 text-xs sm:text-sm text-gray-500 dark:text-navy-400">
             Audit trail of all actor actions across the platform
           </p>
         </div>
         <div class="flex items-center gap-2 self-start sm:self-auto">
           <Show when={logs()}>
-            <span class="px-3 py-1.5 bg-gray-100 rounded-lg text-xs font-medium text-gray-600">
+            <span class="px-3 py-1.5 bg-gray-100 dark:bg-navy-700 rounded-lg text-xs font-medium text-gray-600 dark:text-navy-300">
               {logs()!.meta.total.toLocaleString()} total entries
             </span>
           </Show>
@@ -616,14 +616,14 @@ const LogsPage: Component = () => {
           <div class="hidden lg:block overflow-x-auto">
             <table class="w-full border-collapse">
               <thead>
-                <tr class="bg-gray-50 border-b border-gray-200">
+                <tr class="bg-gray-50 dark:bg-navy-700/50 border-b border-gray-200 dark:border-navy-600">
                   <SortTh field="created_at" label="Time" class="pl-4 w-36" />
-                  <th class="px-3 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider w-24">
+                  <th class="px-3 py-3 text-left text-xs font-semibold text-gray-500 dark:text-navy-400 uppercase tracking-wider w-24">
                     Type
                   </th>
                   <SortTh field="actor_label" label="Actor" />
                   <SortTh field="action" label="Action" />
-                  <th class="px-3 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider w-32">
+                  <th class="px-3 py-3 text-left text-xs font-semibold text-gray-500 dark:text-navy-400 uppercase tracking-wider w-32">
                     IP
                   </th>
                   <SortTh field="status" label="Status" class="w-28" />
@@ -647,18 +647,18 @@ const LogsPage: Component = () => {
                         class={`group border-b transition-colors cursor-pointer
                           ${
                             isExpanded(log.id)
-                              ? "bg-primary-50/40 border-primary-100"
+                              ? "bg-primary-50/40 dark:bg-primary-900/20 border-primary-100 dark:border-primary-800/30"
                               : log.status === "failure"
-                                ? "bg-red-50/20 border-gray-100 hover:bg-red-50/40"
-                                : "border-gray-100 hover:bg-gray-50/80"
+                                ? "bg-red-50/20 dark:bg-red-900/10 border-gray-100 dark:border-navy-700 hover:bg-red-50/40 dark:hover:bg-red-900/20"
+                                : "border-gray-100 dark:border-navy-700 hover:bg-gray-50/80 dark:hover:bg-navy-700/60"
                           }`}
                         onClick={() => toggleExpand(log.id)}
                       >
                         <td class="px-3 pl-4 py-3 align-middle">
-                          <div class="text-xs font-medium text-gray-700 whitespace-nowrap">
+                          <div class="text-xs font-medium text-gray-700 dark:text-navy-200 whitespace-nowrap">
                             {formatDate(log.created_at)}
                           </div>
-                          <div class="text-xs text-gray-400 whitespace-nowrap tabular-nums">
+                          <div class="text-xs text-gray-400 dark:text-navy-500 whitespace-nowrap tabular-nums">
                             {formatTime(log.created_at)}
                           </div>
                         </td>
@@ -667,7 +667,7 @@ const LogsPage: Component = () => {
                         </td>
                         <td class="px-3 py-3 align-middle">
                           <span
-                            class="text-xs text-gray-600 font-mono truncate max-w-[160px] block"
+                            class="text-xs text-gray-600 dark:text-navy-300 font-mono truncate max-w-[160px] block"
                             title={log.actor_label}
                           >
                             {log.actor_label}
@@ -677,7 +677,7 @@ const LogsPage: Component = () => {
                           <ActionPill action={log.action} />
                         </td>
                         <td class="px-3 py-3 align-middle">
-                          <span class="text-xs text-gray-500 font-mono whitespace-nowrap">
+                          <span class="text-xs text-gray-500 dark:text-navy-400 font-mono whitespace-nowrap">
                             {log.ip_address}
                           </span>
                         </td>
@@ -690,7 +690,7 @@ const LogsPage: Component = () => {
                       </tr>
 
                       <Show when={isExpanded(log.id)}>
-                        <tr class="border-b border-primary-100">
+                            <tr class="border-b border-primary-100 dark:border-navy-600">
                           <td colspan="7" class="p-0">
                             <LogDetail log={log} />
                           </td>
@@ -704,8 +704,8 @@ const LogsPage: Component = () => {
           </div>
 
           <div class="lg:hidden">
-            <div class="px-4 py-2.5 bg-gray-50 border-b border-gray-200 flex items-center gap-2 overflow-x-auto">
-              <span class="text-xs text-gray-400 font-medium shrink-0">
+            <div class="px-4 py-2.5 bg-gray-50 dark:bg-navy-700/50 border-b border-gray-200 dark:border-navy-600 flex items-center gap-2 overflow-x-auto">
+              <span class="text-xs text-gray-400 dark:text-navy-500 font-medium shrink-0">
                 Sort:
               </span>
               {(
@@ -721,7 +721,7 @@ const LogsPage: Component = () => {
                   class={`shrink-0 inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-medium transition-all ${
                     sortBy() === field
                       ? "bg-primary-600 text-white shadow-sm"
-                      : "bg-white border border-gray-200 text-gray-600 hover:border-gray-300"
+                      : "bg-white dark:bg-navy-700 border border-gray-200 dark:border-navy-600 text-gray-600 dark:text-navy-300 hover:border-gray-300 dark:hover:border-navy-500"
                   }`}
                 >
                   {field === "created_at"
@@ -739,15 +739,15 @@ const LogsPage: Component = () => {
             <For each={logs()?.data} fallback={<EmptyState />}>
               {(log) => (
                 <div
-                  class={`border-b border-gray-100 ${log.status === "failure" ? "bg-red-50/30" : ""}`}
+                  class={`border-b border-gray-100 dark:border-navy-700 ${log.status === "failure" ? "bg-red-50/30 dark:bg-red-900/10" : ""}`}
                 >
                   <div
-                    class="px-4 py-3.5 flex items-start gap-3 cursor-pointer active:bg-gray-50"
+                    class="px-4 py-3.5 flex items-start gap-3 cursor-pointer active:bg-gray-50 dark:active:bg-navy-700"
                     onClick={() => toggleExpand(log.id)}
                   >
                     <div class="flex-1 min-w-0 space-y-2">
                       <div class="flex items-center justify-between gap-2">
-                        <span class="text-xs text-gray-400 tabular-nums">
+                        <span class="text-xs text-gray-400 dark:text-navy-500 tabular-nums">
                           {formatDate(log.created_at)} ·{" "}
                           {formatTime(log.created_at)}
                         </span>
@@ -757,7 +757,7 @@ const LogsPage: Component = () => {
                         <ActorBadge type={log.actor_type} />
                       </div>
                       <div class="min-w-0">
-                        <span class="text-xs text-gray-600 font-mono truncate block">
+                        <span class="text-xs text-gray-600 dark:text-navy-300 font-mono truncate block">
                           {log.actor_label}
                         </span>
                       </div>
@@ -765,7 +765,7 @@ const LogsPage: Component = () => {
                         <ActionPill action={log.action} />
                       </div>
                       <div class="flex items-center gap-3 flex-wrap">
-                        <span class="text-xs text-gray-400 font-mono">
+                        <span class="text-xs text-gray-400 dark:text-navy-500 font-mono">
                           {log.ip_address}
                         </span>
                       </div>

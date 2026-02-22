@@ -100,7 +100,7 @@ const AccountInboxPage: Component = () => {
   };
 
   const selectCls =
-    "text-sm border border-gray-300 rounded-lg px-3 py-2 bg-white text-gray-700 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-colors";
+    "text-sm border border-gray-200 dark:border-navy-600 rounded-lg px-3 py-2 bg-white dark:bg-navy-800 text-gray-700 dark:text-navy-100 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 dark:focus:bg-navy-700 transition-colors";
 
   return (
     <div class="space-y-5">
@@ -108,11 +108,11 @@ const AccountInboxPage: Component = () => {
         <div class="flex items-center gap-3">
           <button
             onClick={() => navigate("/admin/accounts")}
-            class="flex items-center justify-center w-9 h-9 rounded-lg border border-gray-200 hover:bg-gray-100 transition-colors flex-shrink-0"
+            class="flex items-center justify-center w-9 h-9 rounded-lg border border-gray-200 dark:border-navy-600 hover:bg-gray-100 dark:hover:bg-navy-700 transition-colors flex-shrink-0"
             aria-label="Back to accounts"
           >
             <svg
-              class="w-5 h-5 text-gray-600"
+              class="w-5 h-5 text-gray-600 dark:text-navy-300"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
@@ -126,12 +126,12 @@ const AccountInboxPage: Component = () => {
             </svg>
           </button>
           <div class="min-w-0">
-            <h1 class="text-xl sm:text-2xl font-bold text-gray-900">
+            <h1 class="text-xl sm:text-2xl font-bold text-gray-900 dark:text-white">
               Account Inbox
             </h1>
             <Show when={inboxData()?.account}>
-              <p class="mt-0.5 text-xs sm:text-sm text-gray-500 truncate">
-                <span class="font-medium text-gray-700">
+              <p class="mt-0.5 text-xs sm:text-sm text-gray-500 dark:text-navy-400 truncate">
+                <span class="font-medium text-gray-700 dark:text-navy-200">
                   {inboxData()?.account.email_address}
                 </span>
               </p>
@@ -169,18 +169,18 @@ const AccountInboxPage: Component = () => {
           <Card padding="md">
             <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
               <div class="col-span-2 sm:col-span-1">
-                <p class="text-xs text-gray-400 uppercase tracking-wide font-medium mb-1">
+                <p class="text-xs text-gray-400 dark:text-navy-400 uppercase tracking-wide font-medium mb-1">
                   Email
                 </p>
-                <p class="font-semibold text-gray-900 text-sm break-all">
+                <p class="font-semibold text-gray-900 dark:text-white text-sm break-all">
                   {account().email_address}
                 </p>
               </div>
               <div>
-                <p class="text-xs text-gray-400 uppercase tracking-wide font-medium mb-1">
+                <p class="text-xs text-gray-400 dark:text-navy-400 uppercase tracking-wide font-medium mb-1">
                   Domain
                 </p>
-                <p class="font-semibold text-gray-900 text-sm">
+                <p class="font-semibold text-gray-900 dark:text-white text-sm">
                   {account().domain_name}
                 </p>
               </div>
@@ -199,10 +199,10 @@ const AccountInboxPage: Component = () => {
                 </span>
               </div>
               <div>
-                <p class="text-xs text-gray-400 uppercase tracking-wide font-medium mb-1">
+                <p class="text-xs text-gray-400 dark:text-navy-400 uppercase tracking-wide font-medium mb-1">
                   Total Emails
                 </p>
-                <p class="font-bold text-gray-900 text-base">
+                <p class="font-bold text-gray-900 dark:text-white text-base">
                   {inboxData()?.total ?? 0}
                 </p>
               </div>
@@ -212,17 +212,17 @@ const AccountInboxPage: Component = () => {
       </Show>
 
       <Card padding="none">
-        <div class="px-4 sm:px-5 py-3 border-b border-gray-200 flex items-center justify-between gap-3 flex-wrap bg-white rounded-t-xl">
-          <h2 class="text-sm sm:text-base font-semibold text-gray-800">
+        <div class="px-4 sm:px-5 py-3 border-b border-gray-200 dark:border-navy-700 flex items-center justify-between gap-3 flex-wrap bg-white dark:bg-navy-800 rounded-t-xl">
+          <h2 class="text-sm sm:text-base font-semibold text-gray-800 dark:text-navy-100">
             Messages
             <Show when={inboxData()?.total}>
-              <span class="ml-2 px-2 py-0.5 rounded-full bg-gray-100 text-gray-600 text-xs font-medium">
+              <span class="ml-2 px-2 py-0.5 rounded-full bg-gray-100 dark:bg-navy-700 text-gray-600 dark:text-navy-300 text-xs font-medium">
                 {inboxData()?.total}
               </span>
             </Show>
           </h2>
           <div class="flex items-center gap-2">
-            <label class="text-xs text-gray-500">Per page:</label>
+            <label class="text-xs text-gray-500 dark:text-navy-400">Per page:</label>
             <select
               value={pageSize()}
               onChange={(e) => {
@@ -278,18 +278,18 @@ const AccountInboxPage: Component = () => {
             <div class="hidden sm:block overflow-x-auto">
               <table class="w-full border-collapse">
                 <thead>
-                  <tr class="bg-gray-50 border-b border-gray-200">
-                    <th class="px-5 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider w-8" />
-                    <th class="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider w-44">
+                  <tr class="bg-gray-50 dark:bg-navy-700/50 border-b border-gray-200 dark:border-navy-600">
+                    <th class="px-5 py-3 text-left text-xs font-semibold text-gray-500 dark:text-navy-400 uppercase tracking-wider w-8" />
+                    <th class="px-4 py-3 text-left text-xs font-semibold text-gray-500 dark:text-navy-400 uppercase tracking-wider w-44">
                       From
                     </th>
-                    <th class="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                    <th class="px-4 py-3 text-left text-xs font-semibold text-gray-500 dark:text-navy-400 uppercase tracking-wider">
                       Subject
                     </th>
-                    <th class="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider w-36">
+                    <th class="px-4 py-3 text-left text-xs font-semibold text-gray-500 dark:text-navy-400 uppercase tracking-wider w-36">
                       Received
                     </th>
-                    <th class="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider w-20">
+                    <th class="px-4 py-3 text-left text-xs font-semibold text-gray-500 dark:text-navy-400 uppercase tracking-wider w-20">
                       Status
                     </th>
                     <th class="px-4 py-3 w-20" />
@@ -302,10 +302,10 @@ const AccountInboxPage: Component = () => {
                         <tr
                           class={`border-b transition-colors cursor-pointer ${
                             expandedEmail()?.message_id === email.message_id
-                              ? "bg-primary-50/40 border-primary-100"
+                              ? "bg-primary-50/40 dark:bg-primary-900/20 border-primary-100 dark:border-primary-800"
                               : !email.is_read
-                                ? "bg-blue-50/30 hover:bg-blue-50/60 border-blue-100/50"
-                                : "hover:bg-gray-50/80 border-gray-100"
+                                ? "bg-blue-50/30 dark:bg-blue-900/20 hover:bg-blue-50/60 dark:hover:bg-blue-900/30 border-blue-100/50 dark:border-blue-800/30"
+                                : "hover:bg-gray-50/80 dark:hover:bg-navy-700/60 border-gray-100 dark:border-navy-700"
                           }`}
                           onClick={() => handleShowEmail(email)}
                         >
@@ -316,7 +316,7 @@ const AccountInboxPage: Component = () => {
                           </td>
                           <td class="px-4 py-3.5 align-middle">
                             <div
-                              class={`text-sm truncate ${!email.is_read ? "font-semibold text-gray-900" : "font-medium text-gray-700"}`}
+                              class={`text-sm truncate ${!email.is_read ? "font-semibold text-gray-900 dark:text-white" : "font-medium text-gray-700 dark:text-navy-200"}`}
                               title={email.sender_name || email.sender}
                             >
                               {truncate(
@@ -326,7 +326,7 @@ const AccountInboxPage: Component = () => {
                             </div>
                             <Show when={email.sender_name}>
                               <div
-                                class="text-xs text-gray-400 truncate"
+                                class="text-xs text-gray-400 dark:text-navy-500 truncate"
                                 title={email.sender}
                               >
                                 {truncate(email.sender, 28)}
@@ -336,7 +336,7 @@ const AccountInboxPage: Component = () => {
                           <td class="px-4 py-3.5 align-middle">
                             <div class="flex items-center gap-2">
                               <span
-                                class={`text-sm truncate ${!email.is_read ? "font-semibold text-gray-900" : "text-gray-700"}`}
+                                class={`text-sm truncate ${!email.is_read ? "font-semibold text-gray-900 dark:text-white" : "text-gray-700 dark:text-navy-200"}`}
                                 title={email.subject || "(No Subject)"}
                               >
                                 {truncate(
@@ -348,7 +348,7 @@ const AccountInboxPage: Component = () => {
                             </div>
                           </td>
                           <td class="px-4 py-3.5 align-middle">
-                            <div class="text-xs text-gray-500 whitespace-nowrap">
+                            <div class="text-xs text-gray-500 dark:text-navy-400 whitespace-nowrap">
                               {formatDateShort(email.received_at)}
                             </div>
                           </td>
@@ -393,27 +393,27 @@ const AccountInboxPage: Component = () => {
                           }
                         >
                           {(msg) => (
-                            <tr class="border-b border-primary-100 bg-primary-50/20">
+                            <tr class="border-b border-primary-100 dark:border-primary-800/30 bg-primary-50/20 dark:bg-navy-800/40">
                               <td colspan="6" class="p-0">
-                                <div class="mx-4 my-3 border border-primary-200 rounded-xl overflow-hidden bg-white shadow-sm">
-                                  <div class="px-5 py-3.5 bg-gradient-to-r from-primary-50 to-white border-b border-primary-100 flex items-start justify-between gap-4">
+                                <div class="mx-4 my-3 border border-primary-200 dark:border-navy-600 rounded-xl overflow-hidden bg-white dark:bg-navy-800 shadow-sm">
+                                  <div class="px-5 py-3.5 bg-gradient-to-r from-primary-50 dark:from-navy-700 to-white dark:to-navy-800 border-b border-primary-100 dark:border-navy-600 flex items-start justify-between gap-4">
                                     <div class="min-w-0 space-y-0.5">
-                                      <h3 class="font-semibold text-gray-900 text-sm break-words">
+                                      <h3 class="font-semibold text-gray-900 dark:text-white text-sm break-words">
                                         {msg().subject || "(No Subject)"}
                                       </h3>
-                                      <p class="text-xs text-gray-500 break-all">
+                                      <p class="text-xs text-gray-500 dark:text-navy-400 break-all">
                                         <span class="font-medium">From:</span>{" "}
                                         {msg().sender_name
                                           ? `${msg().sender_name} <${msg().sender}>`
                                           : msg().sender}
                                       </p>
-                                      <p class="text-xs text-gray-400">
+                                      <p class="text-xs text-gray-400 dark:text-navy-500">
                                         {formatDate(msg().received_at)}
                                       </p>
                                     </div>
                                     <button
                                       onClick={() => setExpandedEmail(null)}
-                                      class="flex items-center justify-center w-7 h-7 rounded-lg text-gray-400 hover:text-gray-700 hover:bg-gray-100 transition-colors flex-shrink-0"
+                                      class="flex items-center justify-center w-7 h-7 rounded-lg text-gray-400 dark:text-navy-400 hover:text-gray-700 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-navy-700 transition-colors flex-shrink-0"
                                       aria-label="Close"
                                     >
                                       <svg
@@ -431,11 +431,11 @@ const AccountInboxPage: Component = () => {
                                       </svg>
                                     </button>
                                   </div>
-                                  <div class="max-h-[500px] overflow-y-auto">
+                                  <div class="max-h-[500px] overflow-y-auto bg-white">
                                     <Show
                                       when={msg().body_html}
                                       fallback={
-                                        <pre class="whitespace-pre-wrap text-sm text-gray-800 font-sans leading-relaxed p-5">
+                                        <pre class="whitespace-pre-wrap text-sm text-gray-800 dark:text-navy-100 font-sans leading-relaxed p-5">
                                           {msg().body_text || "(No content)"}
                                         </pre>
                                       }
@@ -460,12 +460,12 @@ const AccountInboxPage: Component = () => {
               </table>
             </div>
 
-            <div class="sm:hidden divide-y divide-gray-100">
+            <div class="sm:hidden divide-y divide-gray-100 dark:divide-navy-700">
               <For each={inboxData()?.emails}>
                 {(email) => (
-                  <div class={`${!email.is_read ? "bg-blue-50/30" : ""}`}>
+                  <div class={`${!email.is_read ? "bg-blue-50/30 dark:bg-blue-900/10" : ""}`}>
                     <div
-                      class="px-4 py-3.5 flex items-start gap-3 cursor-pointer active:bg-gray-50"
+                      class="px-4 py-3.5 flex items-start gap-3 cursor-pointer active:bg-gray-50 dark:active:bg-navy-700"
                       onClick={() => handleShowEmail(email)}
                     >
                       <div class="flex-shrink-0 mt-1.5">
@@ -480,19 +480,19 @@ const AccountInboxPage: Component = () => {
                       <div class="flex-1 min-w-0 space-y-1">
                         <div class="flex items-center justify-between gap-2">
                           <span
-                            class={`text-sm truncate ${!email.is_read ? "font-semibold text-gray-900" : "font-medium text-gray-700"}`}
+                            class={`text-sm truncate ${!email.is_read ? "font-semibold text-gray-900 dark:text-white" : "font-medium text-gray-700 dark:text-navy-200"}`}
                           >
                             {truncate(
                               email.sender_name || email.sender,
                               SENDER_LIMIT,
                             )}
                           </span>
-                          <span class="text-xs text-gray-400 whitespace-nowrap flex-shrink-0">
+                          <span class="text-xs text-gray-400 dark:text-navy-500 whitespace-nowrap flex-shrink-0">
                             {formatDateShort(email.received_at)}
                           </span>
                         </div>
                         <p
-                          class={`text-sm truncate ${!email.is_read ? "text-gray-800" : "text-gray-600"}`}
+                            class={`text-sm truncate ${!email.is_read ? "text-gray-800 dark:text-navy-100" : "text-gray-600 dark:text-navy-300"}`}
                         >
                           {truncate(
                             email.subject || "(No Subject)",
@@ -538,24 +538,24 @@ const AccountInboxPage: Component = () => {
                       }
                     >
                       {(msg) => (
-                        <div class="mx-3 mb-3 border border-primary-200 rounded-xl overflow-hidden bg-white shadow-sm">
-                          <div class="px-4 py-3 bg-primary-50 border-b border-primary-100 flex items-start justify-between gap-3">
+                        <div class="mx-3 mb-3 border border-primary-200 dark:border-navy-600 rounded-xl overflow-hidden bg-white dark:bg-navy-800 shadow-sm">
+                          <div class="px-4 py-3 bg-primary-50 dark:bg-navy-700 border-b border-primary-100 dark:border-navy-600 flex items-start justify-between gap-3">
                             <div class="min-w-0 space-y-0.5">
-                              <p class="font-semibold text-sm text-gray-900 break-words">
+                              <p class="font-semibold text-sm text-gray-900 dark:text-white break-words">
                                 {msg().subject || "(No Subject)"}
                               </p>
-                              <p class="text-xs text-gray-500 break-all">
+                              <p class="text-xs text-gray-500 dark:text-navy-400 break-all">
                                 {msg().sender_name
                                   ? `${msg().sender_name} <${msg().sender}>`
                                   : msg().sender}
                               </p>
-                              <p class="text-xs text-gray-400">
+                              <p class="text-xs text-gray-400 dark:text-navy-500">
                                 {formatDate(msg().received_at)}
                               </p>
                             </div>
                             <button
                               onClick={() => setExpandedEmail(null)}
-                              class="flex items-center justify-center w-6 h-6 rounded text-gray-400 hover:text-gray-700 flex-shrink-0"
+                              class="flex items-center justify-center w-6 h-6 rounded text-gray-400 dark:text-navy-400 hover:text-gray-700 dark:hover:text-white flex-shrink-0"
                             >
                               <svg
                                 class="w-4 h-4"
@@ -572,11 +572,11 @@ const AccountInboxPage: Component = () => {
                               </svg>
                             </button>
                           </div>
-                          <div class="max-h-72 overflow-y-auto">
+                          <div class="max-h-72 overflow-y-auto bg-white">
                             <Show
                               when={msg().body_html}
                               fallback={
-                                <pre class="whitespace-pre-wrap text-xs text-gray-800 font-sans leading-relaxed p-4">
+                                <pre class="whitespace-pre-wrap text-xs text-gray-800 dark:text-navy-100 font-sans leading-relaxed p-4">
                                   {msg().body_text || "(No content)"}
                                 </pre>
                               }

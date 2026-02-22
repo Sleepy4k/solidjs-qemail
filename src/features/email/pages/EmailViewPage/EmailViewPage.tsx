@@ -189,7 +189,9 @@ export const EmailViewPage: Component = () => {
                       </pre>
                     }
                   >
-                    <SafeEmailRenderer html={msg().body_html!} />
+                    <div class="rounded-lg overflow-hidden border border-gray-100 dark:border-navy-600">
+                      <SafeEmailRenderer html={msg().body_html!} />
+                    </div>
                   </Show>
                 </div>
 

@@ -42,6 +42,7 @@ export interface AdminAccount {
   domain_name: string;
   is_custom: boolean;
   ip_address: string | null;
+  forward_to: string | null;
   expires_at: string | null;
   created_at: string;
   email_count?: number;

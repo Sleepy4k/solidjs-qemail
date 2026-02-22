@@ -21,6 +21,28 @@ import {
 } from "../../../../shared/components/ConfirmDialog";
 import { debounce } from "../../../../shared/utils/debounce.util";
 
+const formatRelativeTime = (dateStr: string | null): string => {
+  if (!dateStr) return "—";
+  const date = new Date(dateStr);
+  const now = new Date();
+  const diffMs = now.getTime() - date.getTime();
+  const isFuture = diffMs < 0;
+  const abs = Math.abs(diffMs);
+  const diffMins = Math.floor(abs / 60000);
+  const diffHours = Math.floor(abs / 3600000);
+  const diffDays = Math.floor(abs / 86400000);
+  const diffMonths = Math.floor(diffDays / 30);
+  const diffYears = Math.floor(diffDays / 365);
+  let label: string;
+  if (diffYears >= 1) label = `${diffYears} tahun`;
+  else if (diffMonths >= 1) label = `${diffMonths} bulan`;
+  else if (diffDays >= 1) label = `${diffDays} hari`;
+  else if (diffHours >= 1) label = `${diffHours} jam`;
+  else if (diffMins >= 1) label = `${diffMins} menit`;
+  else return isFuture ? "Sebentar lagi" : "Baru saja";
+  return isFuture ? `${label} lagi` : `${label} yang lalu`;
+};
+
 type TypeFilter = "all" | "random" | "custom";
 
 const AccountsPage: Component = () => {
@@ -45,6 +67,7 @@ const AccountsPage: Component = () => {
   const [error, setError] = createSignal("");
   const [successMessage, setSuccessMessage] = createSignal("");
   const [isRefreshing, setIsRefreshing] = createSignal(false);
+  const [detailAccount, setDetailAccount] = createSignal<AdminAccount | null>(null);
 
   const { isOpen, config, confirm, handleConfirm, handleCancel } =
     useConfirmDialog();
@@ -184,6 +207,10 @@ const AccountsPage: Component = () => {
 
   const truncateEmail = (email: string, max = 28) =>
     email.length > max ? email.substring(0, max) + "…" : email;
+
+  const handleShowDetail = (account: AdminAccount) => {
+    setDetailAccount(account);
+  };
 
   const hasFilters = () =>
     searchQuery() || domainFilter() !== 0 || typeFilter() !== "all";
@@ -491,11 +518,18 @@ const AccountsPage: Component = () => {
                       <td class="px-4 py-4">
                         <div class="flex items-center gap-2">
                           <Button
+                            variant="secondary"
+                            size="sm"
+                            onClick={() => handleShowDetail(account)}
+                          >
+                            Detail
+                          </Button>
+                          <Button
                             variant="primary"
                             size="sm"
                             onClick={() => handleViewInbox(account)}
                           >
-                            View Inbox
+                            Inbox
                           </Button>
                           <Button
                             variant="danger"
@@ -540,11 +574,18 @@ const AccountsPage: Component = () => {
                     </div>
                     <div class="flex gap-1.5 flex-shrink-0">
                       <Button
+                        variant="secondary"
+                        size="sm"
+                        onClick={() => handleShowDetail(account)}
+                      >
+                        Detail
+                      </Button>
+                      <Button
                         variant="primary"
                         size="sm"
                         onClick={() => handleViewInbox(account)}
                       >
-                        View
+                        Inbox
                       </Button>
                       <Button
                         variant="danger"
@@ -623,6 +664,129 @@ const AccountsPage: Component = () => {
         onConfirm={handleConfirm}
         onCancel={handleCancel}
       />
+
+      {/* ── Account Detail Modal ── */}
+      <Show when={detailAccount()}>
+        {(acc) => (
+          <div
+            class="fixed inset-0 z-50 flex items-center justify-center p-4"
+            onClick={() => setDetailAccount(null)}
+          >
+            <div class="absolute inset-0 bg-black/50 backdrop-blur-sm" />
+            <div
+              class="relative w-full max-w-lg bg-white dark:bg-navy-800 rounded-2xl shadow-2xl border border-gray-200 dark:border-navy-600 overflow-hidden"
+              onClick={(e) => e.stopPropagation()}
+            >
+              {/* Modal header */}
+              <div class="flex items-center justify-between px-6 py-4 border-b border-gray-200 dark:border-navy-700 bg-gray-50 dark:bg-navy-700">
+                <div class="flex items-center gap-2">
+                  <svg class="w-5 h-5 text-primary-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                  </svg>
+                  <h2 class="text-base font-bold text-gray-900 dark:text-white">Account Detail</h2>
+                </div>
+                <button
+                  onClick={() => setDetailAccount(null)}
+                  class="flex items-center justify-center w-8 h-8 rounded-lg text-gray-400 hover:text-gray-700 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-navy-600 transition-colors"
+                >
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                  </svg>
+                </button>
+              </div>
+
+              {/* Modal body */}
+              <div class="px-6 py-5 space-y-4">
+                {/* Email address */}
+                <div>
+                  <p class="text-xs font-semibold text-gray-400 dark:text-navy-400 uppercase tracking-wide mb-1">Email Address</p>
+                  <p class="font-mono text-sm font-semibold text-gray-900 dark:text-white break-all">{acc().email_address}</p>
+                </div>
+
+                <div class="grid grid-cols-2 gap-4">
+                  {/* Domain */}
+                  <div>
+                    <p class="text-xs font-semibold text-gray-400 dark:text-navy-400 uppercase tracking-wide mb-1">Domain</p>
+                    <p class="text-sm text-gray-800 dark:text-navy-100">{acc().domain_name}</p>
+                  </div>
+                  {/* Type */}
+                  <div>
+                    <p class="text-xs font-semibold text-gray-400 dark:text-navy-400 uppercase tracking-wide mb-1">Type</p>
+                    <span class={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
+                      acc().is_custom
+                        ? "bg-purple-100 text-purple-800 dark:bg-purple-900/30 dark:text-purple-300"
+                        : "bg-sky-100 text-sky-800 dark:bg-sky-900/30 dark:text-sky-300"
+                    }`}>
+                      {acc().is_custom ? "Custom" : "Random"}
+                    </span>
+                  </div>
+                </div>
+
+                <div class="grid grid-cols-2 gap-4">
+                  {/* Created at */}
+                  <div>
+                    <p class="text-xs font-semibold text-gray-400 dark:text-navy-400 uppercase tracking-wide mb-1">Created</p>
+                    <p class="text-sm text-gray-800 dark:text-navy-100">{formatDate(acc().created_at)}</p>
+                    <p class="text-xs text-gray-400 dark:text-navy-500 mt-0.5">{formatRelativeTime(acc().created_at)}</p>
+                  </div>
+                  {/* Expires at */}
+                  <div>
+                    <p class="text-xs font-semibold text-gray-400 dark:text-navy-400 uppercase tracking-wide mb-1">Expires</p>
+                    <Show when={acc().expires_at} fallback={<p class="text-sm text-gray-400 dark:text-navy-500">Never</p>}>
+                      <p class={`text-sm font-medium ${
+                        new Date(acc().expires_at!) < new Date()
+                          ? "text-red-500 dark:text-red-400"
+                          : "text-gray-800 dark:text-navy-100"
+                      }`}>{formatDate(acc().expires_at)}</p>
+                      <p class={`text-xs mt-0.5 ${
+                        new Date(acc().expires_at!) < new Date()
+                          ? "text-red-400 dark:text-red-500"
+                          : "text-emerald-500 dark:text-emerald-400"
+                      }`}>{formatRelativeTime(acc().expires_at)}</p>
+                    </Show>
+                  </div>
+                </div>
+
+                {/* IP Address */}
+                <div>
+                  <p class="text-xs font-semibold text-gray-400 dark:text-navy-400 uppercase tracking-wide mb-1">IP Address</p>
+                  <Show when={acc().ip_address} fallback={<p class="text-sm text-gray-400 dark:text-navy-500">—</p>}>
+                    <p class="font-mono text-sm text-gray-800 dark:text-navy-100">{acc().ip_address}</p>
+                  </Show>
+                </div>
+
+                {/* Forward To */}
+                <div>
+                  <p class="text-xs font-semibold text-gray-400 dark:text-navy-400 uppercase tracking-wide mb-1">Forward To</p>
+                  <Show when={acc().forward_to} fallback={<p class="text-sm text-gray-400 dark:text-navy-500">—</p>}>
+                    <p class="font-mono text-sm text-gray-800 dark:text-navy-100 break-all">{acc().forward_to}</p>
+                  </Show>
+                </div>
+
+                {/* Emails count */}
+                <div class="pt-1 border-t border-gray-100 dark:border-navy-700">
+                  <div class="flex items-center justify-between">
+                    <span class="text-xs font-semibold text-gray-400 dark:text-navy-400 uppercase tracking-wide">Emails in inbox</span>
+                    <span class="px-2.5 py-1 bg-main-red/10 text-main-red dark:bg-red-900/30 dark:text-red-400 rounded-full text-xs font-bold">
+                      {acc().email_count ?? 0}
+                    </span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Modal footer */}
+              <div class="px-6 py-4 border-t border-gray-100 dark:border-navy-700 bg-gray-50 dark:bg-navy-700/50 flex items-center justify-end gap-2">
+                <Button variant="primary" size="sm" onClick={() => { setDetailAccount(null); handleViewInbox(acc()); }}>
+                  Buka Inbox
+                </Button>
+                <Button variant="secondary" size="sm" onClick={() => setDetailAccount(null)}>
+                  Tutup
+                </Button>
+              </div>
+            </div>
+          </div>
+        )}
+      </Show>
     </div>
   );
 };
