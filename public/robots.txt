@@ -1,0 +1,10 @@
+User-agent: *
+
+Disallow: /admin/
+Disallow: /assets/
+
+Allow: /admin/login
+
+Crawl-delay: 10
+
+Sitemap: https://qemail.web.id/sitemap.xml 
