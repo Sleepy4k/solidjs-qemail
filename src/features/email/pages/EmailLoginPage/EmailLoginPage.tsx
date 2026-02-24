@@ -79,7 +79,8 @@ export const EmailLoginPage: Component = () => {
       return;
     }
 
-    const email = `${username}@${selectedDomain.name}`;
+    const parsedUsername = username.replace(/@.*/, "");
+    const email = `${parsedUsername}@${selectedDomain.name}`;
     setIsLoading(true);
 
     try {
