@@ -1,6 +1,6 @@
 import { Component, createResource, Show, For, onMount } from "solid-js";
 import gsap from "gsap";
-import { Card } from "../../../../shared/components/ui/Card";
+import { Card } from "@shared/components/ui/Card";
 import { adminApiService } from "../../services/admin-api.service";
 
 const DashboardPage: Component = () => {

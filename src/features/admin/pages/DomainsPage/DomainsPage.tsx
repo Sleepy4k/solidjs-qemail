@@ -1,10 +1,10 @@
 import { Component, createResource, createSignal, createMemo, Show, For } from 'solid-js';
 import { DomainList, DomainForm, DomainEditForm } from '../../components';
 import type { DomainFormData, DomainEditFormData } from '../../components';
-import { Card, Button, Alert, Modal } from '../../../../shared/components/ui';
-import { ConfirmDialog, useConfirmDialog } from '../../../../shared/components/ConfirmDialog';
+import { Card, Button, Alert, Modal } from '@shared/components/ui';
+import { ConfirmDialog, useConfirmDialog } from '@shared/components/ConfirmDialog';
 import { adminService } from '../../services/admin.service';
-import { useAnimation } from '../../../../shared/hooks/use-animation.hook';
+import { useAnimation } from '@shared/hooks/use-animation.hook';
 import type { AdminDomain, CfRule } from '../../types/admin.types';
 
 const DomainsPage: Component = () => {

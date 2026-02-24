@@ -1,14 +1,14 @@
 import { Component, JSX, createMemo, createSignal, Show } from "solid-js";
 import { A, useLocation } from "@solidjs/router";
 import { adminStore } from "../../stores/admin.store";
-import { ROUTES } from "../../../../shared/constants/routes.constant";
-import * as animations from "../../../../shared/utils/animation.util";
+import { ROUTES } from "@shared/constants/routes.constant";
+import * as animations from "@shared/utils/animation.util";
 import {
   ConfirmDialog,
   useConfirmDialog,
-} from "../../../../shared/components/ConfirmDialog";
-import { ThemeToggle } from "../../../../shared/components/ThemeToggle";
-import Logo from "../../../../assets/images/logo.png";
+} from "@shared/components/ConfirmDialog";
+import { ThemeToggle } from "@shared/components/ThemeToggle";
+import Logo from "@assets/images/logo.png";
 
 export interface AdminLayoutProps {
   children: JSX.Element;

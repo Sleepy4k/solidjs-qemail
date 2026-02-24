@@ -10,17 +10,17 @@ import { Portal } from "solid-js/web";
 import { useNavigate, useSearchParams } from "@solidjs/router";
 import gsap from "gsap";
 import { adminApiService } from "../../services/admin-api.service";
-import type { AdminAccount, AdminDomain } from "../../../../shared/types/admin.types";
-import { Button } from "../../../../shared/components/ui/Button";
-import { Card } from "../../../../shared/components/ui/Card";
-import { Alert } from "../../../../shared/components/ui/Alert";
-import { Pagination } from "../../../../shared/components/ui/Pagination";
-import { SkeletonTable } from "../../../../shared/components/Skeleton";
+import type { AdminAccount, AdminDomain } from "@shared/types/admin.types";
+import { Button } from "@shared/components/ui/Button";
+import { Card } from "@shared/components/ui/Card";
+import { Alert } from "@shared/components/ui/Alert";
+import { Pagination } from "@shared/components/ui/Pagination";
+import { SkeletonTable } from "@shared/components/Skeleton";
 import {
   ConfirmDialog,
   useConfirmDialog,
-} from "../../../../shared/components/ConfirmDialog";
-import { debounce } from "../../../../shared/utils/debounce.util";
+} from "@shared/components/ConfirmDialog";
+import { debounce } from "@shared/utils/debounce.util";
 
 const formatRelativeTime = (dateStr: string | null): string => {
   if (!dateStr) return "—";

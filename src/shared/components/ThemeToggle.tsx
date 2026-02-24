@@ -1,5 +1,5 @@
 import { Component, Show } from "solid-js";
-import { themeStore } from "../stores/theme.store";
+import { themeStore } from "@shared/stores/theme.store";
 
 interface ThemeToggleProps {
   class?: string;

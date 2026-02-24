@@ -1,8 +1,8 @@
 import { createSignal } from "solid-js";
 import { adminService } from "../services/admin.service";
-import { httpService } from "../../../shared/services/http.service";
+import { httpService } from "@shared/services/http.service";
 import type { AdminUser, AdminLoginRequest } from "../types/admin.types";
-import { ROUTES } from "../../../shared/constants/routes.constant";
+import { ROUTES } from "@shared/constants/routes.constant";
 
 const STORAGE_KEYS = {
   TOKEN: "admin_token",

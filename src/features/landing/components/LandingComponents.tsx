@@ -1,5 +1,5 @@
 import { Component, JSX, onMount } from "solid-js";
-import * as animations from "../../../shared/utils/animation.util";
+import * as animations from "@shared/utils/animation.util";
 
 interface FeatureCardProps {
   emoji: string;

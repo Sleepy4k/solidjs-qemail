@@ -1,6 +1,6 @@
 import { Component, JSX } from "solid-js";
-import { Card } from "../../../../shared/components/ui";
-import { useAnimation } from "../../../../shared/hooks/use-animation.hook";
+import { Card } from "@shared/components/ui";
+import { useAnimation } from "@shared/hooks/use-animation.hook";
 
 export interface StatsCardProps {
   label: string;

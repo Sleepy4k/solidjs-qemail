@@ -1,19 +1,19 @@
 import { Component, createSignal, onMount, Show } from "solid-js";
 import { useParams, useNavigate } from "@solidjs/router";
 import gsap from "gsap";
-import { emailService } from "../../../../shared/services/email.service";
-import { emailStore } from "../../../../shared/stores/email.store";
-import { ROUTES } from "../../../../shared/constants/routes.constant";
-import type { EmailMessage } from "../../../../shared/types/email.types";
-import { Button } from "../../../../shared/components/ui/Button";
-import { Alert } from "../../../../shared/components/ui/Alert";
-import { EmailLayout } from "../../../../shared/layouts/EmailLayout";
+import { emailService } from "@shared/services/email.service";
+import { emailStore } from "@shared/stores/email.store";
+import { ROUTES } from "@shared/constants/routes.constant";
+import type { EmailMessage } from "@shared/types/email.types";
+import { Button } from "@shared/components/ui/Button";
+import { Alert } from "@shared/components/ui/Alert";
+import { EmailLayout } from "@shared/layouts/EmailLayout";
 import {
   ConfirmDialog,
   useConfirmDialog,
-} from "../../../../shared/components/ConfirmDialog";
-import { SafeEmailRenderer } from "../../../../shared/components/SafeEmailRenderer";
-import { AttachmentList } from "../../../../shared/components/AttachmentList";
+} from "@shared/components/ConfirmDialog";
+import { SafeEmailRenderer } from "@shared/components/SafeEmailRenderer";
+import { AttachmentList } from "@shared/components/AttachmentList";
 
 export const EmailViewPage: Component = () => {
   const params = useParams<{ messageId: string }>();

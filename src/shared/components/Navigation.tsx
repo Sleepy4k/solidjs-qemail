@@ -1,7 +1,7 @@
 import { Component, Show, createSignal, onCleanup } from "solid-js";
 import { Portal } from "solid-js/web";
 import { A } from "@solidjs/router";
-import Logo from "../../assets/images/logo.png";
+import Logo from "@assets/images/logo.png";
 import { ThemeToggle } from "./ThemeToggle";
 
 interface NavigationProps {

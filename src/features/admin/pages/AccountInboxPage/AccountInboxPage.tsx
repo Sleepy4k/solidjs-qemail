@@ -1,13 +1,13 @@
 import { Component, createResource, createSignal, Show, For } from "solid-js";
 import { useParams, useNavigate, useSearchParams } from "@solidjs/router";
-import { Card } from "../../../../shared/components/ui/Card";
-import { Button } from "../../../../shared/components/ui/Button";
-import { SkeletonTable } from "../../../../shared/components/Skeleton";
+import { Card } from "@shared/components/ui/Card";
+import { Button } from "@shared/components/ui/Button";
+import { SkeletonTable } from "@shared/components/Skeleton";
 import { adminApiService } from "../../services/admin-api.service";
-import type { AdminEmailItem } from "../../../../shared/types/admin.types";
-import { Pagination } from "../../../../shared/components/ui/Pagination";
-import { SafeEmailRenderer } from "../../../../shared/components/SafeEmailRenderer";
-import { AttachmentList, AttachmentBadge } from "../../../../shared/components/AttachmentList";
+import type { AdminEmailItem } from "@shared/types/admin.types";
+import { Pagination } from "@shared/components/ui/Pagination";
+import { SafeEmailRenderer } from "@shared/components/SafeEmailRenderer";
+import { AttachmentList, AttachmentBadge } from "@shared/components/AttachmentList";
 
 const SUBJECT_LIMIT = 50;
 const SENDER_LIMIT = 30;

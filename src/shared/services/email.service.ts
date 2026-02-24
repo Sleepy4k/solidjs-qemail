@@ -8,7 +8,7 @@ import type {
   InboxResponse,
   EmailMessage,
   PaginationParams,
-} from "../types/email.types";
+} from "@shared/types/email.types";
 
 class EmailService {
   private readonly baseUrl = "/v1/email";

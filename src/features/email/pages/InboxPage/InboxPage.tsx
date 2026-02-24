@@ -8,19 +8,19 @@ import {
 } from "solid-js";
 import { useNavigate } from "@solidjs/router";
 import gsap from "gsap";
-import { emailService } from "../../../../shared/services/email.service";
-import { emailStore } from "../../../../shared/stores/email.store";
-import { ROUTES } from "../../../../shared/constants/routes.constant";
-import type { EmailMessage } from "../../../../shared/types/email.types";
-import { Button } from "../../../../shared/components/ui/Button";
-import { Card } from "../../../../shared/components/ui/Card";
-import { Alert } from "../../../../shared/components/ui/Alert";
-import { EmailLayout } from "../../../../shared/layouts/EmailLayout";
-import { AttachmentBadge } from "../../../../shared/components/AttachmentList";
+import { emailService } from "@shared/services/email.service";
+import { emailStore } from "@shared/stores/email.store";
+import { ROUTES } from "@shared/constants/routes.constant";
+import type { EmailMessage } from "@shared/types/email.types";
+import { Button } from "@shared/components/ui/Button";
+import { Card } from "@shared/components/ui/Card";
+import { Alert } from "@shared/components/ui/Alert";
+import { EmailLayout } from "@shared/layouts/EmailLayout";
+import { AttachmentBadge } from "@shared/components/AttachmentList";
 import {
   ConfirmDialog,
   useConfirmDialog,
-} from "../../../../shared/components/ConfirmDialog";
+} from "@shared/components/ConfirmDialog";
 
 export const InboxPage: Component = () => {
   const navigate = useNavigate();

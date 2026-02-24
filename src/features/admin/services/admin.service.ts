@@ -1,5 +1,5 @@
-import { httpService } from "../../../shared/services/http.service";
-import { API_ENDPOINTS } from "../../../shared/constants/api.constant";
+import { httpService } from "@shared/services/http.service";
+import { API_ENDPOINTS } from "@shared/constants/api.constant";
 import type {
   AdminLoginRequest,
   AdminLoginResponse,

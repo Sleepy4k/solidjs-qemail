@@ -1,5 +1,5 @@
 import { Component, onMount } from "solid-js";
-import { Input, Button } from "../../../../shared/components/ui";
+import { Input, Button } from "@shared/components/ui";
 
 export interface DomainEditFormData {
   cloudflare_zone_id: string;

@@ -1,4 +1,4 @@
-import { httpService } from "../../../shared/services/http.service";
+import { httpService } from "@shared/services/http.service";
 import type {
   AdminLoginRequest,
   AdminLoginResponse,
@@ -12,7 +12,7 @@ import type {
   Setting,
   UpdateSettingRequest,
   PaginationQuery,
-} from "../../../shared/types/admin.types";
+} from "@shared/types/admin.types";
 
 class AdminApiService {
   private readonly baseUrl = "/v1/admin";

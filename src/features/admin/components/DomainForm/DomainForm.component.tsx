@@ -1,5 +1,5 @@
 import { Component } from "solid-js";
-import { Input, Button } from "../../../../shared/components/ui";
+import { Input, Button } from "@shared/components/ui";
 
 export interface DomainFormData {
   name: string;

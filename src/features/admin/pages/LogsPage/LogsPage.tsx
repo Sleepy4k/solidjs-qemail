@@ -16,12 +16,12 @@ import type {
   LogActorType,
   LogStatus,
 } from "../../types/admin.types";
-import { Button } from "../../../../shared/components/ui/Button";
-import { Card } from "../../../../shared/components/ui/Card";
-import { Alert } from "../../../../shared/components/ui/Alert";
-import { SkeletonTable } from "../../../../shared/components/Skeleton";
-import { debounce } from "../../../../shared/utils/debounce.util";
-import { Pagination } from "../../../../shared/components/ui/Pagination";
+import { Button } from "@shared/components/ui/Button";
+import { Card } from "@shared/components/ui/Card";
+import { Alert } from "@shared/components/ui/Alert";
+import { SkeletonTable } from "@shared/components/Skeleton";
+import { debounce } from "@shared/utils/debounce.util";
+import { Pagination } from "@shared/components/ui/Pagination";
 
 const STATUS_BADGE: Record<
   AdminLog["status"],

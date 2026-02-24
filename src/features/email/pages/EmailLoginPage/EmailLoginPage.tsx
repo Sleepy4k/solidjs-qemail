@@ -1,15 +1,15 @@
 import { Component, createSignal, createMemo, onMount, Show } from "solid-js";
 import { useNavigate } from "@solidjs/router";
 import gsap from "gsap";
-import { emailService } from "../../../../shared/services/email.service";
-import { emailStore } from "../../../../shared/stores/email.store";
-import type { Domain } from "../../../../shared/types/email.types";
-import { Button } from "../../../../shared/components/ui/Button";
-import { Card } from "../../../../shared/components/ui/Card";
-import { Input } from "../../../../shared/components/ui/Input";
-import { Alert } from "../../../../shared/components/ui/Alert";
-import { SearchableSelect } from "../../../../shared/components/ui/SearchableSelect";
-import { EmailLayout } from "../../../../shared/layouts/EmailLayout";
+import { emailService } from "@shared/services/email.service";
+import { emailStore } from "@shared/stores/email.store";
+import type { Domain } from "@shared/types/email.types";
+import { Button } from "@shared/components/ui/Button";
+import { Card } from "@shared/components/ui/Card";
+import { Input } from "@shared/components/ui/Input";
+import { Alert } from "@shared/components/ui/Alert";
+import { SearchableSelect } from "@shared/components/ui/SearchableSelect";
+import { EmailLayout } from "@shared/layouts/EmailLayout";
 
 export const EmailLoginPage: Component = () => {
   const navigate = useNavigate();

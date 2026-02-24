@@ -1,7 +1,7 @@
 import { Component, For, Show } from "solid-js";
-import { Card, Button } from "../../../../shared/components/ui";
-import { useStaggerAnimation } from "../../../../shared/hooks/use-animation.hook";
-import { formatDateTime } from "../../../../shared/utils/format.util";
+import { Card, Button } from "@shared/components/ui";
+import { useStaggerAnimation } from "@shared/hooks/use-animation.hook";
+import { formatDateTime } from "@shared/utils/format.util";
 import type { AdminDomain } from "../../types/admin.types";
 
 export interface DomainListProps {

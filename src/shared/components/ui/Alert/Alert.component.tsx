@@ -1,5 +1,5 @@
 import { Component, Show, onMount } from "solid-js";
-import * as animations from "../../../utils/animation.util";
+import * as animations from "@shared/utils/animation.util";
 
 export type AlertType = "success" | "error" | "warning" | "info";
 

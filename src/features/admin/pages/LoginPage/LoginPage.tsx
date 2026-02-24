@@ -1,10 +1,10 @@
 import { Component, Show, createSignal } from "solid-js";
 import { useNavigate } from "@solidjs/router";
-import { Card, Input, Button, Alert } from "../../../../shared/components/ui";
+import { Card, Input, Button, Alert } from "@shared/components/ui";
 import { adminStore } from "../../stores/admin.store";
-import { ROUTES } from "../../../../shared/constants/routes.constant";
-import { useAnimation } from "../../../../shared/hooks/use-animation.hook";
-import { Navigation } from "../../../../shared/components/Navigation";
+import { ROUTES } from "@shared/constants/routes.constant";
+import { useAnimation } from "@shared/hooks/use-animation.hook";
+import { Navigation } from "@shared/components/Navigation";
 
 const LoginPage: Component = () => {
   const navigate = useNavigate();

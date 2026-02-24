@@ -7,50 +7,50 @@ import {
   type JSX,
 } from "solid-js";
 import { Router, Route, useLocation } from "@solidjs/router";
-import { AdminGuard, GuestGuard } from "./shared/guards/auth.guard";
-import { AdminLayout } from "./features/admin/layouts/AdminLayout";
-import { PageWrapper } from "./shared/components/PageWrapper";
-import { Skeleton } from "./shared/components/Skeleton";
+import { AdminGuard, GuestGuard } from "@shared/guards/auth.guard";
+import { AdminLayout } from "@features/admin/layouts/AdminLayout";
+import { PageWrapper } from "@shared/components/PageWrapper";
+import { Skeleton } from "@shared/components/Skeleton";
 import NProgress from "nprogress";
 
 NProgress.configure({ showSpinner: false, trickleSpeed: 150 });
 
 const LandingPage = lazy(
-  () => import("./features/landing/pages/LandingPage/LandingPage"),
+  () => import("@features/landing/pages/LandingPage/LandingPage"),
 );
 const EmailLoginPage = lazy(
-  () => import("./features/email/pages/EmailLoginPage/EmailLoginPage"),
+  () => import("@features/email/pages/EmailLoginPage/EmailLoginPage"),
 );
 const InboxPage = lazy(
-  () => import("./features/email/pages/InboxPage/InboxPage"),
+  () => import("@features/email/pages/InboxPage/InboxPage"),
 );
 const EmailViewPage = lazy(
-  () => import("./features/email/pages/EmailViewPage/EmailViewPage"),
+  () => import("@features/email/pages/EmailViewPage/EmailViewPage"),
 );
 
 const LoginPage = lazy(
-  () => import("./features/admin/pages/LoginPage/LoginPage"),
+  () => import("@features/admin/pages/LoginPage/LoginPage"),
 );
 const DashboardPage = lazy(
-  () => import("./features/admin/pages/DashboardPage/DashboardPage"),
+  () => import("@features/admin/pages/DashboardPage/DashboardPage"),
 );
 const DomainsPage = lazy(
-  () => import("./features/admin/pages/DomainsPage/DomainsPage"),
+  () => import("@features/admin/pages/DomainsPage/DomainsPage"),
 );
 const AccountsPage = lazy(
-  () => import("./features/admin/pages/AccountsPage/AccountsPage"),
+  () => import("@features/admin/pages/AccountsPage/AccountsPage"),
 );
 const AccountInboxPage = lazy(
-  () => import("./features/admin/pages/AccountInboxPage/AccountInboxPage"),
+  () => import("@features/admin/pages/AccountInboxPage/AccountInboxPage"),
 );
 const SettingsPage = lazy(
-  () => import("./features/admin/pages/SettingsPage/SettingsPage"),
+  () => import("@features/admin/pages/SettingsPage/SettingsPage"),
 );
-const LogsPage = lazy(() => import("./features/admin/pages/LogsPage/LogsPage"));
-const NotFoundPage = lazy(() => import("./pages/NotFoundPage"));
-const AboutPage = lazy(() => import("./pages/AboutPage"));
-const HowToUsePage = lazy(() => import("./pages/HowToUsePage"));
-const FAQPage = lazy(() => import("./pages/FAQPage"));
+const LogsPage = lazy(() => import("@features/admin/pages/LogsPage/LogsPage"));
+const NotFoundPage = lazy(() => import("@pages/NotFoundPage"));
+const AboutPage = lazy(() => import("@pages/AboutPage"));
+const HowToUsePage = lazy(() => import("@pages/HowToUsePage"));
+const FAQPage = lazy(() => import("@pages/FAQPage"));
 
 const AdminLoadingSkeleton: Component = () => (
   <div class="min-h-screen bg-gray-50 flex">

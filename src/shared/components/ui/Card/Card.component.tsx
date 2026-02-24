@@ -1,5 +1,5 @@
 import { Component, JSX, splitProps, mergeProps, onMount } from "solid-js";
-import * as animations from "../../../utils/animation.util";
+import * as animations from "@shared/utils/animation.util";
 
 export interface CardProps extends JSX.HTMLAttributes<HTMLDivElement> {
   hover?: boolean;

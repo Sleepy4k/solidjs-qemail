@@ -1,6 +1,6 @@
 import { Component, createSignal, onMount } from "solid-js";
 import gsap from "gsap";
-import { EmailLayout } from "../shared/layouts/EmailLayout";
+import { EmailLayout } from "@shared/layouts/EmailLayout";
 
 const FAQItem: Component<{ question: string; answer: string }> = (props) => {
   const [open, setOpen] = createSignal(false);

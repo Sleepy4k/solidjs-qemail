@@ -1,6 +1,6 @@
 import { Component, JSX } from "solid-js";
 import { Navigation } from "../components/Navigation";
-import BACKGROUND from "../../assets/images/background.png";
+import BACKGROUND from "@assets/images/background.png";
 
 interface EmailLayoutProps {
   children: JSX.Element;

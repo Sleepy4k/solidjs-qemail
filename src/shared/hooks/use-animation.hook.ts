@@ -1,6 +1,6 @@
 import { onMount, onCleanup } from "solid-js";
 import gsap from "gsap";
-import * as animations from "../utils/animation.util";
+import * as animations from "@shared/utils/animation.util";
 
 export interface UseAnimationOptions {
   animation?: keyof typeof animations;

@@ -1,4 +1,4 @@
-import { API_BASE_URL, API_TIMEOUT } from "../constants/api.constant";
+import { API_BASE_URL, API_TIMEOUT } from "@shared/constants/api.constant";
 
 export interface HttpRequestConfig {
   method?: "GET" | "POST" | "PUT" | "PATCH" | "DELETE";

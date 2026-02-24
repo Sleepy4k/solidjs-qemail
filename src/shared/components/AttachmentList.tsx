@@ -1,5 +1,5 @@
 import { Component, For, Show } from "solid-js";
-import type { EmailAttachment } from "../types/email.types";
+import type { EmailAttachment } from "@shared/types/email.types";
 
 interface AttachmentListProps {
   attachments: EmailAttachment[];

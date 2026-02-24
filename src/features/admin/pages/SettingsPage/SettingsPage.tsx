@@ -7,12 +7,12 @@ import {
   onMount,
 } from "solid-js";
 import gsap from "gsap";
-import { Card } from "../../../../shared/components/ui/Card";
-import { Button } from "../../../../shared/components/ui/Button";
-import { Input } from "../../../../shared/components/ui/Input";
-import { Alert } from "../../../../shared/components/ui/Alert";
+import { Card } from "@shared/components/ui/Card";
+import { Button } from "@shared/components/ui/Button";
+import { Input } from "@shared/components/ui/Input";
+import { Alert } from "@shared/components/ui/Alert";
 import { adminApiService } from "../../services/admin-api.service";
-import type { Setting } from "../../../../shared/types/admin.types";
+import type { Setting } from "@shared/types/admin.types";
 
 const SettingsPage: Component = () => {
   const [editingSetting, setEditingSetting] = createSignal<Setting | null>(
