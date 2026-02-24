@@ -37,6 +37,9 @@ class HttpService {
   private responseInterceptors: Array<
     (response: HttpResponse) => HttpResponse | Promise<HttpResponse>
   > = [];
+  private errorInterceptors: Array<
+    (error: HttpError) => void | Promise<void>
+  > = [];
 
   constructor(baseURL: string = API_BASE_URL, timeout: number = API_TIMEOUT) {
     this.baseURL = baseURL;
@@ -57,6 +60,12 @@ class HttpService {
     ) => HttpResponse | Promise<HttpResponse>,
   ) {
     this.responseInterceptors.push(interceptor);
+  }
+
+  addErrorInterceptor(
+    interceptor: (error: HttpError) => void | Promise<void>,
+  ) {
+    this.errorInterceptors.push(interceptor);
   }
 
   async request<T = any>(
@@ -126,6 +135,9 @@ class HttpService {
       clearTimeout(timeoutId);
 
       if (error instanceof HttpError) {
+        for (const interceptor of this.errorInterceptors) {
+          await interceptor(error);
+        }
         throw error;
       }
 

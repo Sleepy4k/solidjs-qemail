@@ -15,6 +15,18 @@ const extractBodyContent = (html: string): string => {
   return headlessHtml;
 };
 
+/** Make all anchor tags open safely in a new tab. */
+const safeifyLinks = (html: string): string => {
+  return html.replace(/<a(\s[^>]*)?>/gi, (match) => {
+    // Remove existing target/rel attrs then add safe ones
+    const stripped = match
+      .replace(/\s+target\s*=\s*(["'])[^"']*\1/gi, "")
+      .replace(/\s+rel\s*=\s*(["'])[^"']*\1/gi, "");
+    // Insert before closing >
+    return stripped.replace(/>$/, ' target="_blank" rel="noopener noreferrer">');
+  });
+};
+
 export const SafeEmailRenderer: Component<SafeEmailRendererProps> = (props) => {
   let iframeRef: HTMLIFrameElement | undefined;
 
@@ -26,7 +38,7 @@ export const SafeEmailRenderer: Component<SafeEmailRendererProps> = (props) => {
 
   const injectContent = (html: string) => {
     if (!iframeRef?.contentDocument) return;
-    const bodyContent = extractBodyContent(html);
+    const bodyContent = safeifyLinks(extractBodyContent(html));
     const doc = iframeRef.contentDocument;
     doc.open();
     doc.write(`<!DOCTYPE html>
@@ -46,7 +58,7 @@ export const SafeEmailRenderer: Component<SafeEmailRendererProps> = (props) => {
     word-break: break-word;
   }
   img { max-width: 100%; height: auto; }
-  a { pointer-events: none; cursor: default; }
+  a { cursor: pointer; }
   table { max-width: 100%; }
   pre, code { white-space: pre-wrap; word-break: break-all; }
 </style>
@@ -69,7 +81,7 @@ export const SafeEmailRenderer: Component<SafeEmailRendererProps> = (props) => {
   return (
     <iframe
       ref={iframeRef}
-      sandbox="allow-same-origin"
+      sandbox="allow-same-origin allow-popups"
       class={`w-full border-0 block ${props.class ?? ""}`}
       style={{ "min-height": `${props.minHeight ?? 80}px` }}
       title="Email content"

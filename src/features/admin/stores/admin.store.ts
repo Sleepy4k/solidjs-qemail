@@ -1,5 +1,6 @@
 import { createSignal } from "solid-js";
 import { adminService } from "../services/admin.service";
+import { httpService } from "../../../shared/services/http.service";
 import type { AdminUser, AdminLoginRequest } from "../types/admin.types";
 import { ROUTES } from "../../../shared/constants/routes.constant";
 
@@ -71,3 +72,10 @@ export const adminStore = {
   logout,
   updateUser,
 };
+
+// Auto-logout when the server returns 401 (token expired / invalid)
+httpService.addErrorInterceptor((error) => {
+  if (error.status === 401 && isAuthenticated()) {
+    logout();
+  }
+});
