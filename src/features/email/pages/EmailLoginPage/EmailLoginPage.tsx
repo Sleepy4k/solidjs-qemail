@@ -1,4 +1,4 @@
-import { Component, createSignal, createMemo, onMount, Show } from "solid-js";
+import { Component, createSignal, createMemo, onMount, Show, onCleanup } from "solid-js";
 import { useNavigate } from "@solidjs/router";
 import gsap from "gsap";
 import { emailService } from "@shared/services/email.service";
@@ -100,6 +100,30 @@ export const EmailLoginPage: Component = () => {
       setIsLoading(false);
     }
   };
+
+  onMount(() => {
+    const handleUsernameInput = () => {
+      const value = usernameRef?.value || "";
+      const atIndex = value.indexOf("@");
+      if (atIndex !== -1) {
+        const domainPart = value.slice(atIndex + 1);
+        const matchedDomain = domains().find((d) => d.name.startsWith(domainPart));
+        if (matchedDomain) {
+          setSelectedDomainId(matchedDomain.id);
+        }
+      } else {
+        if (domains().length > 0) {
+          setSelectedDomainId(domains()[0].id);
+        }
+      }
+    };
+
+    usernameRef?.addEventListener("input", handleUsernameInput);
+
+    onCleanup(() => {
+      usernameRef?.removeEventListener("input", handleUsernameInput);
+    });
+  });
 
   return (
     <EmailLayout currentPage="email-login">

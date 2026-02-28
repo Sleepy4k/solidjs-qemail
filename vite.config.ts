@@ -96,8 +96,6 @@ export default defineConfig(({ mode }) => {
               return "component-confirm-dialog";
             if (id.includes("shared/components/ThemeToggle"))
               return "component-theme-toggle";
-            if (id.includes("shared/components/PageWrapper"))
-              return "component-page-wrapper";
 
             // Shared layouts / guards
             if (id.includes("shared/layouts/")) return "shared-layouts";

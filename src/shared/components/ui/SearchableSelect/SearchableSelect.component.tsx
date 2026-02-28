@@ -35,8 +35,7 @@ export const SearchableSelect: Component<SearchableSelectProps> = (props) => {
   let containerRef: HTMLDivElement | undefined;
   let searchRef: HTMLInputElement | undefined;
   let dropdownRef: HTMLDivElement | undefined;
-  // Prevents immediate close that happens when the opening tap
-  // also fires a scroll/pointerdown event on mobile browsers.
+
   let justOpenedTimer: ReturnType<typeof setTimeout> | undefined;
   let justOpened = false;
 
@@ -56,9 +55,8 @@ export const SearchableSelect: Component<SearchableSelectProps> = (props) => {
     const rect = containerRef.getBoundingClientRect();
     const spaceBelow = window.innerHeight - rect.bottom;
     const spaceAbove = rect.top;
-    const dropdownHeight = 256; // max-h-52 ≈ 208px + search bar ≈ 56px
+    const dropdownHeight = 256;
 
-    // Flip upward only when there is not enough space below
     const top =
       spaceBelow < dropdownHeight && spaceAbove > spaceBelow
         ? rect.top - Math.min(dropdownHeight, spaceAbove) - 4
@@ -75,8 +73,6 @@ export const SearchableSelect: Component<SearchableSelectProps> = (props) => {
     if (props.disabled) return;
     updatePos();
     setIsOpen(true);
-    // Mark as just-opened so that stray scroll / pointerdown events that
-    // are part of the same touch gesture don't immediately close us.
     justOpened = true;
     clearTimeout(justOpenedTimer);
     justOpenedTimer = setTimeout(() => {
@@ -97,7 +93,6 @@ export const SearchableSelect: Component<SearchableSelectProps> = (props) => {
     close();
   };
 
-  // Use pointerdown instead of mousedown so it works on both touch and mouse.
   const handleOutside = (e: PointerEvent) => {
     if (justOpened) return;
     if (!isOpen()) return;
@@ -115,12 +110,8 @@ export const SearchableSelect: Component<SearchableSelectProps> = (props) => {
   const handleScroll = (e: Event) => {
     if (justOpened) return;
     if (!isOpen()) return;
-    // If the scroll originated inside the dropdown, let it pass through
     if (dropdownRef && dropdownRef.contains(e.target as Node)) return;
-    // If the scroll originated inside the trigger container, ignore too
     if (containerRef && containerRef.contains(e.target as Node)) return;
-    // Otherwise the page is scrolling – update position to stay anchored
-    // (don't close; instead reposition so UX is smooth on desktop)
     updatePos();
   };
 
@@ -222,6 +213,7 @@ export const SearchableSelect: Component<SearchableSelectProps> = (props) => {
                   value={search()}
                   onInput={(e) => setSearch(e.currentTarget.value)}
                   onKeyDown={(e) => e.key === "Escape" && close()}
+                  onTouchStart={(e) => e.stopPropagation()}
                 />
               </div>
             </div>
@@ -244,8 +236,6 @@ export const SearchableSelect: Component<SearchableSelectProps> = (props) => {
                       type="button"
                       disabled={option.disabled}
                       onPointerDown={(e) => {
-                        // Prevent the global pointerdown handler from running
-                        // before the click/select logic fires
                         e.stopPropagation();
                       }}
                       onClick={() => !option.disabled && select(option.value)}
