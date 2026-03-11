@@ -99,8 +99,8 @@ export const InboxPage: Component = () => {
 
   const handleLogout = () => {
     confirm({
-      title: "Konfirmasi Logout",
-      message: "Apakah kamu yakin ingin logout? Sesi email temporermu akan berakhir.",
+      title: "Logout Confirmation",
+      message: "Are you sure you want to logout? This will clear your temporary email session.",
       variant: "warning",
       onConfirm: () => {
         emailStore.clearSession();
